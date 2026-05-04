@@ -66,11 +66,11 @@ class LiFiGUI(ctk.CTk):
 
             threading.Thread(target=self.rx_loop, daemon=True).start()
 
-            self.log("✅ Connected")
+            self.log("Connected")
         except:
             self.tx = None
             self.rx = None
-            self.log("⚠️ No hardware detected")
+            self.log(" No hardware detected")
 
     # ---------------- LOG ----------------
     def log(self, msg):
@@ -86,7 +86,7 @@ class LiFiGUI(ctk.CTk):
         if self.tx:
             self.tx.write(f"TXT:{text}\n".encode())
 
-        self.log(f"📤 {text}")
+        self.log(f"{text}")
 
     # ---------------- IMAGE ----------------
     def select_image(self):
@@ -122,7 +122,7 @@ class LiFiGUI(ctk.CTk):
 
         self.tx.write(b"IMG_END\n")
 
-        self.log("📤 Image sent")
+        self.log(" Image sent")
 
     # ---------------- RX ----------------
     def rx_loop(self):
@@ -150,7 +150,7 @@ class LiFiGUI(ctk.CTk):
             with open(path, "wb") as f:
                 f.write(self.image_buffer)
 
-            self.log(f"✅ Saved {path}")
+            self.log(f" Saved {path}")
             return
 
         if self.receiving_image:
