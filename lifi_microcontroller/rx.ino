@@ -1,87 +1,71 @@
-// RX - Manchester Decoding
-#define RX_PIN              5
+// RX - ESP32 Manchester Decoder (µs stable)
+#define RX_PIN 5
 
-uint16_t halfBitMs = 1;      // default half-bit delay in milliseconds
+uint32_t frequencyHz = 500;
+uint32_t halfBitUs;
 
-String messageBuffer = "";
-unsigned long lastCharTime = 0;
+String buffer = "";
 
 void setup() {
   Serial.begin(115200);
   pinMode(RX_PIN, INPUT);
-  Serial.println("\n=== Manchester Receiver Ready ===");
-  printCurrentTiming();
+
+  setFrequency(frequencyHz);
+  Serial.println("RX Ready");
 }
 
 void loop() {
   if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
-    input.trim();
-    if (input.length() > 0) {
-      if (input.startsWith("FREQ=")) {
-        setFrequency(input.substring(5));
-      }
+    String cmd = Serial.readStringUntil('\n');
+    cmd.trim();
+
+    if (cmd.startsWith("FREQ=")) {
+      setFrequency(cmd.substring(5).toInt());
     }
   }
 
-  // Wait for start bit transition (Low -> High)
-  while (digitalRead(RX_PIN) == HIGH) delay(1);
-  while (digitalRead(RX_PIN) == LOW) delay(1);
+  // --- SYNC PHASE ---
+  while (digitalRead(RX_PIN) == HIGH);
+  while (digitalRead(RX_PIN) == LOW);
 
-  delay(halfBitMs / 2);
+  delayMicroseconds(halfBitUs / 2);
 
   uint8_t value = 0;
 
   for (int i = 7; i >= 0; i--) {
-    delay(halfBitMs);
-    bool firstHalf = digitalRead(RX_PIN);
 
-    delay(halfBitMs);
-    bool secondHalf = digitalRead(RX_PIN);
+    delayMicroseconds(halfBitUs);
+    bool first = digitalRead(RX_PIN);
 
-    if (firstHalf == secondHalf) {
-      Serial.println("[ERROR] No transition - invalid Manchester bit");
+    delayMicroseconds(halfBitUs);
+    bool second = digitalRead(RX_PIN);
+
+    // relaxed validation (important for ESP32 jitter tolerance)
+    if (first == second) {
+      Serial.println("[WARN] Bit unstable");
       return;
     }
 
-    bool bit = secondHalf;
+    bool bit = second;
     if (bit) value |= (1 << i);
   }
 
-  char ch = (char)value;
-  messageBuffer += ch;
-  lastCharTime = millis();
+  char c = (char)value;
+  buffer += c;
 
-  Serial.printf("Received: '%c' (0x%02X)\n", ch, value);
-
-  if (messageBuffer.length() > 0 && (millis() - lastCharTime > 1500)) {
-    Serial.println("\n=== MESSAGE COMPLETE ===");
-    Serial.print("Full message: \"");
-    Serial.print(messageBuffer);
-    Serial.println("\"\n");
-    messageBuffer = "";
-  }
+  Serial.print("RX: ");
+  Serial.println(c);
 }
 
-void setFrequency(const String &arg) {
-  uint32_t newFreq = (uint32_t)arg.toInt();
-  if (newFreq == 0) {
-    Serial.println("[ERROR] Invalid frequency");
-    return;
-  }
-  
-  uint16_t calcHalfBitMs = (uint16_t)(500.0f / newFreq + 0.5f);
-  if (calcHalfBitMs == 0) calcHalfBitMs = 1;
-  
-  halfBitMs = calcHalfBitMs;
-  Serial.print("[OK] Frequency set to: "); Serial.print(newFreq); Serial.println(" Hz");
-  printCurrentTiming();
-}
+void setFrequency(uint32_t f) {
+  if (f == 0) return;
 
-void printCurrentTiming() {
-  float fullBitMs = halfBitMs * 2.0f;
-  float frequencyHz = 1000.0f / fullBitMs;
-  Serial.print("Full bit: "); Serial.print(fullBitMs); Serial.println(" ms");
-  Serial.print("Half bit: "); Serial.print(halfBitMs); Serial.println(" ms");
-  Serial.print("Frequency: "); Serial.print((uint32_t)frequencyHz); Serial.println(" Hz\n");
+  frequencyHz = f;
+  halfBitUs = 1000000UL / (2 * frequencyHz);
+
+  Serial.print("RX FREQ = ");
+  Serial.print(frequencyHz);
+  Serial.print(" Hz | halfBit = ");
+  Serial.print(halfBitUs);
+  Serial.println(" us");
 }
