@@ -1,82 +1,77 @@
-// TX - Manchester Encoding
-#define TX_PIN           8
+// ================= TX PACKET MANCHESTER =================
+#define TX_PIN 8
+#define SOF 0x7E
 
-uint16_t halfBitMs = 1;      // default half-bit delay in milliseconds
+uint32_t frequencyHz = 1000;
+uint32_t halfBitUs;
 
 void setup() {
   Serial.begin(115200);
   pinMode(TX_PIN, OUTPUT);
   digitalWrite(TX_PIN, LOW);
 
-  Serial.println("\n=== Manchester TX ===");
-  printCurrentTiming();
+  setFrequency(frequencyHz);
+  Serial.println("TX Ready");
 }
 
 void loop() {
   if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
-    input.trim();
-    if (input.length() == 0) return;
+    String msg = Serial.readStringUntil('\n');
+    msg.trim();
+    if (msg.length() == 0) return;
 
-    if (input.startsWith("FREQ=")) {
-      setFrequency(input.substring(5));
-      return;
-    }
-
-    Serial.print("Sending: \""); Serial.print(input); Serial.println("\"");
-
-    for (char c : input) {
-      sendManchesterByte((uint8_t)c);
-      delay(120);
-    }
-    Serial.println("--- Message sent ---\n");
+    sendText(msg);
   }
 }
 
-void setFrequency(const String &arg) {
-  uint32_t newFreq = (uint32_t)arg.toInt();
-  if (newFreq == 0) {
-    Serial.println("[ERROR] Invalid frequency");
-    return;
+void setFrequency(uint32_t f) {
+  frequencyHz = f;
+  halfBitUs = 1000000UL / (2 * frequencyHz);
+
+  Serial.print("Freq set: ");
+  Serial.print(frequencyHz);
+  Serial.print(" Hz | half-bit ");
+  Serial.print(halfBitUs);
+  Serial.println(" us");
+}
+
+// ---------------- PACKET SENDER ----------------
+
+void sendText(String msg) {
+  uint8_t seq = 0;
+
+  for (int i = 0; i < msg.length(); i += 16) {
+    uint8_t len = min(16, (int)msg.length() - i);
+
+    uint8_t crc = 0;
+
+    sendByte(SOF);
+    sendByte('T');
+    sendByte(seq++);
+    sendByte(len);
+
+    for (int j = 0; j < len; j++) {
+      uint8_t b = msg[i + j];
+      sendByte(b);
+      crc ^= b;
+    }
+
+    sendByte(crc);
+
+    delay(5); // small gap between packets
   }
-  
-  // Calculate half-bit delay from frequency
-  // frequency = 1 / (fullBitTime), fullBitTime = 2 * halfBitTime
-  // So: halfBitMs = 1000 / (2 * frequency)
-  uint16_t calcHalfBitMs = (uint16_t)(500.0f / newFreq + 0.5f);
-  if (calcHalfBitMs == 0) calcHalfBitMs = 1;
-  
-  halfBitMs = calcHalfBitMs;
-  Serial.print("[OK] Frequency set to: "); Serial.print(newFreq); Serial.println(" Hz");
-  printCurrentTiming();
 }
 
-void printCurrentTiming() {
-  float fullBitMs = halfBitMs * 2.0f;
-  float frequencyHz = 1000.0f / fullBitMs;
-  Serial.print("Full bit: "); Serial.print(fullBitMs); Serial.println(" ms");
-  Serial.print("Half bit: "); Serial.print(halfBitMs); Serial.println(" ms");
-  Serial.print("Frequency: "); Serial.print((uint32_t)frequencyHz); Serial.println(" Hz\n");
-}
+// ---------------- MANCHESTER TX ----------------
 
-void sendManchesterByte(uint8_t byte) {
-  // Start bit: Low -> High
-  digitalWrite(TX_PIN, LOW);
-  delay(halfBitMs);
-  digitalWrite(TX_PIN, HIGH);
-  delay(halfBitMs);
-
+void sendByte(uint8_t b) {
   for (int i = 7; i >= 0; i--) {
-    bool bit = (byte & (1 << i)) != 0;
-    digitalWrite(TX_PIN, !bit);
-    delay(halfBitMs);
-    digitalWrite(TX_PIN, bit);
-    delay(halfBitMs);
-  }
+    bool bit = (b >> i) & 1;
 
-  // Stop bit: High -> Low
-  digitalWrite(TX_PIN, HIGH);
-  delay(halfBitMs);
-  digitalWrite(TX_PIN, LOW);
-  delay(halfBitMs);
+    digitalWrite(TX_PIN, !bit);
+    delayMicroseconds(halfBitUs);
+
+    digitalWrite(TX_PIN, bit);
+    delayMicroseconds(halfBitUs);
+  }
 }

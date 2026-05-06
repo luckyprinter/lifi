@@ -1,88 +1,118 @@
-// RX - Manchester Decoding
-#define RX_PIN              5
+#define RX_PIN 5
+#define SOF 0x7E
 
-uint16_t halfBitMs = 1;      // default half-bit delay in milliseconds
+uint32_t frequencyHz = 1000;
+uint32_t halfBitUs;
 
-String messageBuffer = "";
-unsigned long lastCharTime = 0;
+enum State {
+  WAIT_SOF,
+  READ_TYPE,
+  READ_SEQ,
+  READ_LEN,
+  READ_DATA,
+  READ_CRC
+};
+
+State state = WAIT_SOF;
+
+uint8_t type, seq, len, idx;
+uint8_t buffer[64];
+uint8_t crc;
+
+String message = "";
 
 void setup() {
   Serial.begin(115200);
   pinMode(RX_PIN, INPUT);
-  Serial.println("\n=== Manchester Receiver Ready ===");
-  printCurrentTiming();
+
+  setFrequency(frequencyHz);
+  Serial.println("RX Ready");
 }
 
 void loop() {
-  if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
-    input.trim();
-    if (input.length() > 0) {
-      if (input.startsWith("FREQ=")) {
-        setFrequency(input.substring(5));
+  uint8_t byte = readByte();
+
+  switch (state) {
+
+    case WAIT_SOF:
+      if (byte == SOF) state = READ_TYPE;
+      break;
+
+    case READ_TYPE:
+      type = byte;
+      state = READ_SEQ;
+      break;
+
+    case READ_SEQ:
+      seq = byte;
+      state = READ_LEN;
+      break;
+
+    case READ_LEN:
+      len = byte;
+      idx = 0;
+      crc = 0;
+      state = READ_DATA;
+      break;
+
+    case READ_DATA:
+      buffer[idx++] = byte;
+      crc ^= byte;
+
+      if (idx >= len) {
+        state = READ_CRC;
       }
-    }
+      break;
+
+    case READ_CRC:
+      if (crc == byte) {
+        // valid packet
+        for (int i = 0; i < len; i++) {
+          message += (char)buffer[i];
+        }
+
+        Serial.print("RX OK: ");
+        Serial.println(message);
+      } else {
+        Serial.println("CRC FAIL");
+      }
+
+      message = "";
+      state = WAIT_SOF;
+      break;
   }
+}
 
-  // Wait for start bit transition (Low -> High)
-  while (digitalRead(RX_PIN) == HIGH) delay(1);
-  while (digitalRead(RX_PIN) == LOW) delay(1);
+// ---------------- MANCHESTER RX ----------------
 
-  delay(halfBitMs / 2);
-
+uint8_t readByte() {
   uint8_t value = 0;
 
+  // sync
+  while (digitalRead(RX_PIN) == HIGH);
+  while (digitalRead(RX_PIN) == LOW);
+
+  delayMicroseconds(halfBitUs / 2);
+
   for (int i = 7; i >= 0; i--) {
-    delay(halfBitMs);
-    bool firstHalf = digitalRead(RX_PIN);
+    delayMicroseconds(halfBitUs);
+    bool first = digitalRead(RX_PIN);
 
-    delay(halfBitMs);
-    bool secondHalf = digitalRead(RX_PIN);
+    delayMicroseconds(halfBitUs);
+    bool second = digitalRead(RX_PIN);
 
-    bool bit = secondHalf;   // In Manchester, second half is the actual bit value
+    if (first == second) return 0; // invalid
 
-    if (firstHalf == secondHalf) {
-      Serial.println("[ERROR] No transition - invalid Manchester bit");
-      return;
-    }
-
-    if (bit) value |= (1 << i);
+    if (second) value |= (1 << i);
   }
 
-  char ch = (char)value;
-  messageBuffer += ch;
-  lastCharTime = millis();
-
-  Serial.printf("Received: '%c' (0x%02X)\n", ch, value);
-
-  if (messageBuffer.length() > 0 && (millis() - lastCharTime > 1500)) {
-    Serial.println("\n=== MESSAGE COMPLETE ===");
-    Serial.print("Full message: \"");
-    Serial.print(messageBuffer);
-    Serial.println("\"\n");
-    messageBuffer = "";
-  }
+  return value;
 }
 
-void setFrequency(const String &arg) {
-  uint32_t newFreq = (uint32_t)arg.toInt();
-  if (newFreq == 0) {
-    Serial.println("[ERROR] Invalid frequency");
-    return;
-  }
-  
-  uint16_t calcHalfBitMs = (uint16_t)(500.0f / newFreq + 0.5f);
-  if (calcHalfBitMs == 0) calcHalfBitMs = 1;
-  
-  halfBitMs = calcHalfBitMs;
-  Serial.print("[OK] Frequency set to: "); Serial.print(newFreq); Serial.println(" Hz");
-  printCurrentTiming();
-}
+void setFrequency(uint32_t f) {
+  frequencyHz = f;
+  halfBitUs = 1000000UL / (2 * frequencyHz);
 
-void printCurrentTiming() {
-  float fullBitMs = halfBitMs * 2.0f;
-  float frequencyHz = 1000.0f / fullBitMs;
-  Serial.print("Full bit: "); Serial.print(fullBitMs); Serial.println(" ms");
-  Serial.print("Half bit: "); Serial.print(halfBitMs); Serial.println(" ms");
-  Serial.print("Frequency: "); Serial.print((uint32_t)frequencyHz); Serial.println(" Hz\n");
+  Serial.print("RX freq: ");
+  Serial.println(frequencyHz);
 }
