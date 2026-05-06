@@ -19,15 +19,16 @@ HEADER_SIZE = 7  # 1 + 2 + 2 + 2
 MAX_PAYLOAD = 64
 START_MARKER = b'<<START>>'
 END_MARKER = b'<<END>>'
+DEFAULT_FREQUENCY_HZ = 500
+
 
 def pack_packet(packet_type, seq, total, payload):
-    """Pack data into binary packet format."""
     size = len(payload)
     header = struct.pack('>BHHH', packet_type, seq, total, size)
     return header + payload
 
+
 def unpack_packet(data):
-    """Unpack binary packet, return (type, seq, total, size, payload)."""
     if len(data) < HEADER_SIZE:
         return None
     header = data[:HEADER_SIZE]
@@ -37,10 +38,63 @@ def unpack_packet(data):
         return None
     return packet_type, seq, total, size, payload
 
+
 def chunk_data(data, chunk_size=MAX_PAYLOAD):
-    """Chunk data into pieces of max chunk_size."""
     for i in range(0, len(data), chunk_size):
         yield data[i:i+chunk_size]
+
+
+def encode_manchester_byte(byte):
+    bits = []
+    bits.extend([False, True])
+    for i in range(7, -1, -1):
+        bool_bit = (byte & (1 << i)) != 0
+        bits.append(not bool_bit)
+        bits.append(bool_bit)
+    bits.extend([True, False])
+    return bits
+
+
+def encode_manchester_bytes(data):
+    bits = []
+    for byte in data:
+        bits.extend(encode_manchester_byte(byte))
+    return bits
+
+
+def decode_manchester_bits(bits):
+    decoded = bytearray()
+    i = 0
+    while i + 20 <= len(bits):
+        if bits[i] != False or bits[i + 1] != True:
+            i += 1
+            continue
+
+        byte_val = 0
+        valid = True
+        idx = i + 2
+        for bit_index in range(7, -1, -1):
+            first_half = bits[idx]
+            second_half = bits[idx + 1]
+            if first_half == second_half:
+                valid = False
+                break
+            if second_half:
+                byte_val |= 1 << bit_index
+            idx += 2
+
+        if not valid:
+            i += 1
+            continue
+
+        if bits[idx] != True or bits[idx + 1] != False:
+            i += 1
+            continue
+
+        decoded.append(byte_val)
+        i = idx + 2
+
+    return bytes(decoded), i
 
 
 class LiFiGUI_SIM(ctk.CTk):
@@ -50,26 +104,22 @@ class LiFiGUI_SIM(ctk.CTk):
         self.title("LiFi System (SIM MODE)")
         self.geometry("1000x700")
 
-        # virtual channel
         self.virtual_channel = []
         self.lock = threading.Lock()
+        self.rx_buffer = bytearray()
+        self.current_frequency_hz = DEFAULT_FREQUENCY_HZ
 
-        # file system
         self.selected_image = None
         self.selected_audio = None
-        self.send_folder = os.getcwd()
         self.receive_folder = os.path.expanduser("~/Documents/LiFi_Received")
         os.makedirs(self.receive_folder, exist_ok=True)
 
-        # reception buffers
-        self.reception_buffers = {}  # (type, total) -> {seq: payload}
-        self.current_metadata = {}  # (type, total) -> metadata dict
+        self.reception_buffers = {}
+        self.current_metadata = {}
 
         self.create_widgets()
-
         threading.Thread(target=self.rx_loop, daemon=True).start()
 
-    # ---------------- UI ----------------
     def create_widgets(self):
         main = ctk.CTkFrame(self)
         main.pack(fill="both", expand=True, padx=20, pady=10)
@@ -82,6 +132,18 @@ class LiFiGUI_SIM(ctk.CTk):
 
         ctk.CTkLabel(send, text="SEND", font=ctk.CTkFont(size=16)).pack()
 
+        freq_frame = ctk.CTkFrame(send)
+        freq_frame.pack(fill="x", pady=5)
+        ctk.CTkLabel(freq_frame, text="Frequency (Hz):").grid(row=0, column=0, sticky="w")
+        self.frequency_entry = ctk.CTkEntry(freq_frame)
+        self.frequency_entry.insert(0, str(self.current_frequency_hz))
+        self.frequency_entry.grid(row=0, column=1, sticky="ew", padx=(5,0))
+        ctk.CTkButton(freq_frame, text="Apply", command=self.apply_frequency).grid(row=0, column=2, padx=5)
+        freq_frame.grid_columnconfigure(1, weight=1)
+
+        self.frequency_label = ctk.CTkLabel(send, text=self.get_frequency_label())
+        self.frequency_label.pack(fill="x", padx=10, pady=(0,10))
+
         self.input = ctk.CTkTextbox(send, height=120)
         self.input.pack(fill="x", padx=10)
 
@@ -90,7 +152,6 @@ class LiFiGUI_SIM(ctk.CTk):
         ctk.CTkButton(send, text="Send Image", command=self.send_image).pack(pady=5)
         ctk.CTkButton(send, text="Attach Audio", command=self.select_audio).pack(pady=5)
         ctk.CTkButton(send, text="Send Audio", command=self.send_audio).pack(pady=5)
-
         ctk.CTkButton(send, text="Receive Folder", command=self.select_rx_folder).pack(pady=5)
 
         self.progress = ctk.CTkProgressBar(send)
@@ -101,51 +162,82 @@ class LiFiGUI_SIM(ctk.CTk):
         self.progress_label.pack()
 
         ctk.CTkLabel(recv, text="RECEIVED", font=ctk.CTkFont(size=16)).pack()
-
         self.log_box = ctk.CTkTextbox(recv, state="disabled")
         self.log_box.pack(fill="both", expand=True, padx=10)
 
-    # ---------------- LOG ----------------
     def log(self, msg):
         self.log_box.configure(state="normal")
         self.log_box.insert("end", f"[{datetime.now().strftime('%H:%M:%S')}] {msg}\n")
         self.log_box.see("end")
         self.log_box.configure(state="disabled")
 
-    # ---------------- TX ----------------
-    def tx(self, data):
-        """Transmit data with framing markers."""
-        time.sleep(0.05)
-        with self.lock:
-            self.virtual_channel.append(START_MARKER)
-            if isinstance(data, list):
-                for packet in data:
-                    self.virtual_channel.append(packet)
-            else:
-                self.virtual_channel.append(data)
-            self.virtual_channel.append(END_MARKER)
+    def get_frequency_label(self):
+        full_bit_ms = 1000.0 / self.current_frequency_hz
+        half_bit_us = 500000.0 / self.current_frequency_hz
+        return f"Current frequency: {self.current_frequency_hz} Hz | Full bit: {full_bit_ms:.3f} ms | Half bit: {half_bit_us:.0f} µs"
 
-    # ---------------- RX LOOP ----------------
+    def apply_frequency(self):
+        try:
+            freq = int(self.frequency_entry.get().strip())
+        except ValueError:
+            self.log("❌ Invalid frequency value")
+            return
+        if freq <= 0:
+            self.log("❌ Frequency must be greater than 0")
+            return
+        self.current_frequency_hz = freq
+        self.frequency_label.configure(text=self.get_frequency_label())
+        self.log(f"🔧 Simulator frequency set to {freq} Hz")
+
+    def tx(self, data):
+        time.sleep(0.05)
+        encoded = encode_manchester_bytes(START_MARKER)
+        if isinstance(data, list):
+            for packet in data:
+                encoded.extend(encode_manchester_bytes(packet))
+        else:
+            encoded.extend(encode_manchester_bytes(data))
+        encoded.extend(encode_manchester_bytes(END_MARKER))
+        with self.lock:
+            self.virtual_channel.extend(encoded)
+
     def rx_loop(self):
-        buffer = bytearray()
-        in_transmission = False
+        bit_buffer = []
         while True:
-            if self.virtual_channel:
-                with self.lock:
-                    data = self.virtual_channel.pop(0)
-                if data == START_MARKER:
-                    buffer.clear()
-                    in_transmission = True
-                elif data == END_MARKER and in_transmission:
-                    in_transmission = False
-                    self.process_packets(buffer)
-                elif in_transmission:
-                    buffer.extend(data)
+            with self.lock:
+                if self.virtual_channel:
+                    bit_buffer.extend(self.virtual_channel)
+                    self.virtual_channel.clear()
+
+            if bit_buffer:
+                decoded_bytes, consumed = decode_manchester_bits(bit_buffer)
+                if consumed > 0:
+                    del bit_buffer[:consumed]
+                    if decoded_bytes:
+                        self.process_received_bytes(decoded_bytes)
             time.sleep(0.02)
 
-    # ---------------- PROCESS PACKETS ----------------
+    def process_received_bytes(self, data_bytes):
+        self.rx_buffer.extend(data_bytes)
+
+        while True:
+            start_index = self.rx_buffer.find(START_MARKER)
+            if start_index == -1:
+                if len(self.rx_buffer) > len(START_MARKER):
+                    self.rx_buffer = self.rx_buffer[-len(START_MARKER):]
+                break
+
+            end_index = self.rx_buffer.find(END_MARKER, start_index + len(START_MARKER))
+            if end_index == -1:
+                if start_index > 0:
+                    self.rx_buffer = self.rx_buffer[start_index:]
+                break
+
+            packet_data = self.rx_buffer[start_index + len(START_MARKER):end_index]
+            self.process_packets(packet_data)
+            self.rx_buffer = self.rx_buffer[end_index + len(END_MARKER):]
+
     def process_packets(self, buffer):
-        """Process received packet data."""
         offset = 0
         while offset + HEADER_SIZE <= len(buffer):
             header = buffer[offset:offset + HEADER_SIZE]
@@ -160,38 +252,30 @@ class LiFiGUI_SIM(ctk.CTk):
                 self.handle_packet(packet_type, seq, total, payload)
                 offset += packet_size
             else:
-                break  # Invalid packet, stop processing
+                break
 
     def handle_packet(self, packet_type, seq, total, payload):
-        """Handle individual packet."""
         key = (packet_type, total)
         if key not in self.reception_buffers:
             self.reception_buffers[key] = {}
         self.reception_buffers[key][seq] = payload
 
-        # If first packet and file type, parse metadata
         if seq == 0 and packet_type in (IMAGE_TYPE, AUDIO_TYPE):
             try:
                 meta_str = payload.decode('utf-8')
                 self.current_metadata[key] = json.loads(meta_str)
             except:
-                pass  # Ignore invalid metadata
+                pass
 
-        # Check if all packets received
         if len(self.reception_buffers[key]) == total:
             self.reconstruct_data(key)
 
     def reconstruct_data(self, key):
-        """Reconstruct data from packets."""
         packet_type, total = key
         buffers = self.reception_buffers[key]
         metadata = self.current_metadata.get(key, {})
 
-        # Check for missing packets
-        missing = []
-        for seq in range(total):
-            if seq not in buffers:
-                missing.append(seq)
+        missing = [seq for seq in range(total) if seq not in buffers]
         if missing:
             self.log(f"⚠️ Missing packets: {missing}")
             del self.reception_buffers[key]
@@ -202,19 +286,18 @@ class LiFiGUI_SIM(ctk.CTk):
             text = data.decode('utf-8', errors='ignore')
             self.log(f"📥 {text}")
         elif packet_type in (IMAGE_TYPE, AUDIO_TYPE):
-            data = b''.join(buffers[seq] for seq in range(1, total))  # Skip seq 0 (metadata)
-            filename = metadata.get('filename', f'received_{int(time.time())}.{"jpg" if packet_type == IMAGE_TYPE else "wav"}')
+            data = b''.join(buffers[seq] for seq in range(1, total))
+            ext = 'jpg' if packet_type == IMAGE_TYPE else 'wav'
+            filename = metadata.get('filename', f'received_{int(time.time())}.{ext}')
             path = os.path.join(self.receive_folder, filename)
             with open(path, 'wb') as f:
                 f.write(data)
             self.log(f"✅ {'Image' if packet_type == IMAGE_TYPE else 'Audio'} saved: {path} ({len(data)} bytes)")
 
-        # Cleanup
         del self.reception_buffers[key]
         if key in self.current_metadata:
             del self.current_metadata[key]
 
-    # ---------------- TEXT ----------------
     def send_text(self):
         text = self.input.get("1.0", "end").strip()
         if not text:
@@ -227,7 +310,6 @@ class LiFiGUI_SIM(ctk.CTk):
         self.tx(packets)
         self.log(f"📤 TX: {text}")
 
-    # ---------------- IMAGE ----------------
     def select_image(self):
         path = filedialog.askopenfilename()
         if path:
@@ -243,10 +325,8 @@ class LiFiGUI_SIM(ctk.CTk):
     def prepare_image(self, path):
         img = Image.open(path)
         img.thumbnail((128, 128))
-
         buf = io.BytesIO()
         img.save(buf, format="JPEG", quality=40)
-
         return buf.getvalue()
 
     def send_image(self):
@@ -271,7 +351,7 @@ class LiFiGUI_SIM(ctk.CTk):
         total = len(packets)
         self.tx(packets)
 
-        for i in range(total):
+        for _ in range(total):
             sent += 1
             self.progress.set(sent / total)
             self.progress_label.configure(text=f"{int(sent/total*100)}%")
@@ -293,7 +373,6 @@ class LiFiGUI_SIM(ctk.CTk):
             data = f.read()
         filename = os.path.basename(self.selected_audio)
 
-        # Metadata in first packet
         metadata = {'filename': f'received_{int(time.time())}_{filename}'}
         meta_json = json.dumps(metadata).encode('utf-8')
         data_chunks = list(chunk_data(data))
@@ -307,10 +386,9 @@ class LiFiGUI_SIM(ctk.CTk):
 
         sent = 0
         total = len(packets)
-
         self.tx(packets)
 
-        for i in range(total):
+        for _ in range(total):
             sent += 1
             self.progress.set(sent / total)
             self.progress_label.configure(text=f"{int(sent/total*100)}%")
