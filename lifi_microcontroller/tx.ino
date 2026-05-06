@@ -1,12 +1,14 @@
-// Arduino_TX.ino
+// TX - Manchester Encoding
 #define TX_PIN           8
-#define BIT_DURATION_MS  80      // Keep around 80-100ms for stability
+#define HALF_BIT_MS      1      // Must match RX
 
 void setup() {
   Serial.begin(115200);
   pinMode(TX_PIN, OUTPUT);
-  digitalWrite(TX_PIN, LOW);     // LED ON when idle
-  Serial.println("TX Ready");
+  digitalWrite(TX_PIN, LOW);
+
+  Serial.println("\n=== Manchester TX ===");
+  Serial.print("Full bit duration: "); Serial.print(HALF_BIT_MS*2); Serial.println(" ms\n");
 }
 
 void loop() {
@@ -15,30 +17,83 @@ void loop() {
     input.trim();
     if (input.length() == 0) return;
 
-    // Preamble
-    for (int i = 0; i < 4; i++) {
-      sendByte(0xAA);
-      delay(30);
-    }
-
-    sendByte(input.length());
+    Serial.print("Sending: \""); Serial.print(input); Serial.println("\"");
 
     for (char c : input) {
-      sendByte((uint8_t)c);
+      sendManchesterByte((uint8_t)c);
+      delay(120);
     }
-
-    uint8_t checksum = 0;
-    for (char c : input) checksum += (uint8_t)c;
-    sendByte(checksum);
-
-    Serial.println("Sent");
+    Serial.println("--- Message sent ---\n");
   }
 }
 
-void sendByte(uint8_t val) {
+void sendManchesterByte(uint8_t byte) {
+  // Start bit: Low -> High
+  digitalWrite(TX_PIN, LOW);
+  delay(HALF_BIT_MS);
+  digitalWrite(TX_PIN, HIGH);
+  delay(HALF_BIT_MS);
+
   for (int i = 7; i >= 0; i--) {
-    bool bit = (val & (1 << i)) != 0;
-    digitalWrite(TX_PIN, bit ? HIGH : LOW);
-    delay(BIT_DURATION_MS);
+    bool bit = (byte & (1 << i)) != 0;
+    digitalWrite(TX_PIN, !bit);
+    delay(HALF_BIT_MS);
+    digitalWrite(TX_PIN, bit);
+    delay(HALF_BIT_MS);
   }
+
+  // Stop bit: High -> Low
+  digitalWrite(TX_PIN, HIGH);
+  delay(HALF_BIT_MS);
+  digitalWrite(TX_PIN, LOW);
+  delay(HALF_BIT_MS);
+}// TX - Manchester Encoding
+#define TX_PIN           8
+#define HALF_BIT_MS      1      // Must match RX
+
+void setup() {
+  Serial.begin(115200);
+  pinMode(TX_PIN, OUTPUT);
+  digitalWrite(TX_PIN, LOW);
+
+  Serial.println("\n=== Manchester TX ===");
+  Serial.print("Full bit duration: "); Serial.print(HALF_BIT_MS*2); Serial.println(" ms\n");
+}
+
+void loop() {
+  if (Serial.available()) {
+    String input = Serial.readStringUntil('\n');
+    input.trim();
+    if (input.length() == 0) return;
+
+    Serial.print("Sending: \""); Serial.print(input); Serial.println("\"");
+
+    for (char c : input) {
+      sendManchesterByte((uint8_t)c);
+      delay(120);
+    }
+    Serial.println("--- Message sent ---\n");
+  }
+}
+
+void sendManchesterByte(uint8_t byte) {
+  // Start bit: Low -> High
+  digitalWrite(TX_PIN, LOW);
+  delay(HALF_BIT_MS);
+  digitalWrite(TX_PIN, HIGH);
+  delay(HALF_BIT_MS);
+
+  for (int i = 7; i >= 0; i--) {
+    bool bit = (byte & (1 << i)) != 0;
+    digitalWrite(TX_PIN, !bit);
+    delay(HALF_BIT_MS);
+    digitalWrite(TX_PIN, bit);
+    delay(HALF_BIT_MS);
+  }
+
+  // Stop bit: High -> Low
+  digitalWrite(TX_PIN, HIGH);
+  delay(HALF_BIT_MS);
+  digitalWrite(TX_PIN, LOW);
+  delay(HALF_BIT_MS);
 }
