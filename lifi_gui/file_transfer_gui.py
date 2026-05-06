@@ -37,6 +37,7 @@ class FileTransferGUI(tk.Tk):
         self.receive_buffer = bytearray()
         self.receive_file_extension = ".bin"
         self.last_received_file = None
+        self.pending_file_name = None
 
         self.create_widgets()
 
@@ -220,10 +221,7 @@ class FileTransferGUI(tk.Tk):
             return
 
         self.receive_file_extension = os.path.splitext(path)[1] or ".bin"
-        self.expected_file_size = size
-        self.expecting_file = True
-        self.received_file_bytes = bytearray()
-        self.receive_buffer = bytearray()
+        self.pending_file_name = os.path.basename(path)
 
         header = bytes([HEADER_START, (size >> 8) & 0xFF, size & 0xFF])
 
@@ -231,12 +229,11 @@ class FileTransferGUI(tk.Tk):
             self.tx_serial.write(header)
             self.tx_serial.write(data)
             self.tx_serial.flush()
-            self.add_tx_log(f"Sent file '{os.path.basename(path)}' ({size} bytes)")
-            self.transfer_status.config(text=f"Sending {os.path.basename(path)}", fg="blue")
+            self.add_tx_log(f"Sent file '{self.pending_file_name}' ({size} bytes)")
+            self.transfer_status.config(text=f"Waiting for RX file start...", fg="orange")
         except Exception as e:
             self.add_tx_log(f"TX error sending file: {e}")
             self.transfer_status.config(text="TX error", fg="red")
-            self.expecting_file = False
 
     def rx_loop(self):
         while self.rx_running and self.rx_serial and self.rx_serial.is_open:
@@ -281,6 +278,11 @@ class FileTransferGUI(tk.Tk):
         except Exception:
             text = repr(line)
 
+        if text.startswith("RX_ERROR"):
+            self.add_rx_log(text)
+            self.transfer_status.config(text="RX error", fg="red")
+            return
+
         self.add_rx_log(text)
 
         if text.startswith("RX_FILE_START:"):
@@ -290,7 +292,7 @@ class FileTransferGUI(tk.Tk):
                 self.received_file_bytes = bytearray()
                 self.expecting_file = True
                 self.add_rx_log(f"File transfer started: {size} bytes")
-                self.transfer_status.config(text="RX file start", fg="blue")
+                self.transfer_status.config(text="Receiving file...", fg="blue")
             except ValueError:
                 self.add_rx_log("RX warning: invalid file start message")
 

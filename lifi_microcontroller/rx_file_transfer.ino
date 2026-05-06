@@ -17,6 +17,8 @@ RxState rxState = WAIT_START;
 uint16_t expectedSize = 0;
 uint16_t bytesRemaining = 0;
 
+uint32_t waitTimeoutUs = 20000;
+
 void setup() {
   Serial.begin(115200);
   pinMode(RX_PIN, INPUT);
@@ -37,7 +39,6 @@ void loop() {
 
   int received = receiveManchesterByte();
   if (received < 0) {
-    Serial.println("RX_ERROR: Manchester decode failed");
     return;
   }
 
@@ -46,8 +47,16 @@ void loop() {
 }
 
 int receiveManchesterByte() {
-  while (digitalRead(RX_PIN) == HIGH);
-  while (digitalRead(RX_PIN) == LOW);
+  if (!waitForEdge(HIGH, waitTimeoutUs)) {
+    Serial.println("RX_ERROR1: no preamble HIGH");
+    return -1;
+  }
+
+  if (!waitForEdge(LOW, waitTimeoutUs)) {
+    Serial.println("RX_ERROR2: no preamble LOW");
+    return -1;
+  }
+
   delayMicroseconds(halfBitUs / 2);
 
   uint8_t value = 0;
@@ -58,6 +67,7 @@ int receiveManchesterByte() {
     bool second = digitalRead(RX_PIN);
 
     if (first == second) {
+      Serial.println("RX_ERROR3: unstable Manchester bit");
       return -1;
     }
 
@@ -70,11 +80,23 @@ int receiveManchesterByte() {
   return value;
 }
 
+bool waitForEdge(bool level, uint32_t timeoutUs) {
+  uint32_t start = micros();
+  while (digitalRead(RX_PIN) != level) {
+    if ((micros() - start) > timeoutUs) {
+      return false;
+    }
+  }
+  return true;
+}
+
 void processReceivedByte(uint8_t data) {
   switch (rxState) {
     case WAIT_START:
       if (data == 0x02) {
         rxState = READ_SIZE_MSB;
+      } else {
+        Serial.write(data);
       }
       break;
 
