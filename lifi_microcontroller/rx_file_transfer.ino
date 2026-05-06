@@ -31,11 +31,13 @@ void loop() {
     cmd.trim();
     if (cmd.startsWith("FREQ=")) {
       setFrequency(cmd.substring(5).toInt());
+      return;
     }
   }
 
   int received = receiveManchesterByte();
   if (received < 0) {
+    Serial.println("RX_ERROR: Manchester decode failed");
     return;
   }
 
@@ -85,12 +87,12 @@ void processReceivedByte(uint8_t data) {
       expectedSize |= data;
       bytesRemaining = expectedSize;
       if (expectedSize == 0) {
-        Serial.println("[RX] empty transfer, done");
+        Serial.println("RX_LOG: empty transfer received");
         rxState = WAIT_START;
       } else {
-        Serial.print("[RX] receiving ");
+        Serial.print("RX_FILE_START:");
         Serial.print(expectedSize);
-        Serial.println(" bytes");
+        Serial.println();
         rxState = READ_DATA;
       }
       break;
@@ -102,7 +104,7 @@ void processReceivedByte(uint8_t data) {
       }
       if (bytesRemaining == 0) {
         Serial.println();
-        Serial.println("[RX] FILE_TRANSFER_COMPLETE");
+        Serial.println("RX_FILE_COMPLETE");
         rxState = WAIT_START;
       }
       break;
