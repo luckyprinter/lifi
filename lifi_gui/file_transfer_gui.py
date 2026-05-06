@@ -57,7 +57,7 @@ class FileTransferGUI(tk.Tk):
 
         tk.Label(toolbar, text="Frequency:").grid(row=0, column=4, sticky="w")
         self.freq_entry = tk.Entry(toolbar, width=10)
-        self.freq_entry.insert(0, "1000")
+        self.freq_entry.insert(0, "500")
         self.freq_entry.grid(row=0, column=5, padx=4)
 
         self.connect_button = tk.Button(toolbar, text="Connect", command=self.connect_ports)

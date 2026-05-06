@@ -3,7 +3,7 @@
 
 #define RX_PIN 5
 
-uint32_t frequencyHz = 1000;
+uint32_t frequencyHz = 500;
 uint32_t halfBitUs;
 
 enum RxState {
@@ -47,16 +47,8 @@ void loop() {
 }
 
 int receiveManchesterByte() {
-  if (!waitForEdge(HIGH, waitTimeoutUs)) {
-    Serial.println("RX_ERROR1: no preamble HIGH");
-    return -1;
-  }
-
-  if (!waitForEdge(LOW, waitTimeoutUs)) {
-    Serial.println("RX_ERROR2: no preamble LOW");
-    return -1;
-  }
-
+  while (digitalRead(RX_PIN) == HIGH);
+  while (digitalRead(RX_PIN) == LOW);
   delayMicroseconds(halfBitUs / 2);
 
   uint8_t value = 0;
@@ -67,7 +59,6 @@ int receiveManchesterByte() {
     bool second = digitalRead(RX_PIN);
 
     if (first == second) {
-      Serial.println("RX_ERROR3: unstable Manchester bit");
       return -1;
     }
 
@@ -78,16 +69,6 @@ int receiveManchesterByte() {
   }
 
   return value;
-}
-
-bool waitForEdge(bool level, uint32_t timeoutUs) {
-  uint32_t start = micros();
-  while (digitalRead(RX_PIN) != level) {
-    if ((micros() - start) > timeoutUs) {
-      return false;
-    }
-  }
-  return true;
 }
 
 void processReceivedByte(uint8_t data) {

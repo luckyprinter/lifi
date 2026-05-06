@@ -3,7 +3,7 @@
 
 #define TX_PIN 8
 
-uint32_t frequencyHz = 1000;
+uint32_t frequencyHz = 500;
 uint32_t halfBitUs;
 
 void setup() {

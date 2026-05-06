@@ -3,3 +3,4 @@ darkdetect==0.8.0
 packaging==26.2
 pillow==12.2.0
 pyserial==3.5
+crcmod==1.7
