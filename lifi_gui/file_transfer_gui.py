@@ -10,6 +10,17 @@ BAUDRATE = 115200
 HEADER_START = 0x02
 
 
+def crc16_ccitt(data: bytes, crc: int = 0xFFFF) -> int:
+    for b in data:
+        crc ^= b << 8
+        for _ in range(8):
+            if crc & 0x8000:
+                crc = ((crc << 1) ^ 0x1021) & 0xFFFF
+            else:
+                crc = (crc << 1) & 0xFFFF
+    return crc
+
+
 def safe_str(data):
     try:
         return data.decode("utf-8", errors="replace")
@@ -38,6 +49,8 @@ class FileTransferGUI(tk.Tk):
         self.receive_file_extension = ".bin"
         self.last_received_file = None
         self.pending_file_name = None
+        self.crc_enabled = tk.BooleanVar(value=True)
+        self.debug_enabled = tk.BooleanVar(value=False)
 
         self.create_widgets()
 
@@ -65,6 +78,12 @@ class FileTransferGUI(tk.Tk):
 
         self.disconnect_button = tk.Button(toolbar, text="Disconnect", command=self.disconnect_ports, state="disabled")
         self.disconnect_button.grid(row=0, column=7)
+
+        self.debug_check = tk.Checkbutton(toolbar, text="RX Debug", variable=self.debug_enabled, command=self.update_rx_debug)
+        self.debug_check.grid(row=0, column=8, padx=4)
+
+        self.crc_check = tk.Checkbutton(toolbar, text="CRC Check", variable=self.crc_enabled)
+        self.crc_check.grid(row=0, column=9, padx=4)
 
         folder_frame = tk.Frame(self)
         folder_frame.pack(fill="x", padx=10, pady=4)
@@ -147,6 +166,8 @@ class FileTransferGUI(tk.Tk):
         if freq.isdigit():
             self.set_frequency(int(freq))
 
+        self.update_rx_debug()
+
         self.rx_running = True
         self.rx_thread = threading.Thread(target=self.rx_loop, daemon=True)
         self.rx_thread.start()
@@ -180,6 +201,17 @@ class FileTransferGUI(tk.Tk):
                 self.add_tx_log(f"Sent command: {cmd.decode().strip()}")
             except Exception as e:
                 self.add_tx_log(f"Failed to set frequency: {e}")
+
+    def update_rx_debug(self):
+        if self.rx_serial and self.rx_serial.is_open:
+            debug_flag = 1 if self.debug_enabled.get() else 0
+            cmd = f"DEBUG={debug_flag}\n".encode("ascii")
+            try:
+                self.rx_serial.write(cmd)
+                self.rx_serial.flush()
+                self.add_tx_log(f"Sent RX debug command: {cmd.decode().strip()}")
+            except Exception as e:
+                self.add_tx_log(f"Failed to set RX debug mode: {e}")
 
     def send_text(self):
         if not self.tx_serial or not self.tx_serial.is_open:
@@ -223,13 +255,43 @@ class FileTransferGUI(tk.Tk):
         self.receive_file_extension = os.path.splitext(path)[1] or ".bin"
         self.pending_file_name = os.path.basename(path)
 
-        header = bytes([HEADER_START, (size >> 8) & 0xFF, size & 0xFF])
+        chunk_size = 64
+        sent = 0
+        if self.crc_enabled.get():
+            crc = crc16_ccitt(data)
+            header = bytes([
+                HEADER_START,
+                0x01,
+                (size >> 8) & 0xFF,
+                size & 0xFF,
+                (crc >> 8) & 0xFF,
+                crc & 0xFF,
+            ])
+            crc_note = f", crc=0x{crc:04X}"
+        else:
+            header = bytes([
+                HEADER_START,
+                0x00,
+                (size >> 8) & 0xFF,
+                size & 0xFF,
+            ])
+            crc = None
+            crc_note = ""
 
         try:
             self.tx_serial.write(header)
-            self.tx_serial.write(data)
             self.tx_serial.flush()
-            self.add_tx_log(f"Sent file '{self.pending_file_name}' ({size} bytes)")
+
+            for i in range(0, len(data), chunk_size):
+                chunk = data[i : i + chunk_size]
+                self.tx_serial.write(chunk)
+                self.tx_serial.flush()
+                sent += len(chunk)
+                if self.debug_enabled.get():
+                    self.add_tx_log(f"TX chunk sent {sent}/{size}")
+                time.sleep(0.01)
+
+            self.add_tx_log(f"Sent file '{self.pending_file_name}' ({size} bytes){crc_note}")
             self.transfer_status.config(text=f"Waiting for RX file start...", fg="orange")
         except Exception as e:
             self.add_tx_log(f"TX error sending file: {e}")
@@ -302,6 +364,14 @@ class FileTransferGUI(tk.Tk):
             else:
                 self.add_rx_log("RX warning: file complete marker received before full payload")
                 self.expecting_file = False
+
+        elif text.startswith("RX_FILE_CRC_OK"):
+            self.add_rx_log("RX file CRC OK")
+            self.transfer_status.config(text="File transfer CRC OK", fg="green")
+
+        elif text.startswith("RX_FILE_CRC_FAIL"):
+            self.add_rx_log(text)
+            self.transfer_status.config(text="File CRC mismatch", fg="red")
 
     def save_received_file(self):
         filename = f"received_{int(time.time())}{self.receive_file_extension}"

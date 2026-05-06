@@ -1,7 +1,10 @@
 // TX - Arduino UNO Manchester File Transfer
-// Compatible with raw binary file transfer over serial-to-light using 1kHz-style Manchester timing.
+// Compatible with raw binary file transfer over serial-to-light using stable Manchester timing.
 
 #define TX_PIN 8
+const uint8_t PREAMBLE_BYTE = 0xAA;
+const uint8_t FILE_TRANSFER_TYPE = 0x01;
+const uint8_t PREAMBLE_COUNT = 4;
 
 uint32_t frequencyHz = 500;
 uint32_t halfBitUs;
@@ -27,25 +30,66 @@ void loop() {
   }
 
   if (peeked == 0x02) {
-    if (Serial.available() < 3) {
-      return; // wait until full transfer header is available
+    if (Serial.available() < 2) {
+      return;
     }
+
     Serial.read(); // consume START byte
-    uint16_t size = (uint16_t)Serial.read() << 8;
-    size |= (uint16_t)Serial.read();
-
-    sendManchesterByte(0x02);
-    sendManchesterByte((size >> 8) & 0xFF);
-    sendManchesterByte(size & 0xFF);
-
-    for (uint16_t remaining = size; remaining > 0; remaining--) {
-      while (!Serial.available()) {
-        // wait for serial data
+    int type = Serial.peek();
+    if (type == FILE_TRANSFER_TYPE) {
+      if (Serial.available() < 6) {
+        return; // wait for full CRC header
       }
-      sendManchesterByte((uint8_t)Serial.read());
+      Serial.read(); // consume type
+      uint16_t size = (uint16_t)Serial.read() << 8;
+      size |= (uint16_t)Serial.read();
+      uint16_t crc = (uint16_t)Serial.read() << 8;
+      crc |= (uint16_t)Serial.read();
+
+      sendManchesterPreamble(PREAMBLE_COUNT);
+      sendManchesterByte(0x02);
+      sendManchesterByte((uint8_t)FILE_TRANSFER_TYPE);
+      sendManchesterByte((size >> 8) & 0xFF);
+      sendManchesterByte(size & 0xFF);
+      sendManchesterByte((crc >> 8) & 0xFF);
+      sendManchesterByte(crc & 0xFF);
+
+      for (uint16_t remaining = size; remaining > 0; remaining--) {
+        while (!Serial.available()) {
+        }
+        sendManchesterByte((uint8_t)Serial.read());
+      }
+
+      Serial.println("TX: file stream sent (CRC)");
+      return;
     }
 
-    Serial.println("TX: file stream sent");
+    if (type == 0x00) {
+      if (Serial.available() < 4) {
+        return; // wait for full no-CRC header
+      }
+      Serial.read(); // consume type
+      uint16_t size = (uint16_t)Serial.read() << 8;
+      size |= (uint16_t)Serial.read();
+
+      sendManchesterPreamble(PREAMBLE_COUNT);
+      sendManchesterByte(0x02);
+      sendManchesterByte(0x00);
+      sendManchesterByte((size >> 8) & 0xFF);
+      sendManchesterByte(size & 0xFF);
+
+      for (uint16_t remaining = size; remaining > 0; remaining--) {
+        while (!Serial.available()) {
+        }
+        sendManchesterByte((uint8_t)Serial.read());
+      }
+
+      Serial.println("TX: file stream sent (no CRC)");
+      return;
+    }
+
+    // Not a file frame, treat as normal byte sequence
+    sendManchesterByte(0x02);
     return;
   }
 
@@ -64,9 +108,14 @@ void handleCommand() {
     return;
   }
 
-  // Unknown command is ignored while preserving stability
   Serial.print("TX: unknown command ");
   Serial.println(line);
+}
+
+void sendManchesterPreamble(uint8_t count) {
+  for (uint8_t i = 0; i < count; i++) {
+    sendManchesterByte(PREAMBLE_BYTE);
+  }
 }
 
 void setFrequency(uint32_t f) {
