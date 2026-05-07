@@ -140,7 +140,10 @@ void processReceivedByte(uint8_t data) {
       break;
 
     case READ_DATA:
-      Serial.write(data);
+      // Don't echo binary file data - only echo text data to prevent serial buffer overflow
+      if (frameType != 0x01) {
+        Serial.write(data);
+      }
       if (frameType == 0x01) {
         computedCRC = crc16_ccitt(computedCRC, data);
       }
