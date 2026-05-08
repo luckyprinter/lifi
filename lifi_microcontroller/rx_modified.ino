@@ -1,85 +1,46 @@
 #define RX_PIN 5
-#define SOF 0x7E
+#define START_BYTE 0x02
 
 uint32_t frequencyHz = 1000;
 uint32_t halfBitUs;
 
-enum State {
-  WAIT_SOF,
-  READ_TYPE,
-  READ_SEQ,
-  READ_LEN,
-  READ_DATA,
-  READ_CRC
-};
-
-State state = WAIT_SOF;
-
-uint8_t type, seq, len, idx;
-uint8_t buffer[64];
-uint8_t crc;
-
-String message = "";
+bool receiving = false;
+uint16_t imgSize = 0;
+uint16_t index = 0;
 
 void setup() {
   Serial.begin(115200);
   pinMode(RX_PIN, INPUT);
 
   setFrequency(frequencyHz);
-  Serial.println("RX Ready");
+  Serial.println("RX Ready (File Transfer v1)");
 }
 
 void loop() {
-  uint8_t byte = readByte();
+  uint8_t b = readByte();
 
-  switch (state) {
+  if (!receiving) {
+    if (b == START_BYTE) {
+      receiving = true;
 
-    case WAIT_SOF:
-      if (byte == SOF) state = READ_TYPE;
-      break;
+      uint8_t high = readByte();
+      uint8_t low = readByte();
 
-    case READ_TYPE:
-      type = byte;
-      state = READ_SEQ;
-      break;
+      imgSize = (high << 8) | low;
+      index = 0;
 
-    case READ_SEQ:
-      seq = byte;
-      state = READ_LEN;
-      break;
+      Serial.println("RX: Image start");
+    }
+  } 
+  else {
+    Serial.write(b); // stream to PC
 
-    case READ_LEN:
-      len = byte;
-      idx = 0;
-      crc = 0;
-      state = READ_DATA;
-      break;
+    index++;
 
-    case READ_DATA:
-      buffer[idx++] = byte;
-      crc ^= byte;
-
-      if (idx >= len) {
-        state = READ_CRC;
-      }
-      break;
-
-    case READ_CRC:
-      if (crc == byte) {
-        // valid packet
-        for (int i = 0; i < len; i++) {
-          message += (char)buffer[i];
-        }
-
-        Serial.print("RX OK: ");
-        Serial.println(message);
-      } else {
-        Serial.println("CRC FAIL");
-      }
-
-      message = "";
-      state = WAIT_SOF;
-      break;
+    if (index >= imgSize) {
+      receiving = false;
+      Serial.println("\nRX: Image complete");
+    }
   }
 }
 
@@ -88,7 +49,6 @@ void loop() {
 uint8_t readByte() {
   uint8_t value = 0;
 
-  // sync
   while (digitalRead(RX_PIN) == HIGH);
   while (digitalRead(RX_PIN) == LOW);
 
@@ -96,14 +56,14 @@ uint8_t readByte() {
 
   for (int i = 7; i >= 0; i--) {
     delayMicroseconds(halfBitUs);
-    bool first = digitalRead(RX_PIN);
+    bool a = digitalRead(RX_PIN);
 
     delayMicroseconds(halfBitUs);
-    bool second = digitalRead(RX_PIN);
+    bool b = digitalRead(RX_PIN);
 
-    if (first == second) return 0; // invalid
+    if (a == b) return 0;
 
-    if (second) value |= (1 << i);
+    if (b) value |= (1 << i);
   }
 
   return value;
@@ -112,7 +72,4 @@ uint8_t readByte() {
 void setFrequency(uint32_t f) {
   frequencyHz = f;
   halfBitUs = 1000000UL / (2 * frequencyHz);
-
-  Serial.print("RX freq: ");
-  Serial.println(frequencyHz);
 }
