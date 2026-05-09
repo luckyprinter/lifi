@@ -20,6 +20,7 @@ These files are kept for testing, recovery, and future development. They are not
 - `firmware/experiments/file_transfer_rx/` - file transfer RX prototype
 - `firmware/experiments/file_transfer_v1_legacy/` - older top-level file-transfer sketches moved from `lifi_microcontroller/`
 - `firmware/experiments/esp32_tx/` - ESP32 transmitter prototype
+- `firmware/experiments/dc_biased_pwm_tx/` - ESP32 TX experiment using 50 kHz DC-biased PWM Manchester modulation to reduce visible brightness fluctuation
 
 ## Promotion Rule
 

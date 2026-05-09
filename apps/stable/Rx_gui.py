@@ -6,8 +6,10 @@ import subprocess
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
 
-import serial
-import serial.tools.list_ports
+try:
+    from .serial_utils import build_port_choices, extract_device, friendly_serial_error, open_serial
+except ImportError:
+    from serial_utils import build_port_choices, extract_device, friendly_serial_error, open_serial
 
 BAUDRATE = 115200
 DEFAULT_FREQUENCY_HZ = 9000
@@ -25,6 +27,7 @@ THEMES = {
         "accent": "#38bdf8",
         "accent_dark": "#0369a1",
         "good": "#22c55e",
+        "warn": "#f59e0b",
         "bad": "#ef4444",
         "field": "#020617",
         "status_bg": "#1f2937",
@@ -38,6 +41,7 @@ THEMES = {
         "accent": "#14b8c4",
         "accent_dark": "#0f7f8c",
         "good": "#168553",
+        "warn": "#b7791f",
         "bad": "#c2413a",
         "field": "#f8fbfd",
         "status_bg": "#e4edf5",
@@ -51,6 +55,7 @@ THEMES = {
         "accent": "#f2a65a",
         "accent_dark": "#9a5a22",
         "good": "#8fc46b",
+        "warn": "#f2c078",
         "bad": "#e26d5c",
         "field": "#1f160f",
         "status_bg": "#4a3322",
@@ -202,6 +207,7 @@ class RXGui(tk.Tk):
         self.transfers = {}
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
+        self.port_map = {}
 
         self.receive_folder = os.path.expanduser("~/LiFiReceived")
         os.makedirs(self.receive_folder, exist_ok=True)
@@ -222,7 +228,7 @@ class RXGui(tk.Tk):
         style.configure("Muted.TLabel", background=self.colors["panel"], foreground=self.colors["muted"], font=("Segoe UI", 9))
         style.configure("Title.TLabel", background=self.colors["bg"], foreground=self.colors["text"], font=("Segoe UI", 20, "bold"))
         style.configure("PanelTitle.TLabel", background=self.colors["panel"], foreground=self.colors["text"], font=("Segoe UI", 12, "bold"))
-        style.configure("TButton", font=("Segoe UI", 10), padding=(12, 7))
+        style.configure("TButton", font=("Segoe UI", 10), padding=(10, 7))
         style.configure("Accent.TButton", background=self.colors["accent_dark"], foreground="#f8fafc")
         style.map("Accent.TButton", background=[("active", self.colors["accent"])])
         style.configure(
@@ -262,6 +268,7 @@ class RXGui(tk.Tk):
                 fg=self.colors["text"],
                 insertbackground=self.colors["accent"],
             )
+        self.configure_log_tags()
 
     def panel(self, parent, **grid_options):
         frame = ttk.Frame(parent, style="Panel.TFrame", padding=14)
@@ -348,12 +355,29 @@ class RXGui(tk.Tk):
         right.rowconfigure(1, weight=1)
 
         ttk.Label(left, text="Received Text", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        self.text_out = scrolledtext.ScrolledText(left, state="disabled", height=20, bg=self.colors["field"], fg=self.colors["text"], relief="flat", font=("Consolas", 10), padx=10, pady=10)
+        self.text_out = scrolledtext.ScrolledText(left, state="disabled", height=20, bg=self.colors["field"], fg=self.colors["text"], relief="flat", font=("Segoe UI", 10), padx=10, pady=10)
         self.text_out.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
 
-        ttk.Label(right, text="RX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        self.log = scrolledtext.ScrolledText(right, state="disabled", bg=self.colors["field"], fg=self.colors["text"], relief="flat", font=("Consolas", 9), padx=10, pady=10)
+        log_header = ttk.Frame(right, style="Panel.TFrame")
+        log_header.grid(row=0, column=0, sticky="ew")
+        log_header.columnconfigure(0, weight=1)
+        ttk.Label(log_header, text="RX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
+        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=1, sticky="e")
+
+        self.log = scrolledtext.ScrolledText(
+            right,
+            state="disabled",
+            bg=self.colors["field"],
+            fg=self.colors["text"],
+            relief="flat",
+            font=("JetBrains Mono", 9),
+            padx=12,
+            pady=10,
+            spacing1=2,
+            spacing3=4,
+        )
         self.log.grid(row=1, column=0, sticky="nsew", pady=(8, 0))
+        self.configure_log_tags()
 
     def toggle_connection(self):
         if self.ser and self.ser.is_open:
@@ -361,13 +385,44 @@ class RXGui(tk.Tk):
         else:
             self.connect()
 
+    def configure_log_tags(self):
+        if not hasattr(self, "log"):
+            return
+
+        self.log.tag_configure("time", foreground=self.colors["muted"])
+        self.log.tag_configure("info", foreground=self.colors["text"])
+        self.log.tag_configure("success", foreground=self.colors["good"])
+        self.log.tag_configure("warning", foreground=self.colors["warn"])
+        self.log.tag_configure("error", foreground=self.colors["bad"])
+        self.log.tag_configure("protocol", foreground=self.colors["accent_dark"])
+
+    def log_tag(self, msg):
+        text = msg.lower()
+        if "error" in text or "fail" in text or "bad_crc" in text or "denied" in text:
+            return "error"
+        if "warn" in text or "unstable" in text or "timeout" in text:
+            return "warning"
+        if "ok" in text or "saved" in text or "connected" in text or "received in" in text or "recovered" in text:
+            return "success"
+        if "rx_" in text or "crc" in text or "chunk" in text or "parity" in text or "tid=" in text:
+            return "protocol"
+        return "info"
+
     def log_msg(self, msg):
         def ui():
+            tag = self.log_tag(msg)
             self.log.config(state="normal")
-            self.log.insert(tk.END, f"{time.strftime('%H:%M:%S')} RX: {msg}\n")
+            self.log.insert(tk.END, time.strftime("%H:%M:%S"), ("time",))
+            self.log.insert(tk.END, "  RX  ", ("time",))
+            self.log.insert(tk.END, f"{msg}\n", (tag,))
             self.log.see(tk.END)
             self.log.config(state="disabled")
         self.after(0, ui)
+
+    def clear_log(self):
+        self.log.config(state="normal")
+        self.log.delete("1.0", tk.END)
+        self.log.config(state="disabled")
 
     def text_msg(self, msg):
         def ui():
@@ -378,28 +433,36 @@ class RXGui(tk.Tk):
         self.after(0, ui)
 
     def refresh_ports(self):
-        ports = [p.device for p in serial.tools.list_ports.comports()]
-        self.port_box["values"] = ports
-        if ports and not self.port_var.get():
-            self.port_var.set(ports[0])
+        labels, mapping = build_port_choices()
+        self.port_map = mapping
+        self.port_box["values"] = labels
+        if labels and (not self.port_var.get() or self.port_var.get() not in mapping):
+            self.port_var.set(labels[0])
+        elif not labels:
+            self.port_var.set("")
+            self.log_msg("No likely ESP32 USB serial ports found. Plug in the board and press Refresh.")
 
     def connect(self):
         if self.ser and self.ser.is_open:
             self.log_msg("Already connected.")
             return
 
-        port = self.port_var.get().strip()
+        selection = self.port_var.get().strip()
+        port = extract_device(selection, self.port_map)
         if not port:
             messagebox.showwarning("Port", "Select RX COM port.")
             return
 
         try:
-            self.ser = serial.Serial(port, BAUDRATE, timeout=0.05, write_timeout=5)
+            self.ser = open_serial(port, BAUDRATE, timeout=0.05, write_timeout=5)
         except Exception as e:
-            messagebox.showerror("Serial Error", str(e))
+            message = friendly_serial_error(port, e)
+            self.log_msg(message.replace("\n", " | "))
+            messagebox.showerror("Serial Error", message)
             return
 
         self.running = True
+        self.port_var.set(selection)
         self.status.config(text=f"Connected: {port}", fg=self.colors["good"])
         self.connect_btn.config(text="Disconnect")
 
@@ -674,12 +737,14 @@ class RXGui(tk.Tk):
             return
 
         st.saved = True
+        elapsed = time.time() - st.start_time
+        self.after(0, lambda e=elapsed: self.update_progress_done(e))
 
         if st.kind == KIND_TEXT:
             text = data.decode("utf-8", errors="replace")
             self.text_msg(f"--- Received text tid={st.tid} ---")
             self.text_msg(text)
-            self.log_msg(f"RX_TEXT_CAROUSEL_OK tid={st.tid}")
+            self.log_msg(f"RX_TEXT_CAROUSEL_OK tid={st.tid}, received in {fmt_time(elapsed)}")
             return
 
         folder = self.folder_entry.get().strip() or self.receive_folder
@@ -698,7 +763,11 @@ class RXGui(tk.Tk):
 
         self.last_file = path
         self.log_msg(f"Saved file: {path}")
-        self.log_msg(f"RX_FILE_CAROUSEL_OK tid={st.tid}, crc=0x{actual_crc:04X}")
+        self.log_msg(f"RX_FILE_CAROUSEL_OK tid={st.tid}, crc=0x{actual_crc:04X}, received in {fmt_time(elapsed)}")
+
+    def update_progress_done(self, elapsed):
+        self.progress["value"] = 100
+        self.progress_label.config(text=f"100% | received in {fmt_time(elapsed)}")
 
     def browse_folder(self):
         folder = filedialog.askdirectory()

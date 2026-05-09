@@ -3,3 +3,38 @@ __pycache__/
 *.pyc
 .vscode/
 .env
+
+# Python caches and test/build output
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+*.egg-info/
+
+# Local IDE/editor files
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Local logs and generated receive output
+*.log
+LiFiReceived/
+received_*
+samples/received_*
+samples/received_images/received_*
+
+# Local history/backup folders
+.history/
+
+# Arduino/embedded build artifacts
+.pio/
+*.elf
+*.bin
+*.hex
+*.map
