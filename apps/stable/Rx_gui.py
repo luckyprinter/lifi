@@ -208,6 +208,7 @@ class RXGui(tk.Tk):
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
         self.diag_var = tk.BooleanVar(value=False)
+        self.noise_lines = 0
         self.port_map = {}
 
         self.receive_folder = os.path.expanduser("~/LiFiReceived")
@@ -654,8 +655,31 @@ class RXGui(tk.Tk):
 
             text = line.decode("utf-8", errors="replace").strip()
 
-            if text:
+            if text and self.is_readable_serial_line(text):
                 self.handle_line(text)
+            elif text:
+                self.noise_lines += 1
+                if self.noise_lines == 1 or self.noise_lines % 25 == 0:
+                    self.log_msg(f"Discarded non-protocol serial/noise lines: {self.noise_lines}")
+
+    def is_readable_serial_line(self, text):
+        if "\x00" in text or "�" in text:
+            return False
+
+        printable = sum(1 for ch in text if ch.isprintable() or ch in "\t")
+        if text and printable / len(text) < 0.95:
+            return False
+
+        prefixes = (
+            "ESP32 ",
+            "RX ",
+            "RX_",
+            "FREQ=",
+            "DEBUG=",
+            "RXDIAG=",
+            "STATS",
+        )
+        return text.startswith(prefixes)
 
     def handle_line(self, line):
         if line.startswith("RX_CAROUSEL_CHUNK:"):

@@ -12,6 +12,12 @@ const uint8_t MIN_PREAMBLE_COUNT = 8;
 const uint16_t CAROUSEL_HEADER_MIN = 16;
 const uint16_t PARITY_HEADER_MIN = 19;
 
+// TEPT4400 divider used here is inverted relative to optical brightness:
+// light ON measures lower voltage, and light OFF/dim measures higher voltage.
+// Decode Manchester using normalized optical level so HIGH means "light
+// present" regardless of the raw GPIO polarity.
+const bool RX_LIGHT_ACTIVE_LOW = true;
+
 uint32_t frequencyHz = 1000;
 uint32_t halfBitUs = 500;
 bool rxDebug = false;
@@ -23,8 +29,13 @@ uint32_t framesOk = 0;
 uint32_t badCrcFrames = 0;
 uint32_t badHeaderFrames = 0;
 
-inline int readRxPin() {
+inline int readRxRawPin() {
   return gpio_get_level((gpio_num_t)RX_PIN);
+}
+
+inline int readRxPin() {
+  int raw = readRxRawPin();
+  return RX_LIGHT_ACTIVE_LOW ? !raw : raw;
 }
 
 enum RxState {
@@ -130,18 +141,24 @@ void runRxInputTest() {
   const uint32_t sampleGapUs = 200;
   uint32_t startMs = millis();
   uint32_t samples = 0;
-  uint32_t highCount = 0;
-  uint32_t lowCount = 0;
+  uint32_t rawHighCount = 0;
+  uint32_t rawLowCount = 0;
+  uint32_t lightHighCount = 0;
+  uint32_t lightLowCount = 0;
   uint32_t transitions = 0;
-  int last = readRxPin();
+  int last = readRxRawPin();
 
   Serial.println("RX_INPUT_TEST_START");
 
   while (millis() - startMs < durationMs) {
-    int current = readRxPin();
+    int current = readRxRawPin();
+    int light = RX_LIGHT_ACTIVE_LOW ? !current : current;
 
-    if (current == HIGH) highCount++;
-    else lowCount++;
+    if (current == HIGH) rawHighCount++;
+    else rawLowCount++;
+
+    if (light == HIGH) lightHighCount++;
+    else lightLowCount++;
 
     if (current != last) {
       transitions++;
@@ -154,12 +171,18 @@ void runRxInputTest() {
 
   Serial.print("RX_INPUT_TEST_DONE:samples=");
   Serial.print(samples);
-  Serial.print(":high=");
-  Serial.print(highCount);
-  Serial.print(":low=");
-  Serial.print(lowCount);
+  Serial.print(":rawHigh=");
+  Serial.print(rawHighCount);
+  Serial.print(":rawLow=");
+  Serial.print(rawLowCount);
+  Serial.print(":lightHigh=");
+  Serial.print(lightHighCount);
+  Serial.print(":lightLow=");
+  Serial.print(lightLowCount);
   Serial.print(":transitions=");
-  Serial.println(transitions);
+  Serial.print(transitions);
+  Serial.print(":activeLow=");
+  Serial.println(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
 }
 
 void printRxStats() {
@@ -169,6 +192,8 @@ void printRxStats() {
   Serial.print(halfBitUs);
   Serial.print(":pin=");
   Serial.print(RX_PIN);
+  Serial.print(":lightActiveLow=");
+  Serial.print(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
   Serial.print(":debug=");
   Serial.print(rxDebug ? 1 : 0);
   Serial.print(":diag=");
@@ -217,7 +242,7 @@ int receiveManchesterByte() {
         break;
       }
 
-      bool bit = second;
+      bool bit = first;
 
       if (bit) value |= (1 << i);
     }

@@ -3,6 +3,7 @@ import time
 import math
 import struct
 import random
+import hashlib
 import threading
 import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, ttk
@@ -718,6 +719,7 @@ class TXGui(tk.Tk):
         optical_mode = self.tx_optical_mode_var.get()
 
         file_crc = crc16_ccitt(data)
+        self.log_sent_payload(data, kind, filename, file_crc)
         name = safe_name(filename).encode("utf-8")
         total_size = len(data)
         total_chunks = (total_size + chunk_size - 1) // chunk_size
@@ -847,6 +849,24 @@ class TXGui(tk.Tk):
         elapsed_total = time.time() - start
         self.after(0, lambda e=elapsed_total: self.update_progress_done(e))
         self.log_msg(f"Carousel done: sent {sent_frames}/{total_frames} frames in {fmt_time(elapsed_total)}")
+
+    def log_sent_payload(self, data, kind, filename, file_crc):
+        sha256 = hashlib.sha256(data).hexdigest()
+
+        if kind == KIND_TEXT:
+            text = data.decode("utf-8", errors="replace")
+            if len(text) > 1000:
+                shown = text[:1000] + "... [truncated]"
+            else:
+                shown = text
+            self.log_msg(f"SENT_TEXT filename={filename} bytes={len(data)} crc=0x{file_crc:04X} sha256={sha256}")
+            self.log_msg(f"SENT_TEXT_CONTENT={shown!r}")
+            return
+
+        self.log_msg(
+            f"SENT_FILE kind={KIND_NAMES.get(kind, 'file')} filename={filename} "
+            f"bytes={len(data)} crc=0x{file_crc:04X} sha256={sha256}"
+        )
 
     def mark_frame_progress(self, sent_frames, total_frames, start, verbose=False):
         sent_frames += 1

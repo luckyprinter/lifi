@@ -13,7 +13,11 @@ fi
 
 mkdir -p debug_logs
 
-git add -f debug_logs/.gitkeep debug_logs/*.log debug_logs/**/*.log 2>/dev/null || true
+git add -f debug_logs/.gitkeep
+
+while IFS= read -r -d '' log_file; do
+  git add -f "$log_file"
+done < <(find debug_logs -type f -name '*.log' -print0)
 
 if git diff --cached --quiet -- debug_logs; then
   echo "No debug logs staged. Save TX/RX logs into debug_logs/ first."
