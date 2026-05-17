@@ -7,3 +7,5 @@ collect2: error: ld returned 1 exit status
 exit status 1
 
 Compilation error: exit status 1
+
+arduino-cli upload -p /dev/ttyUSB0 --fqbn esp32:esp32:esp32 firmware/stable/rx
