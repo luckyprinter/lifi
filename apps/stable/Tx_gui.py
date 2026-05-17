@@ -16,12 +16,12 @@ BAUDRATE = 115200
 START_BYTE = 0x02
 TYPE_CAROUSEL_CHUNK = 0x20
 TYPE_CAROUSEL_PARITY = 0x21
-DEFAULT_FREQUENCY_HZ = 9000
+DEFAULT_FREQUENCY_HZ = 1000
 MIN_FREQUENCY_HZ = 1
 MAX_FREQUENCY_HZ = 50000
-DEFAULT_CHUNK_SIZE = 512
-DEFAULT_CAROUSEL_ROUNDS = 3
-DEFAULT_ROUND_GAP_MS = 500
+DEFAULT_CHUNK_SIZE = 256
+DEFAULT_CAROUSEL_ROUNDS = 1
+DEFAULT_ROUND_GAP_MS = 0
 DEFAULT_INTER_FRAME_GAP_MS = 2
 DEFAULT_WAIT_TX_DONE = True
 DEFAULT_TX_OPTICAL_MODE = "ON/OFF"
@@ -143,8 +143,7 @@ class TXGui(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("LiFi TX - Optical Carousel")
-        self.geometry("1180x760")
-        self.minsize(980, 640)
+        self.fit_to_screen()
         self.configure(bg="#eef3f8")
 
         self.ser = None
@@ -152,7 +151,7 @@ class TXGui(tk.Tk):
         self.transfer_running = False
         self.tx_done = threading.Event()
         self.theme_var = tk.StringVar(value="Light")
-        self.fec_var = tk.BooleanVar(value=True)
+        self.fec_var = tk.BooleanVar(value=False)
         self.wait_done_var = tk.BooleanVar(value=DEFAULT_WAIT_TX_DONE)
         self.tx_optical_mode_var = tk.StringVar(value=DEFAULT_TX_OPTICAL_MODE)
         self.port_map = {}
@@ -160,6 +159,14 @@ class TXGui(tk.Tk):
         self.setup_theme(self.theme_var.get())
         self.build_ui()
         self.refresh_ports()
+
+    def fit_to_screen(self):
+        screen_w = self.winfo_screenwidth()
+        screen_h = self.winfo_screenheight()
+        width = min(1180, max(820, screen_w - 80))
+        height = min(760, max(560, screen_h - 120))
+        self.geometry(f"{width}x{height}")
+        self.minsize(min(820, width), min(560, height))
 
     def setup_theme(self, theme_name):
         self.colors = THEMES.get(theme_name, THEMES["Dark"])

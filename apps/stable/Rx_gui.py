@@ -196,8 +196,7 @@ class RXGui(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("LiFi RX - Optical Carousel")
-        self.geometry("1180x760")
-        self.minsize(980, 640)
+        self.fit_to_screen()
         self.configure(bg="#eef3f8")
 
         self.ser = None
@@ -215,6 +214,14 @@ class RXGui(tk.Tk):
         self.setup_theme(self.theme_var.get())
         self.build_ui()
         self.refresh_ports()
+
+    def fit_to_screen(self):
+        screen_w = self.winfo_screenwidth()
+        screen_h = self.winfo_screenheight()
+        width = min(1180, max(820, screen_w - 80))
+        height = min(760, max(560, screen_h - 120))
+        self.geometry(f"{width}x{height}")
+        self.minsize(min(820, width), min(560, height))
 
     def setup_theme(self, theme_name):
         self.colors = THEMES.get(theme_name, THEMES["Dark"])

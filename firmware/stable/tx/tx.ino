@@ -42,17 +42,18 @@ const uint32_t PWM_MAX_DUTY = (1UL << PWM_RESOLUTION_BITS) - 1;
 // If your actual wiring still behaves as active-low, change this to true.
 const bool LED_ACTIVE_LOW = false;
 
-// Start with a moderate 96% vs 76% optical difference. This is gentler than
-// 100/70, but still gives the simple phototransistor RX a practical 20%
-// optical contrast for reliable 9 kHz image/audio transfer.
+// PWM recovery defaults. Start with a large bright/dim difference because the
+// current RX is a simple TEPT4400 divider and needs strong contrast. Once OOK
+// is stable again, you can reduce the gap gradually, for example 100/60/80,
+// 100/70/85, then 96/76/86.
 //
-// Idle is set to the average of bright/dim states: (96 + 76) / 2 = 86.
+// Idle is set near the average of bright/dim states: (100 + 50) / 2 = 75.
 // Matching idle brightness to the average transmission brightness reduces
 // low-frequency envelope flicker at chunk/frame boundaries, round gaps, and
 // txIdle() transitions.
-const uint8_t LED_IDLE_BRIGHTNESS_PERCENT = 86;
-const uint8_t LED_BRIGHT_PERCENT = 96;
-const uint8_t LED_DIM_PERCENT = 76;
+const uint8_t LED_IDLE_BRIGHTNESS_PERCENT = 75;
+const uint8_t LED_BRIGHT_PERCENT = 100;
+const uint8_t LED_DIM_PERCENT = 50;
 
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
@@ -160,6 +161,33 @@ const char *txModeName() {
   return txMode == TX_MODE_PWM ? "DC_PWM" : "ON_OFF";
 }
 
+void printTxDiagnostics() {
+  Serial.print("TX_MODE:");
+  Serial.println(txModeName());
+  Serial.print("TX_LED_PIN:");
+  Serial.println(TX_PIN);
+  Serial.print("TX_LED_ACTIVE_LOW:");
+  Serial.println(LED_ACTIVE_LOW ? 1 : 0);
+  Serial.print("TX_POLARITY:");
+  Serial.println(LED_ACTIVE_LOW ? "ACTIVE_LOW_2N3904_INVERTER" : "ACTIVE_HIGH_IRLZ44N_LOW_SIDE");
+  Serial.print("TX_PWM:freq=");
+  Serial.print(PWM_FREQ_HZ);
+  Serial.print(":resolution=");
+  Serial.print(PWM_RESOLUTION_BITS);
+  Serial.print(":maxDuty=");
+  Serial.println(PWM_MAX_DUTY);
+  Serial.print("TX_BRIGHTNESS:bright=");
+  Serial.print(LED_BRIGHT_PERCENT);
+  Serial.print(":dim=");
+  Serial.print(LED_DIM_PERCENT);
+  Serial.print(":idle=");
+  Serial.println(LED_IDLE_BRIGHTNESS_PERCENT);
+  Serial.print("TX_FREQ:");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.println(halfBitUs);
+}
+
 void setTxMode(TxOpticalMode mode) {
   txMode = mode;
 
@@ -172,8 +200,9 @@ void setTxMode(TxOpticalMode mode) {
 
   txIdle();
 
-  Serial.print("TX optical mode = ");
+  Serial.print("TXMODE_SET:");
   Serial.println(txModeName());
+  printTxDiagnostics();
 }
 
 void setup() {
@@ -191,15 +220,6 @@ void setup() {
 
   Serial.println("ESP32 TX Ready - dual-mode Manchester LiFi");
   Serial.println("Default optical mode = ON_OFF stable");
-  Serial.print("PWM carrier = ");
-  Serial.print(PWM_FREQ_HZ);
-  Serial.print(" Hz | bright = ");
-  Serial.print(LED_BRIGHT_PERCENT);
-  Serial.print("% | dim = ");
-  Serial.print(LED_DIM_PERCENT);
-  Serial.println("%");
-  Serial.print("LED polarity = ");
-  Serial.println(LED_ACTIVE_LOW ? "active-low" : "active-high");
 }
 
 void loop() {
@@ -392,6 +412,11 @@ void handleCommand() {
 
   if (line.startsWith("LEDTEST")) {
     runLedTest();
+    return;
+  }
+
+  if (line.startsWith("STATS")) {
+    printTxDiagnostics();
     return;
   }
 
