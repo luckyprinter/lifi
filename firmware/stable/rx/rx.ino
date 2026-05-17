@@ -249,7 +249,10 @@ int receiveManchesterByte() {
 
     if (!valid) {
       unstableBits++;
-      if (rxDebug) Serial.println("RX_ERROR: unstable Manchester bit");
+      if (rxDebug && (unstableBits <= 10 || unstableBits % 25 == 0)) {
+        Serial.print("RX_ERROR: unstable Manchester bit count=");
+        Serial.println(unstableBits);
+      }
       continue;
     }
 

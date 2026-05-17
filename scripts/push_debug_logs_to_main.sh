@@ -13,19 +13,31 @@ fi
 
 mkdir -p debug_logs
 
+echo "Fetching latest origin/main..."
+git fetch origin main
+
 git add -f debug_logs/.gitkeep
 
 while IFS= read -r -d '' log_file; do
   git add -f "$log_file"
 done < <(find debug_logs -type f -name '*.log' -print0)
 
-if git diff --cached --quiet -- debug_logs; then
-  echo "No debug logs staged. Save TX/RX logs into debug_logs/ first."
+if ! git diff --cached --quiet -- debug_logs; then
+  timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
+  git commit -m "Add LiFi debug logs - $timestamp"
+else
+  echo "No new unstaged debug logs found."
+fi
+
+echo "Rebasing local main on origin/main before push..."
+git pull --rebase --autostash origin main
+
+ahead_count="$(git rev-list --count origin/main..HEAD)"
+if [[ "$ahead_count" == "0" ]]; then
+  echo "No local commits to push."
   exit 0
 fi
 
-timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
-git commit -m "Add LiFi debug logs - $timestamp"
 git push origin main
 
-echo "Debug logs pushed to origin/main."
+echo "Pushed $ahead_count local commit(s) to origin/main."
