@@ -12,11 +12,11 @@ const uint8_t MIN_PREAMBLE_COUNT = 8;
 const uint16_t CAROUSEL_HEADER_MIN = 16;
 const uint16_t PARITY_HEADER_MIN = 19;
 
-// TEPT4400 divider used here is inverted relative to optical brightness:
-// light ON measures lower voltage, and light OFF/dim measures higher voltage.
-// Decode Manchester using normalized optical level so HIGH means "light
-// present" regardless of the raw GPIO polarity.
-const bool RX_LIGHT_ACTIVE_LOW = true;
+// Keep the Manchester decoder on the raw GPIO polarity used by the earlier
+// working receiver. With the TEPT4400 divider, light ON is a lower voltage and
+// light OFF is a higher voltage. That raw inverted waveform is already what
+// the working Manchester bit mapping expects, so do not normalize it here.
+const bool RX_LIGHT_ACTIVE_LOW = false;
 
 uint32_t frequencyHz = 1000;
 uint32_t halfBitUs = 500;
@@ -222,27 +222,24 @@ int receiveManchesterByte() {
       yield();
     }
 
-    uint32_t sampleDeadline = micros() + (halfBitUs / 2);
-    waitUntilMicros(sampleDeadline);
+    delayMicroseconds(halfBitUs / 2);
 
     uint8_t value = 0;
     bool valid = true;
 
     for (int i = 7; i >= 0; i--) {
-      sampleDeadline += halfBitUs;
-      waitUntilMicros(sampleDeadline);
-      bool first = majorityRead();
+      delayMicroseconds(halfBitUs);
+      bool first = readRxPin();
 
-      sampleDeadline += halfBitUs;
-      waitUntilMicros(sampleDeadline);
-      bool second = majorityRead();
+      delayMicroseconds(halfBitUs);
+      bool second = readRxPin();
 
       if (first == second) {
         valid = false;
         break;
       }
 
-      bool bit = first;
+      bool bit = second;
 
       if (bit) value |= (1 << i);
     }
