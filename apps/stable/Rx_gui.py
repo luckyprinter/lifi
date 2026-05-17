@@ -207,6 +207,7 @@ class RXGui(tk.Tk):
         self.transfers = {}
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
+        self.log_lines = []
         self.port_map = {}
 
         self.receive_folder = os.path.expanduser("~/LiFiReceived")
@@ -322,7 +323,9 @@ class RXGui(tk.Tk):
         self.connect_btn.grid(row=1, column=5, padx=3, pady=(3, 0))
         ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=6, padx=3, pady=(3, 0))
         ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=7, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Stats", command=self.request_stats).grid(row=1, column=9, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=10, padx=3, pady=(3, 0))
 
         folder = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         folder.columnconfigure(1, weight=1)
@@ -362,7 +365,8 @@ class RXGui(tk.Tk):
         log_header.grid(row=0, column=0, sticky="ew")
         log_header.columnconfigure(0, weight=1)
         ttk.Label(log_header, text="RX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=1, sticky="e")
+        ttk.Button(log_header, text="Save Log", command=self.save_log).grid(row=0, column=1, padx=(0, 6), sticky="e")
+        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=2, sticky="e")
 
         self.log = scrolledtext.ScrolledText(
             right,
@@ -409,10 +413,13 @@ class RXGui(tk.Tk):
         return "info"
 
     def log_msg(self, msg):
+        stamp = time.strftime("%H:%M:%S")
+        self.log_lines.append(f"{stamp} RX {msg}")
+
         def ui():
             tag = self.log_tag(msg)
             self.log.config(state="normal")
-            self.log.insert(tk.END, time.strftime("%H:%M:%S"), ("time",))
+            self.log.insert(tk.END, stamp, ("time",))
             self.log.insert(tk.END, "  RX  ", ("time",))
             self.log.insert(tk.END, f"{msg}\n", (tag,))
             self.log.see(tk.END)
@@ -420,9 +427,25 @@ class RXGui(tk.Tk):
         self.after(0, ui)
 
     def clear_log(self):
+        self.log_lines.clear()
         self.log.config(state="normal")
         self.log.delete("1.0", tk.END)
         self.log.config(state="disabled")
+
+    def save_log(self):
+        path = filedialog.asksaveasfilename(
+            defaultextension=".log",
+            filetypes=[("Log files", "*.log"), ("Text files", "*.txt"), ("All files", "*.*")],
+            initialfile=f"lifi_rx_debug_{time.strftime('%Y%m%d_%H%M%S')}.log",
+        )
+        if not path:
+            return
+
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(self.log_lines))
+            f.write("\n")
+
+        self.log_msg(f"Saved debug log: {path}")
 
     def text_msg(self, msg):
         def ui():
@@ -507,6 +530,30 @@ class RXGui(tk.Tk):
         self.ser.write(f"DEBUG={value}\n".encode())
         self.ser.flush()
         self.log_msg(f"DEBUG={value}")
+
+    def request_stats(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect RX first.")
+            return
+
+        try:
+            self.ser.write(b"STATS\n")
+            self.ser.flush()
+            self.log_msg("STATS requested")
+        except Exception as e:
+            self.log_msg(f"RX stats error: {e}")
+
+    def rx_test(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect RX first.")
+            return
+
+        try:
+            self.ser.write(b"RXTEST\n")
+            self.ser.flush()
+            self.log_msg("RXTEST sent")
+        except Exception as e:
+            self.log_msg(f"RX test error: {e}")
 
     def reader_loop(self):
         while self.running and self.ser and self.ser.is_open:

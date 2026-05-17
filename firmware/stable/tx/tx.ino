@@ -12,6 +12,11 @@ const uint32_t MAX_FREQUENCY_HZ = 50000;
 
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
+bool txDebug = false;
+uint32_t serialFramesSeen = 0;
+uint32_t opticalFramesSent = 0;
+uint32_t serialPayloadBytes = 0;
+uint32_t txErrors = 0;
 
 // Current IRLZ44N low-side driver is active-high:
 // ESP32 HIGH = MOSFET ON  = LED ON
@@ -46,7 +51,7 @@ void loop() {
 
   int peeked = Serial.peek();
 
-  if (peeked == 'F') {
+  if (peeked >= 'A' && peeked <= 'Z') {
     handleCommand();
     return;
   }
@@ -60,6 +65,7 @@ void loop() {
 
   int typeRead = readByteWithTimeout(1000);
   if (typeRead < 0) {
+    txErrors++;
     Serial.println("TX_ERROR: timeout reading frame type");
     return;
   }
@@ -70,6 +76,7 @@ void loop() {
   int lsb = readByteWithTimeout(1000);
 
   if (msb < 0 || lsb < 0) {
+    txErrors++;
     Serial.println("TX_ERROR: timeout reading size");
     return;
   }
@@ -80,6 +87,7 @@ void loop() {
   int crcLsb = readByteWithTimeout(1000);
 
   if (crcMsb < 0 || crcLsb < 0) {
+    txErrors++;
     Serial.println("TX_ERROR: timeout reading CRC");
     return;
   }
@@ -87,6 +95,7 @@ void loop() {
   uint16_t frameCRC = ((uint16_t)crcMsb << 8) | (uint16_t)crcLsb;
 
   if (frameType != TYPE_CAROUSEL_CHUNK && frameType != TYPE_CAROUSEL_PARITY) {
+    txErrors++;
     Serial.print("TX_ERROR: unknown frame type 0x");
     Serial.println(frameType, HEX);
     discardBytes(size);
@@ -99,16 +108,30 @@ void loop() {
     payload = (uint8_t *)malloc(size);
 
     if (!payload) {
+      txErrors++;
       Serial.println("TX_ERROR: cannot allocate payload buffer");
       discardBytes(size);
       return;
     }
 
     if (!readExact(payload, size, 15000)) {
+      txErrors++;
       Serial.println("TX_ERROR: timeout reading payload from GUI");
       free(payload);
       return;
     }
+  }
+
+  serialFramesSeen++;
+  serialPayloadBytes += size;
+
+  if (txDebug) {
+    Serial.print("TX_DEBUG_FRAME_IN:type=0x");
+    Serial.print(frameType, HEX);
+    Serial.print(":size=");
+    Serial.print(size);
+    Serial.print(":crc=0x");
+    Serial.println(frameCRC, HEX);
   }
 
   sendFrameGap();
@@ -130,6 +153,8 @@ void loop() {
   txLightOn();
 
   if (payload) free(payload);
+
+  opticalFramesSent++;
 
   Serial.print("TX_CAROUSEL_FRAME_SENT: ");
   Serial.print(size);
@@ -189,8 +214,61 @@ void handleCommand() {
     return;
   }
 
+  if (line.startsWith("DEBUG=")) {
+    txDebug = (line.substring(6).toInt() != 0);
+    Serial.print("TX debug ");
+    Serial.println(txDebug ? "enabled" : "disabled");
+    return;
+  }
+
+  if (line.startsWith("STATS")) {
+    printTxStats();
+    return;
+  }
+
+  if (line.startsWith("LEDTEST")) {
+    runLedTest();
+    return;
+  }
+
+  if (line.startsWith("QUIET=")) {
+    Serial.println("TX quiet mode unsupported in this historical firmware");
+    return;
+  }
+
   Serial.print("TX: unknown command ");
   Serial.println(line);
+}
+
+void printTxStats() {
+  Serial.print("TX_STATS:freq=");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.print(halfBitUs);
+  Serial.print(":serialFrames=");
+  Serial.print(serialFramesSeen);
+  Serial.print(":opticalFrames=");
+  Serial.print(opticalFramesSent);
+  Serial.print(":payloadBytes=");
+  Serial.print(serialPayloadBytes);
+  Serial.print(":errors=");
+  Serial.print(txErrors);
+  Serial.print(":pin=");
+  Serial.println(gpio_get_level((gpio_num_t)TX_PIN));
+}
+
+void runLedTest() {
+  Serial.println("TX_LED_TEST_START");
+
+  for (uint8_t i = 0; i < 5; i++) {
+    txLightOff();
+    delay(350);
+    txLightOn();
+    delay(350);
+  }
+
+  txLightOn();
+  Serial.println("TX_LED_TEST_DONE");
 }
 
 void sendFrameGap() {

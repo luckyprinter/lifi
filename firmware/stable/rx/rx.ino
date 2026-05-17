@@ -15,6 +15,16 @@ const uint16_t PARITY_HEADER_MIN = 19;
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 bool rxDebug = false;
+uint32_t decodedBytes = 0;
+uint32_t invalidManchester = 0;
+uint32_t candidateStarts = 0;
+uint32_t frameStarts = 0;
+uint32_t chunkFramesOk = 0;
+uint32_t parityFramesOk = 0;
+uint32_t badCrcFrames = 0;
+uint32_t badHeaderFrames = 0;
+uint32_t unknownTypeFrames = 0;
+uint32_t lastStatsMs = 0;
 
 inline int readRxPin() {
   return gpio_get_level((gpio_num_t)RX_PIN);
@@ -87,6 +97,19 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("STATS")) {
+      printRxStats();
+      handled = true;
+      continue;
+    }
+
+    if (cmd.startsWith("RXTEST")) {
+      runRxInputTest();
+      resetFrame();
+      handled = true;
+      continue;
+    }
+
     Serial.print("RX: unknown command ");
     Serial.println(cmd);
     handled = true;
@@ -95,17 +118,99 @@ bool handleSerialCommands() {
   return handled;
 }
 
+void runRxInputTest() {
+  const uint32_t durationMs = 1200;
+  const uint32_t sampleGapUs = 200;
+  uint32_t startMs = millis();
+  uint32_t samples = 0;
+  uint32_t highCount = 0;
+  uint32_t lowCount = 0;
+  uint32_t transitions = 0;
+  int last = readRxPin();
+
+  Serial.println("RX_INPUT_TEST_START");
+
+  while (millis() - startMs < durationMs) {
+    int current = readRxPin();
+
+    if (current == HIGH) highCount++;
+    else lowCount++;
+
+    if (current != last) {
+      transitions++;
+      last = current;
+    }
+
+    samples++;
+    delayMicroseconds(sampleGapUs);
+  }
+
+  Serial.print("RX_INPUT_TEST_DONE:samples=");
+  Serial.print(samples);
+  Serial.print(":high=");
+  Serial.print(highCount);
+  Serial.print(":low=");
+  Serial.print(lowCount);
+  Serial.print(":transitions=");
+  Serial.println(transitions);
+}
+
+void printRxStats() {
+  Serial.print("RX_STATS:freq=");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.print(halfBitUs);
+  Serial.print(":pin=");
+  Serial.print(readRxPin());
+  Serial.print(":decodedBytes=");
+  Serial.print(decodedBytes);
+  Serial.print(":invalidManchester=");
+  Serial.print(invalidManchester);
+  Serial.print(":candidateStarts=");
+  Serial.print(candidateStarts);
+  Serial.print(":frameStarts=");
+  Serial.print(frameStarts);
+  Serial.print(":chunkOk=");
+  Serial.print(chunkFramesOk);
+  Serial.print(":parityOk=");
+  Serial.print(parityFramesOk);
+  Serial.print(":badCrc=");
+  Serial.print(badCrcFrames);
+  Serial.print(":badHeader=");
+  Serial.print(badHeaderFrames);
+  Serial.print(":unknownType=");
+  Serial.print(unknownTypeFrames);
+  Serial.print(":state=");
+  Serial.print((int)rxState);
+  Serial.print(":preambleSeen=");
+  Serial.println(preambleSeen);
+}
+
+void printRxStatsIfDue() {
+  if (!rxDebug) return;
+
+  uint32_t now = millis();
+  if (now - lastStatsMs < 1000) return;
+
+  lastStatsMs = now;
+  printRxStats();
+}
+
 int receiveManchesterByte() {
   while (true) {
     while (readRxPin() == HIGH) {
       if (handleSerialCommands()) return -2;
+      printRxStatsIfDue();
       yield();
     }
 
     while (readRxPin() == LOW) {
       if (handleSerialCommands()) return -2;
+      printRxStatsIfDue();
       yield();
     }
+
+    candidateStarts++;
 
     uint32_t sampleDeadline = micros() + (halfBitUs / 2);
     waitUntilMicros(sampleDeadline);
@@ -133,8 +238,15 @@ int receiveManchesterByte() {
     }
 
     if (!valid) {
+      invalidManchester++;
       if (rxDebug) Serial.println("RX_ERROR: unstable Manchester bit");
       continue;
+    }
+
+    decodedBytes++;
+    if (rxDebug && decodedBytes % 64 == 0) {
+      Serial.print("RX_DEBUG_DECODED_BYTES:");
+      Serial.println(decodedBytes);
     }
 
     return value;
@@ -207,6 +319,8 @@ void processReceivedByte(uint8_t data) {
         if (preambleSeen < 255) preambleSeen++;
       } else if (data == START_BYTE && preambleSeen >= MIN_PREAMBLE_COUNT) {
         preambleSeen = 0;
+        frameStarts++;
+        if (rxDebug) Serial.println("RX_DEBUG_FRAME_START");
         rxState = READ_TYPE;
       } else {
         preambleSeen = 0;
@@ -219,6 +333,11 @@ void processReceivedByte(uint8_t data) {
       if (frameType == TYPE_CAROUSEL_CHUNK || frameType == TYPE_CAROUSEL_PARITY) {
         rxState = READ_SIZE_MSB;
       } else {
+        unknownTypeFrames++;
+        if (rxDebug) {
+          Serial.print("RX_DEBUG_UNKNOWN_TYPE:0x");
+          Serial.println(frameType, HEX);
+        }
         resetFrame();
       }
       break;
@@ -241,6 +360,7 @@ void processReceivedByte(uint8_t data) {
       uint16_t minHeader = (frameType == TYPE_CAROUSEL_PARITY) ? PARITY_HEADER_MIN : CAROUSEL_HEADER_MIN;
 
       if (expectedSize < minHeader) {
+        badHeaderFrames++;
         Serial.println("RX_CAROUSEL_BAD_HEADER: too small");
         resetFrame();
         break;
@@ -287,6 +407,7 @@ void processReceivedByte(uint8_t data) {
             handleParityFrame();
           }
         } else {
+          badCrcFrames++;
           Serial.print("RX_CAROUSEL_BAD_CRC:");
           Serial.print(computedCRC, HEX);
           Serial.print(":expected=");
@@ -327,6 +448,7 @@ void handleParityFrame() {
       groupCount == 0 ||
       groupCount > 8 ||
       groupStart >= totalChunks) {
+    badHeaderFrames++;
     Serial.print("RX_CAROUSEL_BAD_HEADER: parity tid=");
     Serial.print(tid);
     Serial.print(" group=");
@@ -375,6 +497,7 @@ void handleParityFrame() {
   Serial.print(groupStart);
   Serial.print(":");
   Serial.println(groupCount);
+  parityFramesOk++;
 }
 
 void handleCarouselFrame() {
@@ -395,6 +518,7 @@ void handleCarouselFrame() {
   uint32_t needed = (uint32_t)CAROUSEL_HEADER_MIN + nameLen + chunkLen;
 
   if (needed > expectedSize || totalChunks == 0 || seq >= totalChunks) {
+    badHeaderFrames++;
     Serial.print("RX_CAROUSEL_BAD_HEADER: tid=");
     Serial.print(tid);
     Serial.print(" seq=");
@@ -441,6 +565,7 @@ void handleCarouselFrame() {
   Serial.print(totalChunks);
   Serial.print(":");
   Serial.println(chunkLen);
+  chunkFramesOk++;
 }
 
 void setFrequency(uint32_t f) {

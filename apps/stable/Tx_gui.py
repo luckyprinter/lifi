@@ -153,6 +153,8 @@ class TXGui(tk.Tk):
         self.theme_var = tk.StringVar(value="Light")
         self.fec_var = tk.BooleanVar(value=True)
         self.wait_done_var = tk.BooleanVar(value=DEFAULT_WAIT_TX_DONE)
+        self.debug_var = tk.BooleanVar(value=False)
+        self.log_lines = []
         self.port_map = {}
 
         self.setup_theme(self.theme_var.get())
@@ -208,6 +210,13 @@ class TXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
+        self.debug_check.configure(
+            bg=self.colors["panel"],
+            fg=self.colors["text"],
+            activebackground=self.colors["panel"],
+            activeforeground=self.colors["text"],
+            selectcolor=self.colors["field"],
+        )
         for widget in (self.text_box, self.log):
             widget.configure(
                 bg=self.colors["field"],
@@ -237,7 +246,7 @@ class TXGui(tk.Tk):
         self.status.grid(row=0, column=1, rowspan=2, sticky="e")
 
         top = self.panel(shell, row=1, column=0, sticky="ew", pady=(0, 10))
-        for col in range(13):
+        for col in range(15):
             top.columnconfigure(col, weight=0)
         top.columnconfigure(1, weight=1)
         top.columnconfigure(5, weight=1)
@@ -288,6 +297,8 @@ class TXGui(tk.Tk):
         self.connect_btn.grid(row=1, column=8, padx=3, pady=(3, 0))
         ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=9, padx=3, pady=(3, 0))
         ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="TX Stats", command=self.request_stats).grid(row=1, column=11, padx=3, pady=(3, 0))
+        ttk.Button(top, text="LED Test", command=self.led_test).grid(row=1, column=12, padx=3, pady=(3, 0))
         self.fec_check = tk.Checkbutton(
             top,
             text="FEC",
@@ -298,7 +309,19 @@ class TXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
-        self.fec_check.grid(row=1, column=11, padx=3, pady=(3, 0))
+        self.fec_check.grid(row=1, column=13, padx=3, pady=(3, 0))
+        self.debug_check = tk.Checkbutton(
+            top,
+            text="Debug",
+            variable=self.debug_var,
+            command=self.set_debug,
+            bg=self.colors["panel"],
+            fg=self.colors["text"],
+            activebackground=self.colors["panel"],
+            activeforeground=self.colors["text"],
+            selectcolor=self.colors["field"],
+        )
+        self.debug_check.grid(row=1, column=14, padx=3, pady=(3, 0))
 
         progress_panel = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         progress_panel.columnconfigure(0, weight=1)
@@ -355,7 +378,8 @@ class TXGui(tk.Tk):
         log_header.grid(row=0, column=0, sticky="ew")
         log_header.columnconfigure(0, weight=1)
         ttk.Label(log_header, text="TX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=1, sticky="e")
+        ttk.Button(log_header, text="Save Log", command=self.save_log).grid(row=0, column=1, padx=(0, 6), sticky="e")
+        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=2, sticky="e")
 
         self.log = scrolledtext.ScrolledText(
             right,
@@ -402,10 +426,13 @@ class TXGui(tk.Tk):
         return "info"
 
     def log_msg(self, msg):
+        stamp = time.strftime("%H:%M:%S")
+        self.log_lines.append(f"{stamp} TX {msg}")
+
         def ui():
             tag = self.log_tag(msg)
             self.log.config(state="normal")
-            self.log.insert(tk.END, time.strftime("%H:%M:%S"), ("time",))
+            self.log.insert(tk.END, stamp, ("time",))
             self.log.insert(tk.END, "  TX  ", ("time",))
             self.log.insert(tk.END, f"{msg}\n", (tag,))
             self.log.see(tk.END)
@@ -413,9 +440,25 @@ class TXGui(tk.Tk):
         self.after(0, ui)
 
     def clear_log(self):
+        self.log_lines.clear()
         self.log.config(state="normal")
         self.log.delete("1.0", tk.END)
         self.log.config(state="disabled")
+
+    def save_log(self):
+        path = filedialog.asksaveasfilename(
+            defaultextension=".log",
+            filetypes=[("Log files", "*.log"), ("Text files", "*.txt"), ("All files", "*.*")],
+            initialfile=f"lifi_tx_debug_{time.strftime('%Y%m%d_%H%M%S')}.log",
+        )
+        if not path:
+            return
+
+        with open(path, "w", encoding="utf-8") as f:
+            f.write("\n".join(self.log_lines))
+            f.write("\n")
+
+        self.log_msg(f"Saved debug log: {path}")
 
     def update_transmission_mode_label(self):
         if not hasattr(self, "mode_label"):
@@ -466,6 +509,7 @@ class TXGui(tk.Tk):
 
         time.sleep(1)
         self.set_freq()
+        self.set_debug()
         self.set_tx_quiet_mode()
         self.log_msg("Connected.")
 
@@ -514,6 +558,17 @@ class TXGui(tk.Tk):
         except Exception as e:
             self.log_msg(f"Frequency error: {e}")
 
+    def set_debug(self):
+        if not self.ser or not self.ser.is_open:
+            return
+        value = 1 if self.debug_var.get() else 0
+        try:
+            self.ser.write(f"DEBUG={value}\n".encode())
+            self.ser.flush()
+            self.log_msg(f"DEBUG={value}")
+        except Exception as e:
+            self.log_msg(f"Debug error: {e}")
+
     def set_tx_quiet_mode(self):
         if not self.ser or not self.ser.is_open:
             return
@@ -526,6 +581,30 @@ class TXGui(tk.Tk):
             self.log_msg("Debug wait mode" if quiet == 0 else "Smooth streaming mode")
         except Exception as e:
             self.log_msg(f"TX mode error: {e}")
+
+    def request_stats(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect TX first.")
+            return
+
+        try:
+            self.ser.write(b"STATS\n")
+            self.ser.flush()
+            self.log_msg("STATS requested")
+        except Exception as e:
+            self.log_msg(f"Stats error: {e}")
+
+    def led_test(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect TX first.")
+            return
+
+        try:
+            self.ser.write(b"LEDTEST\n")
+            self.ser.flush()
+            self.log_msg("LEDTEST sent")
+        except Exception as e:
+            self.log_msg(f"LED test error: {e}")
 
     def stop_transfer(self):
         self.transfer_running = False
