@@ -118,6 +118,20 @@ def padded_chunk(data: bytes, chunk_size: int) -> bytes:
     return data + bytes(chunk_size - len(data))
 
 
+def readable_serial_text(data: bytes) -> str:
+    text = data.decode("utf-8", errors="replace").strip()
+    if not text:
+        return ""
+
+    printable = sum(1 for ch in text if ch.isprintable() or ch.isspace())
+    ratio = printable / max(1, len(text))
+    if ratio >= 0.85:
+        return text
+
+    preview = data[:32].hex(" ")
+    return f"RX_BINARY_NOISE:len={len(data)}:hex={preview}"
+
+
 class TransferState:
     def __init__(self, tid, kind, total_chunks, total_size, file_crc, name):
         self.tid = tid
@@ -492,8 +506,11 @@ class RXGui(tk.Tk):
         threading.Thread(target=self.reader_loop, daemon=True).start()
 
         time.sleep(1)
+        self.request_firmware_id()
         self.set_freq()
+        self.set_edge_high_to_low()
         self.set_debug()
+        self.request_stats(log_request=False)
         self.log_msg("Connected.")
 
     def disconnect(self, log_message=True):
@@ -531,7 +548,29 @@ class RXGui(tk.Tk):
         self.ser.flush()
         self.log_msg(f"DEBUG={value}")
 
-    def request_stats(self):
+    def request_firmware_id(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        try:
+            self.ser.write(b"FW?\n")
+            self.ser.flush()
+            self.log_msg("FW? requested")
+        except Exception as e:
+            self.log_msg(f"RX firmware query error: {e}")
+
+    def set_edge_high_to_low(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        try:
+            self.ser.write(b"EDGE=HL\n")
+            self.ser.flush()
+            self.log_msg("EDGE=HL")
+        except Exception as e:
+            self.log_msg(f"RX edge error: {e}")
+
+    def request_stats(self, log_request=True):
         if not self.ser or not self.ser.is_open:
             messagebox.showwarning("Serial", "Connect RX first.")
             return
@@ -539,7 +578,8 @@ class RXGui(tk.Tk):
         try:
             self.ser.write(b"STATS\n")
             self.ser.flush()
-            self.log_msg("STATS requested")
+            if log_request:
+                self.log_msg("STATS requested")
         except Exception as e:
             self.log_msg(f"RX stats error: {e}")
 
@@ -602,7 +642,7 @@ class RXGui(tk.Tk):
             line = bytes(self.rx_buffer[:idx + 1])
             del self.rx_buffer[:idx + 1]
 
-            text = line.decode("utf-8", errors="replace").strip()
+            text = readable_serial_text(line)
 
             if text:
                 self.handle_line(text)

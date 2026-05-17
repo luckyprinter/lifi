@@ -138,6 +138,20 @@ def build_xor_parity(chunks, chunk_size: int) -> bytes:
     return bytes(parity)
 
 
+def readable_serial_text(data: bytes) -> str:
+    text = data.decode("utf-8", errors="replace").strip()
+    if not text:
+        return ""
+
+    printable = sum(1 for ch in text if ch.isprintable() or ch.isspace())
+    ratio = printable / max(1, len(text))
+    if ratio >= 0.85:
+        return text
+
+    preview = data[:32].hex(" ")
+    return f"TX_BINARY_NOISE:len={len(data)}:hex={preview}"
+
+
 class TXGui(tk.Tk):
     def __init__(self):
         super().__init__()
@@ -508,9 +522,11 @@ class TXGui(tk.Tk):
         threading.Thread(target=self.reader_loop, daemon=True).start()
 
         time.sleep(1)
+        self.request_firmware_id()
         self.set_freq()
         self.set_debug()
         self.set_tx_quiet_mode()
+        self.request_stats(log_request=False)
         self.log_msg("Connected.")
 
     def disconnect(self, log_message=True):
@@ -539,7 +555,7 @@ class TXGui(tk.Tk):
             if not line:
                 continue
 
-            text = line.decode(errors="replace").strip()
+            text = readable_serial_text(line)
             if text:
                 self.log_msg(text)
                 if text.startswith("TX_CAROUSEL_FRAME_SENT"):
@@ -569,6 +585,17 @@ class TXGui(tk.Tk):
         except Exception as e:
             self.log_msg(f"Debug error: {e}")
 
+    def request_firmware_id(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        try:
+            self.ser.write(b"FW?\n")
+            self.ser.flush()
+            self.log_msg("FW? requested")
+        except Exception as e:
+            self.log_msg(f"TX firmware query error: {e}")
+
     def set_tx_quiet_mode(self):
         if not self.ser or not self.ser.is_open:
             return
@@ -582,7 +609,7 @@ class TXGui(tk.Tk):
         except Exception as e:
             self.log_msg(f"TX mode error: {e}")
 
-    def request_stats(self):
+    def request_stats(self, log_request=True):
         if not self.ser or not self.ser.is_open:
             messagebox.showwarning("Serial", "Connect TX first.")
             return
@@ -590,7 +617,8 @@ class TXGui(tk.Tk):
         try:
             self.ser.write(b"STATS\n")
             self.ser.flush()
-            self.log_msg("STATS requested")
+            if log_request:
+                self.log_msg("STATS requested")
         except Exception as e:
             self.log_msg(f"Stats error: {e}")
 

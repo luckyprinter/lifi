@@ -6,6 +6,7 @@ const uint8_t START_BYTE = 0x02;
 const uint8_t PREAMBLE_BYTE = 0xAA;
 const uint8_t TYPE_CAROUSEL_CHUNK = 0x20;
 const uint8_t TYPE_CAROUSEL_PARITY = 0x21;
+const char *RX_FIRMWARE_ID = "RX_DIAG_EDGE_HL_20260517";
 
 const uint32_t MAX_FREQUENCY_HZ = 50000;
 const uint8_t MIN_PREAMBLE_COUNT = 8;
@@ -61,7 +62,8 @@ void setup() {
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 RX Ready - one-way carousel protocol");
+  Serial.print("ESP32 RX Ready - one-way carousel protocol | FW=");
+  Serial.println(RX_FIRMWARE_ID);
 }
 
 void loop() {
@@ -100,6 +102,13 @@ bool handleSerialCommands() {
 
     if (cmd.startsWith("STATS")) {
       printRxStats();
+      handled = true;
+      continue;
+    }
+
+    if (cmd.startsWith("FW?") || cmd.startsWith("VERSION")) {
+      Serial.print("RX_FW:");
+      Serial.println(RX_FIRMWARE_ID);
       handled = true;
       continue;
     }
@@ -180,6 +189,8 @@ void runRxInputTest() {
 void printRxStats() {
   Serial.print("RX_STATS:freq=");
   Serial.print(frequencyHz);
+  Serial.print(":fw=");
+  Serial.print(RX_FIRMWARE_ID);
   Serial.print(":halfBitUs=");
   Serial.print(halfBitUs);
   Serial.print(":edge=");
