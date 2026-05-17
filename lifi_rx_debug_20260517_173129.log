@@ -1,0 +1,8 @@
+17:30:17 RX FREQ=5000
+17:30:17 RX RX FREQ = 5000 Hz | halfBit = 100 us
+17:30:29 RX STATS requested
+17:30:29 RX RX_STATS:freq=5000:halfBitUs=100:pin=0:decodedBytes=0:invalidManchester=0:candidateStarts=0:frameStarts=0:chunkOk=0:parityOk=0:badCrc=0:badHeader=0:unknownType=0:state=0:preambleSeen=0
+17:30:49 RX STATS requested
+17:30:49 RX RX_STATS:freq=5000:halfBitUs=100:pin=0:decodedBytes=1276:invalidManchester=96:candidateStarts=1372:frameStarts=0:chunkOk=0:parityOk=0:badCrc=0:badHeader=0:unknownType=0:state=0:preambleSeen=0
+17:31:13 RX STATS requested
+17:31:13 RX RX_STATS:freq=5000:halfBitUs=100:pin=0:decodedBytes=2570:invalidManchester=206:candidateStarts=2776:frameStarts=0:chunkOk=0:parityOk=0:badCrc=0:badHeader=0:unknownType=0:state=0:preambleSeen=0

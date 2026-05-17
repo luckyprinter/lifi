@@ -23,7 +23,7 @@ dist/
 Thumbs.db
 
 # Local logs and generated receive output
-*.log
+
 LiFiReceived/
 received_*
 samples/received_*
