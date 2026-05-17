@@ -12,25 +12,32 @@ const uint8_t TYPE_CAROUSEL_PARITY = 0x21;
 
 const uint8_t PREAMBLE_COUNT = 32;
 const uint32_t MAX_FREQUENCY_HZ = 50000;
-const uint32_t FRAME_GAP_US = 0;
+const uint32_t OOK_FRAME_GAP_MIN_US = 2000;
+const uint32_t OOK_FRAME_GAP_MAX_US = 12000;
+const uint32_t PWM_FRAME_GAP_US = 0;
 const uint16_t QUIET_PROGRESS_EVERY_FRAMES = 32;
 
-// DC-biased PWM optical modulation settings.
-//
-// The LED is no longer switched fully ON/OFF for Manchester symbols.
-// Instead, every optical symbol is sent as either bright or dim light.
-// Keeping a strong DC light level reduces visible brightness pumping and
-// eye strain, while the phototransistor still sees the high-speed changes.
-//
-// 40 kHz PWM is far above the 9 kHz LiFi data frequency. The LED therefore
-// looks mostly steady to human eyes, while the RX phototransistor still sees
-// the slower Manchester bright/dim envelope.
+// Transmission modes:
+//   OOK: direct ON/OFF Manchester. This is the stable default for the simple
+//        TEPT4400 receiver because it gives maximum optical contrast.
+//   PWM: experimental DC-biased Manchester. The LED never fully turns off;
+//        symbols switch between bright and dim PWM levels to reduce visible
+//        brightness pumping, but it may be harder for a simple RX to decode.
+enum TxOpticalMode : uint8_t {
+  TX_MODE_OOK = 0,
+  TX_MODE_PWM = 1,
+};
+
+// DC-biased PWM settings used only when TX_MODE_PWM is selected.
+// 40 kHz PWM is far above the 9 kHz LiFi data frequency. Human eyes mostly
+// see the average brightness, while the RX sees the Manchester bright/dim
+// envelope. If the RX struggles, use the default ON/OFF mode.
 const uint32_t PWM_FREQ_HZ = 40000;
 const uint8_t PWM_RESOLUTION_BITS = 8;
 const uint8_t PWM_CHANNEL = 0;
 const uint32_t PWM_MAX_DUTY = (1UL << PWM_RESOLUTION_BITS) - 1;
 
-// Your current IRLZ44N gate drive is assumed active-high:
+// Current IRLZ44N low-side gate drive is active-high:
 // GPIO HIGH -> MOSFET ON -> LED brighter.
 // If your actual wiring still behaves as active-low, change this to true.
 const bool LED_ACTIVE_LOW = false;
@@ -50,15 +57,21 @@ const uint8_t LED_DIM_PERCENT = 76;
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 bool quietMode = false;
+TxOpticalMode txMode = TX_MODE_OOK;
 uint32_t framesSentSinceBoot = 0;
+bool pwmAttached = false;
 
 void setupPwmOutput() {
+  if (pwmAttached) return;
+
 #if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
   ledcAttach(TX_PIN, PWM_FREQ_HZ, PWM_RESOLUTION_BITS);
 #else
   ledcSetup(PWM_CHANNEL, PWM_FREQ_HZ, PWM_RESOLUTION_BITS);
   ledcAttachPin(TX_PIN, PWM_CHANNEL);
 #endif
+
+  pwmAttached = true;
 }
 
 void writePwmDuty(uint32_t duty) {
@@ -70,11 +83,15 @@ void writePwmDuty(uint32_t duty) {
 }
 
 void detachPwmOutput() {
+  if (!pwmAttached) return;
+
 #if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
   ledcDetach(TX_PIN);
 #else
   ledcDetachPin(TX_PIN);
 #endif
+
+  pwmAttached = false;
 }
 
 void writeLedDigital(bool ledOn) {
@@ -104,27 +121,59 @@ uint32_t brightnessPercentToDuty(uint8_t percent) {
 }
 
 void setBrightnessPercent(uint8_t percent) {
+  setupPwmOutput();
   writePwmDuty(brightnessPercentToDuty(percent));
 }
 
 void txIdle() {
-  setBrightnessPercent(LED_IDLE_BRIGHTNESS_PERCENT);
+  if (txMode == TX_MODE_PWM) {
+    setBrightnessPercent(LED_IDLE_BRIGHTNESS_PERCENT);
+  } else {
+    writeLedDigital(true);
+  }
 }
 
 void txBright() {
-  setBrightnessPercent(LED_BRIGHT_PERCENT);
+  if (txMode == TX_MODE_PWM) {
+    setBrightnessPercent(LED_BRIGHT_PERCENT);
+  } else {
+    writeLedDigital(true);
+  }
 }
 
 void txDim() {
-  setBrightnessPercent(LED_DIM_PERCENT);
+  if (txMode == TX_MODE_PWM) {
+    setBrightnessPercent(LED_DIM_PERCENT);
+  } else {
+    writeLedDigital(false);
+  }
 }
 
 void txBoundaryCarrier() {
-  // Continuous boundary carrier: frame boundaries should sit at the same
-  // average optical brightness as the Manchester stream, not at full bright
-  // or full dim. This avoids visible brightness jumps without changing the
-  // optical frame format or the RX decoder.
+  // In PWM mode, frame boundaries sit near the average optical brightness to
+  // reduce visible envelope flicker. In OOK mode, keep the historical idle-ON
+  // behavior that the existing receiver timing was tuned around.
   txIdle();
+}
+
+const char *txModeName() {
+  return txMode == TX_MODE_PWM ? "DC_PWM" : "ON_OFF";
+}
+
+void setTxMode(TxOpticalMode mode) {
+  txMode = mode;
+
+  if (txMode == TX_MODE_PWM) {
+    setupPwmOutput();
+  } else {
+    detachPwmOutput();
+    pinMode(TX_PIN, OUTPUT);
+  }
+
+  txIdle();
+
+  Serial.print("TX optical mode = ");
+  Serial.println(txModeName());
 }
 
 void setup() {
@@ -135,12 +184,13 @@ void setup() {
   Serial.begin(115200);
   Serial.setTimeout(25);
 
-  setupPwmOutput();
-  txIdle();
+  pinMode(TX_PIN, OUTPUT);
+  setTxMode(TX_MODE_OOK);
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 TX Ready - DC-biased PWM Manchester idle bright");
+  Serial.println("ESP32 TX Ready - dual-mode Manchester LiFi");
+  Serial.println("Default optical mode = ON_OFF stable");
   Serial.print("PWM carrier = ");
   Serial.print(PWM_FREQ_HZ);
   Serial.print(" Hz | bright = ");
@@ -323,6 +373,23 @@ void handleCommand() {
     return;
   }
 
+  if (line.startsWith("TXMODE=") || line.startsWith("MODE=")) {
+    int equals = line.indexOf('=');
+    String mode = line.substring(equals + 1);
+    mode.trim();
+    mode.toUpperCase();
+
+    if (mode == "PWM" || mode == "DC_PWM" || mode == "DC") {
+      setTxMode(TX_MODE_PWM);
+    } else if (mode == "OOK" || mode == "ON_OFF" || mode == "ONOFF") {
+      setTxMode(TX_MODE_OOK);
+    } else {
+      Serial.print("TX_ERROR: unknown optical mode ");
+      Serial.println(mode);
+    }
+    return;
+  }
+
   if (line.startsWith("LEDTEST")) {
     runLedTest();
     return;
@@ -335,9 +402,10 @@ void handleCommand() {
 void runLedTest() {
   Serial.println("TX_LED_TEST_START");
 
-  // Make this a true human-visible control test, not a PWM brightness test.
-  // PWM at 40 kHz reads as an average voltage on a multimeter and may not look
-  // like an obvious blink. Detach PWM briefly and drive the gate fully ON/OFF.
+  // Human-visible control test. It temporarily forces direct GPIO drive even
+  // when PWM mode is selected, so a multimeter and the LED should show clear
+  // full-scale ON/OFF changes at the IRLZ44N gate.
+  TxOpticalMode previousMode = txMode;
   detachPwmOutput();
   pinMode(TX_PIN, OUTPUT);
 
@@ -350,16 +418,28 @@ void runLedTest() {
 
   writeLedDigital(false);
   delay(250);
-  setupPwmOutput();
-  txIdle();
+  setTxMode(previousMode);
   Serial.println("TX_LED_TEST_DONE");
 }
 
 void sendFrameGap() {
   txBoundaryCarrier();
 
-  if (FRAME_GAP_US > 0) {
-    delayMicroseconds(FRAME_GAP_US);
+  if (txMode == TX_MODE_PWM) {
+    if (PWM_FRAME_GAP_US > 0) {
+      delayMicroseconds(PWM_FRAME_GAP_US);
+    }
+    return;
+  }
+
+  // ON/OFF mode needs a small quiet interval so the simple RX can reliably
+  // re-lock onto the next preamble. Keep it bounded to avoid long visible
+  // packet-envelope pauses.
+  uint32_t gap = halfBitUs * 80UL;
+  if (gap < OOK_FRAME_GAP_MIN_US) gap = OOK_FRAME_GAP_MIN_US;
+  if (gap > OOK_FRAME_GAP_MAX_US) gap = OOK_FRAME_GAP_MAX_US;
+  if (gap > 0) {
+    delayMicroseconds(gap);
   }
 }
 

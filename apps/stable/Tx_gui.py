@@ -20,10 +20,11 @@ DEFAULT_FREQUENCY_HZ = 9000
 MIN_FREQUENCY_HZ = 1
 MAX_FREQUENCY_HZ = 50000
 DEFAULT_CHUNK_SIZE = 512
-DEFAULT_CAROUSEL_ROUNDS = 2
-DEFAULT_ROUND_GAP_MS = 250
-DEFAULT_INTER_FRAME_GAP_MS = 0
-DEFAULT_WAIT_TX_DONE = False
+DEFAULT_CAROUSEL_ROUNDS = 3
+DEFAULT_ROUND_GAP_MS = 500
+DEFAULT_INTER_FRAME_GAP_MS = 2
+DEFAULT_WAIT_TX_DONE = True
+DEFAULT_TX_OPTICAL_MODE = "ON/OFF"
 FEC_GROUP_SIZE = 8
 MAX_FRAME_PAYLOAD = 65535
 MAX_TOTAL_CHUNKS = 65535
@@ -153,6 +154,7 @@ class TXGui(tk.Tk):
         self.theme_var = tk.StringVar(value="Light")
         self.fec_var = tk.BooleanVar(value=True)
         self.wait_done_var = tk.BooleanVar(value=DEFAULT_WAIT_TX_DONE)
+        self.tx_optical_mode_var = tk.StringVar(value=DEFAULT_TX_OPTICAL_MODE)
         self.port_map = {}
 
         self.setup_theme(self.theme_var.get())
@@ -237,7 +239,7 @@ class TXGui(tk.Tk):
         self.status.grid(row=0, column=1, rowspan=2, sticky="e")
 
         top = self.panel(shell, row=1, column=0, sticky="ew", pady=(0, 10))
-        for col in range(13):
+        for col in range(15):
             top.columnconfigure(col, weight=0)
         top.columnconfigure(1, weight=1)
         top.columnconfigure(5, weight=1)
@@ -284,11 +286,22 @@ class TXGui(tk.Tk):
         self.frame_gap_var = tk.StringVar(value=str(DEFAULT_INTER_FRAME_GAP_MS))
         ttk.Entry(top, textvariable=self.frame_gap_var, width=8).grid(row=1, column=7, sticky="ew", padx=(0, 10), pady=(3, 0))
 
+        ttk.Label(top, text="TX mode", style="Muted.TLabel").grid(row=0, column=8, sticky="w")
+        self.tx_mode_box = ttk.Combobox(
+            top,
+            textvariable=self.tx_optical_mode_var,
+            values=["ON/OFF", "DC PWM"],
+            state="readonly",
+            width=8,
+        )
+        self.tx_mode_box.grid(row=1, column=8, sticky="ew", padx=(0, 10), pady=(3, 0))
+        self.tx_mode_box.bind("<<ComboboxSelected>>", lambda _event: self.set_tx_optical_mode())
+
         self.connect_btn = ttk.Button(top, text="Connect", style="Accent.TButton", command=self.toggle_connection)
-        self.connect_btn.grid(row=1, column=8, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=9, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=10, padx=3, pady=(3, 0))
-        ttk.Button(top, text="LED Test", command=self.led_test).grid(row=1, column=11, padx=3, pady=(3, 0))
+        self.connect_btn.grid(row=1, column=9, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=11, padx=3, pady=(3, 0))
+        ttk.Button(top, text="LED Test", command=self.led_test).grid(row=1, column=12, padx=3, pady=(3, 0))
         self.fec_check = tk.Checkbutton(
             top,
             text="FEC",
@@ -299,7 +312,7 @@ class TXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
-        self.fec_check.grid(row=1, column=12, padx=3, pady=(3, 0))
+        self.fec_check.grid(row=1, column=13, padx=3, pady=(3, 0))
 
         progress_panel = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         progress_panel.columnconfigure(0, weight=1)
@@ -467,6 +480,7 @@ class TXGui(tk.Tk):
 
         time.sleep(1)
         self.set_freq()
+        self.set_tx_optical_mode()
         self.set_tx_quiet_mode()
         self.log_msg("Connected.")
 
@@ -527,6 +541,20 @@ class TXGui(tk.Tk):
             self.log_msg("Debug wait mode" if quiet == 0 else "Smooth streaming mode")
         except Exception as e:
             self.log_msg(f"TX mode error: {e}")
+
+    def set_tx_optical_mode(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        mode_label = self.tx_optical_mode_var.get()
+        firmware_mode = "PWM" if mode_label == "DC PWM" else "OOK"
+
+        try:
+            self.ser.write(f"TXMODE={firmware_mode}\n".encode())
+            self.ser.flush()
+            self.log_msg(f"Optical TX mode: {mode_label}")
+        except Exception as e:
+            self.log_msg(f"Optical TX mode error: {e}")
 
     def led_test(self):
         if not self.ser or not self.ser.is_open:
@@ -618,7 +646,9 @@ class TXGui(tk.Tk):
             return
 
         wait_for_done = self.wait_done_var.get()
+        self.set_tx_optical_mode()
         self.set_tx_quiet_mode()
+        optical_mode = self.tx_optical_mode_var.get()
 
         file_crc = crc16_ccitt(data)
         name = safe_name(filename).encode("utf-8")
@@ -678,6 +708,7 @@ class TXGui(tk.Tk):
             f"Carousel start: {KIND_NAMES[kind]} '{filename}', "
             f"tid={tid}, size={fmt_bytes(total_size)}, chunks={total_chunks}, "
             f"chunk={chunk_size}, rounds={rounds}, fec={'on' if fec_enabled else 'off'}, "
+            f"tx={optical_mode}, "
             f"mode={'debug wait' if wait_for_done else 'smooth streaming'}, "
             f"file_crc=0x{file_crc:04X}"
         )

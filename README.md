@@ -18,6 +18,50 @@ The stable firmware uses Manchester encoding with configurable frequency command
 
 Serial is used only for setup, local control, and diagnostics between the PC and microcontrollers. The actual data link remains LiFi: TX emits modulated light and RX decodes that light.
 
+## Current Stable Hardware Wiring
+
+### TX: ESP32 Dev Module + IRLZ44N Low-Side LED Driver
+
+Use a common ground between the ESP32 and the 12 V LED power supply.
+
+- ESP32 `GPIO 5` -> `220 ohm` resistor -> IRLZ44N `gate`
+- IRLZ44N `gate` -> `10k ohm` resistor -> GND pulldown
+- IRLZ44N `source` -> GND
+- IRLZ44N `drain` -> 12 V LED negative terminal
+- 12 V LED positive terminal -> +12 V supply
+- ESP32 GND -> 12 V supply GND
+
+This wiring is active-high: `GPIO HIGH = LED ON`, `GPIO LOW = LED OFF`. The stable TX firmware is configured for this with:
+
+```cpp
+#define TX_PIN 5
+const bool LED_ACTIVE_LOW = false;
+```
+
+If you later use an inverting driver, change only `LED_ACTIVE_LOW` to `true`.
+
+### RX: ESP32 + TEPT4400 Simple Receiver
+
+Start with the phototransistor and load resistor as a voltage divider, then connect the junction to the RX input pin:
+
+- ESP32 `3.3V` -> load resistor, start with `10k ohm`
+- Load resistor output node -> ESP32 `GPIO 5`
+- Same node -> TEPT4400 phototransistor
+- TEPT4400 other leg -> GND
+
+The RX firmware input pin is:
+
+```cpp
+#define RX_PIN 5
+```
+
+Changing the RX load resistor normally does not require a code change. It changes the analog voltage swing and speed before the ESP32 digital input:
+
+- Lower resistor, such as `4.7k` or `10k`: faster response, better for higher frequency, less sensitive at distance.
+- Higher resistor, such as `22k` or `47k`: more sensitive for 1.5-2 m tests, but slower and more affected by ambient light/noise.
+
+For the current TEPT4400 receiver, tune in this order: optical alignment, ambient light shielding, resistor value, then frequency/chunk settings. If the signal polarity is ever inverted by a different receiver circuit, adjust the RX firmware input interpretation rather than changing the GUI protocol.
+
 ## Experiments
 
 Experimental or older versions are kept here:
@@ -105,6 +149,7 @@ ESP32 boards usually appear as `COM3`, `COM4`, etc. If Windows reports access de
 - `Refresh`: rescans likely physical USB serial ports. The dropdown favors ESP32-style devices such as CP210x, CH340, FTDI, `/dev/ttyUSB*`, `/dev/ttyACM*`, and Windows `COM*` ports.
 - `Connect`: connects to the port currently selected in the dropdown.
 - `Set Freq`: sends the optical Manchester frequency to the connected ESP32.
+- `LED Test`: sends a short visible blink command to the TX firmware. This uses direct full ON/OFF GPIO drive so you can verify the app, ESP32 pin, MOSFET gate, and LED are under control.
 - `Clear Log`: clears the visible event log only. It does not reset firmware or transfer state.
 
 ## TX GUI Options
@@ -113,6 +158,11 @@ ESP32 boards usually appear as `COM3`, `COM4`, etc. If Windows reports access de
 - `Chunk bytes`: file payload bytes per optical chunk. Smaller chunks, such as `256`, are more reliable because a corrupted frame loses less data and has a shorter on-air time. Larger chunks, such as `1024` or `2048`, reduce header overhead and can improve throughput, but they are more likely to fail CRC on noisy or poorly aligned hardware.
 - `Carousel rounds`: how many times the TX sends the full chunk sequence. More rounds improve the chance that RX eventually receives every chunk, but increase transfer time and visible packet-envelope flicker. The default is `2` because parity FEC now helps recover isolated missing chunks.
 - `Round gap ms`: pause between carousel rounds. A lower value reduces total delay and visible brightness pulsing. If the RX misses many final chunks, increase this slightly.
+- `Frame gap ms`: optional GUI-side delay after each optical frame. Use `0-2 ms` for smoother transmission. Increase only if the RX misses frame boundaries.
+- `TX mode`: optical modulation mode sent to the TX firmware.
+  - `ON/OFF`: stable default. Uses direct GPIO Manchester switching with maximum optical contrast.
+  - `DC PWM`: experimental. Keeps the LED partially on using 40 kHz PWM and switches between bright/dim levels. This can reduce visible dimming, but the current TEPT4400 receiver may decode it less reliably.
+- `Wait for TX done marker`: stable debug pacing. ON means the GUI waits for `TX_CAROUSEL_FRAME_SENT` after each frame. OFF streams frames by estimated airtime for smoother visual output, but it depends more on serial and timing margins.
 - `FEC`: enables XOR parity recovery. One parity frame is sent per group of 8 data chunks. RX can recover exactly one missing chunk in that group. If two or more chunks are missing in the same group, RX waits for another carousel round.
 - `Theme`: visual theme only. The default is the cleaner Light theme.
 - `Image`, `Audio`, `Video`: send those file categories through the same LiFi chunk protocol. The generic file picker is intentionally hidden to keep demo workflows focused.
@@ -132,8 +182,11 @@ Start thesis demos with:
 
 - Frequency: `9000 Hz`
 - Chunk bytes: `512`
-- Carousel rounds: `2`
-- Round gap: `250 ms`
+- Carousel rounds: `3`
+- Round gap: `500 ms`
+- Frame gap: `2 ms`
+- TX mode: `ON/OFF`
+- Wait for TX done marker: enabled
 - FEC: enabled
 
 If transfers fail CRC often, try this order:
@@ -142,4 +195,5 @@ If transfers fail CRC often, try this order:
 2. Lower frequency to `7000 Hz`.
 3. Lower chunk size to `256`.
 4. Increase carousel rounds to `3`.
-5. Increase round gap to `400-500 ms` only if final chunks are consistently missed.
+5. Try RX load resistor values such as `22k` or `47k` for longer distance, then return to `10k` if edges become too slow.
+6. Increase round gap above `500 ms` only if final chunks are consistently missed.
