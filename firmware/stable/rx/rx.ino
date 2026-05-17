@@ -6,6 +6,7 @@ const uint8_t START_BYTE = 0x02;
 const uint8_t PREAMBLE_BYTE = 0xAA;
 const uint8_t TYPE_CAROUSEL_CHUNK = 0x20;
 const uint8_t TYPE_CAROUSEL_PARITY = 0x21;
+const char *RX_FIRMWARE_ID = "RX_DIAG_EDGE_HL_20260517";
 
 const uint32_t MAX_FREQUENCY_HZ = 50000;
 const uint8_t MIN_PREAMBLE_COUNT = 8;
@@ -15,6 +16,7 @@ const uint16_t PARITY_HEADER_MIN = 19;
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 bool rxDebug = false;
+bool syncHighToLow = true;
 uint32_t decodedBytes = 0;
 uint32_t invalidManchester = 0;
 uint32_t candidateStarts = 0;
@@ -60,7 +62,8 @@ void setup() {
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 RX Ready - one-way carousel protocol");
+  Serial.print("ESP32 RX Ready - one-way carousel protocol | FW=");
+  Serial.println(RX_FIRMWARE_ID);
 }
 
 void loop() {
@@ -99,6 +102,34 @@ bool handleSerialCommands() {
 
     if (cmd.startsWith("STATS")) {
       printRxStats();
+      handled = true;
+      continue;
+    }
+
+    if (cmd.startsWith("FW?") || cmd.startsWith("VERSION")) {
+      Serial.print("RX_FW:");
+      Serial.println(RX_FIRMWARE_ID);
+      handled = true;
+      continue;
+    }
+
+    if (cmd.startsWith("EDGE=")) {
+      String edge = cmd.substring(5);
+      edge.trim();
+      edge.toUpperCase();
+
+      if (edge == "HL" || edge == "HIGH_TO_LOW") {
+        syncHighToLow = true;
+        Serial.println("RX sync edge = HIGH_TO_LOW");
+      } else if (edge == "LH" || edge == "LOW_TO_HIGH") {
+        syncHighToLow = false;
+        Serial.println("RX sync edge = LOW_TO_HIGH");
+      } else {
+        Serial.print("RX_ERROR: unknown EDGE=");
+        Serial.println(edge);
+      }
+
+      resetFrame();
       handled = true;
       continue;
     }
@@ -158,8 +189,12 @@ void runRxInputTest() {
 void printRxStats() {
   Serial.print("RX_STATS:freq=");
   Serial.print(frequencyHz);
+  Serial.print(":fw=");
+  Serial.print(RX_FIRMWARE_ID);
   Serial.print(":halfBitUs=");
   Serial.print(halfBitUs);
+  Serial.print(":edge=");
+  Serial.print(syncHighToLow ? "HL" : "LH");
   Serial.print(":pin=");
   Serial.print(readRxPin());
   Serial.print(":decodedBytes=");
@@ -198,16 +233,35 @@ void printRxStatsIfDue() {
 
 int receiveManchesterByte() {
   while (true) {
-    while (readRxPin() == HIGH) {
-      if (handleSerialCommands()) return -2;
-      printRxStatsIfDue();
-      yield();
-    }
+    if (syncHighToLow) {
+      // Current TEPT4400 divider with TX idle LED ON usually idles LOW.
+      // A Manchester byte starts when TX briefly turns the LED OFF then ON,
+      // which appears at the RX GPIO as HIGH then LOW. Sync on that falling
+      // edge so the following samples align with the data bit centers.
+      while (readRxPin() == LOW) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
 
-    while (readRxPin() == LOW) {
-      if (handleSerialCommands()) return -2;
-      printRxStatsIfDue();
-      yield();
+      while (readRxPin() == HIGH) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
+    } else {
+      // Legacy/inverted receiver wiring path.
+      while (readRxPin() == HIGH) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
+
+      while (readRxPin() == LOW) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
     }
 
     candidateStarts++;

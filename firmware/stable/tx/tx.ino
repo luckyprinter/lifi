@@ -6,6 +6,7 @@ const uint8_t START_BYTE = 0x02;
 const uint8_t PREAMBLE_BYTE = 0xAA;
 const uint8_t TYPE_CAROUSEL_CHUNK = 0x20;
 const uint8_t TYPE_CAROUSEL_PARITY = 0x21;
+const char *TX_FIRMWARE_ID = "TX_DIAG_ACTIVE_HIGH_20260517";
 
 const uint8_t PREAMBLE_COUNT = 32;
 const uint32_t MAX_FREQUENCY_HZ = 50000;
@@ -43,7 +44,8 @@ void setup() {
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 TX Ready - carousel active-high IRLZ44N idle ON");
+  Serial.print("ESP32 TX Ready - carousel active-high IRLZ44N idle ON | FW=");
+  Serial.println(TX_FIRMWARE_ID);
 }
 
 void loop() {
@@ -226,6 +228,12 @@ void handleCommand() {
     return;
   }
 
+  if (line.startsWith("FW?") || line.startsWith("VERSION")) {
+    Serial.print("TX_FW:");
+    Serial.println(TX_FIRMWARE_ID);
+    return;
+  }
+
   if (line.startsWith("LEDTEST")) {
     runLedTest();
     return;
@@ -243,6 +251,8 @@ void handleCommand() {
 void printTxStats() {
   Serial.print("TX_STATS:freq=");
   Serial.print(frequencyHz);
+  Serial.print(":fw=");
+  Serial.print(TX_FIRMWARE_ID);
   Serial.print(":halfBitUs=");
   Serial.print(halfBitUs);
   Serial.print(":serialFrames=");
