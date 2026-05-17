@@ -288,6 +288,7 @@ class TXGui(tk.Tk):
         self.connect_btn.grid(row=1, column=8, padx=3, pady=(3, 0))
         ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=9, padx=3, pady=(3, 0))
         ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="LED Test", command=self.led_test).grid(row=1, column=11, padx=3, pady=(3, 0))
         self.fec_check = tk.Checkbutton(
             top,
             text="FEC",
@@ -298,7 +299,7 @@ class TXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
-        self.fec_check.grid(row=1, column=11, padx=3, pady=(3, 0))
+        self.fec_check.grid(row=1, column=12, padx=3, pady=(3, 0))
 
         progress_panel = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         progress_panel.columnconfigure(0, weight=1)
@@ -526,6 +527,18 @@ class TXGui(tk.Tk):
             self.log_msg("Debug wait mode" if quiet == 0 else "Smooth streaming mode")
         except Exception as e:
             self.log_msg(f"TX mode error: {e}")
+
+    def led_test(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect TX first.")
+            return
+
+        try:
+            self.ser.write(b"LEDTEST\n")
+            self.ser.flush()
+            self.log_msg("LEDTEST sent")
+        except Exception as e:
+            self.log_msg(f"LED test error: {e}")
 
     def stop_transfer(self):
         self.transfer_running = False

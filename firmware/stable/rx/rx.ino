@@ -87,12 +87,56 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("RXTEST")) {
+      runRxInputTest();
+      resetFrame();
+      handled = true;
+      continue;
+    }
+
     Serial.print("RX: unknown command ");
     Serial.println(cmd);
     handled = true;
   }
 
   return handled;
+}
+
+void runRxInputTest() {
+  const uint32_t durationMs = 1200;
+  const uint32_t sampleGapUs = 200;
+  uint32_t startMs = millis();
+  uint32_t samples = 0;
+  uint32_t highCount = 0;
+  uint32_t lowCount = 0;
+  uint32_t transitions = 0;
+  int last = readRxPin();
+
+  Serial.println("RX_INPUT_TEST_START");
+
+  while (millis() - startMs < durationMs) {
+    int current = readRxPin();
+
+    if (current == HIGH) highCount++;
+    else lowCount++;
+
+    if (current != last) {
+      transitions++;
+      last = current;
+    }
+
+    samples++;
+    delayMicroseconds(sampleGapUs);
+  }
+
+  Serial.print("RX_INPUT_TEST_DONE:samples=");
+  Serial.print(samples);
+  Serial.print(":high=");
+  Serial.print(highCount);
+  Serial.print(":low=");
+  Serial.print(lowCount);
+  Serial.print(":transitions=");
+  Serial.println(transitions);
 }
 
 int receiveManchesterByte() {

@@ -322,7 +322,8 @@ class RXGui(tk.Tk):
         self.connect_btn.grid(row=1, column=5, padx=3, pady=(3, 0))
         ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=6, padx=3, pady=(3, 0))
         ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=7, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=9, padx=3, pady=(3, 0))
 
         folder = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         folder.columnconfigure(1, weight=1)
@@ -507,6 +508,18 @@ class RXGui(tk.Tk):
         self.ser.write(f"DEBUG={value}\n".encode())
         self.ser.flush()
         self.log_msg(f"DEBUG={value}")
+
+    def rx_test(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect RX first.")
+            return
+
+        try:
+            self.ser.write(b"RXTEST\n")
+            self.ser.flush()
+            self.log_msg("RXTEST sent")
+        except Exception as e:
+            self.log_msg(f"RX test error: {e}")
 
     def reader_loop(self):
         while self.running and self.ser and self.ser.is_open:

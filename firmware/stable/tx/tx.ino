@@ -1,4 +1,7 @@
-#include "driver/gpio.h"
+#include <Arduino.h>
+#if __has_include(<esp_arduino_version.h>)
+#include <esp_arduino_version.h>
+#endif
 
 #define TX_PIN 5
 
@@ -9,19 +12,119 @@ const uint8_t TYPE_CAROUSEL_PARITY = 0x21;
 
 const uint8_t PREAMBLE_COUNT = 32;
 const uint32_t MAX_FREQUENCY_HZ = 50000;
+const uint32_t FRAME_GAP_US = 0;
+const uint16_t QUIET_PROGRESS_EVERY_FRAMES = 32;
+
+// DC-biased PWM optical modulation settings.
+//
+// The LED is no longer switched fully ON/OFF for Manchester symbols.
+// Instead, every optical symbol is sent as either bright or dim light.
+// Keeping a strong DC light level reduces visible brightness pumping and
+// eye strain, while the phototransistor still sees the high-speed changes.
+//
+// 40 kHz PWM is far above the 9 kHz LiFi data frequency. The LED therefore
+// looks mostly steady to human eyes, while the RX phototransistor still sees
+// the slower Manchester bright/dim envelope.
+const uint32_t PWM_FREQ_HZ = 40000;
+const uint8_t PWM_RESOLUTION_BITS = 8;
+const uint8_t PWM_CHANNEL = 0;
+const uint32_t PWM_MAX_DUTY = (1UL << PWM_RESOLUTION_BITS) - 1;
+
+// Your current IRLZ44N gate drive is assumed active-high:
+// GPIO HIGH -> MOSFET ON -> LED brighter.
+// If your actual wiring still behaves as active-low, change this to true.
+const bool LED_ACTIVE_LOW = false;
+
+// Start with a moderate 96% vs 76% optical difference. This is gentler than
+// 100/70, but still gives the simple phototransistor RX a practical 20%
+// optical contrast for reliable 9 kHz image/audio transfer.
+//
+// Idle is set to the average of bright/dim states: (96 + 76) / 2 = 86.
+// Matching idle brightness to the average transmission brightness reduces
+// low-frequency envelope flicker at chunk/frame boundaries, round gaps, and
+// txIdle() transitions.
+const uint8_t LED_IDLE_BRIGHTNESS_PERCENT = 86;
+const uint8_t LED_BRIGHT_PERCENT = 96;
+const uint8_t LED_DIM_PERCENT = 76;
 
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
+bool quietMode = false;
+uint32_t framesSentSinceBoot = 0;
 
-// Your hardware is active-low:
-// ESP32 LOW  = LED ON
-// ESP32 HIGH = LED OFF
-inline void txLightOn() {
-  gpio_set_level((gpio_num_t)TX_PIN, 0);
+void setupPwmOutput() {
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcAttach(TX_PIN, PWM_FREQ_HZ, PWM_RESOLUTION_BITS);
+#else
+  ledcSetup(PWM_CHANNEL, PWM_FREQ_HZ, PWM_RESOLUTION_BITS);
+  ledcAttachPin(TX_PIN, PWM_CHANNEL);
+#endif
 }
 
-inline void txLightOff() {
-  gpio_set_level((gpio_num_t)TX_PIN, 1);
+void writePwmDuty(uint32_t duty) {
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcWrite(TX_PIN, duty);
+#else
+  ledcWrite(PWM_CHANNEL, duty);
+#endif
+}
+
+void detachPwmOutput() {
+#if defined(ESP_ARDUINO_VERSION_MAJOR) && ESP_ARDUINO_VERSION_MAJOR >= 3
+  ledcDetach(TX_PIN);
+#else
+  ledcDetachPin(TX_PIN);
+#endif
+}
+
+void writeLedDigital(bool ledOn) {
+  if (LED_ACTIVE_LOW) {
+    digitalWrite(TX_PIN, ledOn ? LOW : HIGH);
+  } else {
+    digitalWrite(TX_PIN, ledOn ? HIGH : LOW);
+  }
+}
+
+uint32_t brightnessPercentToDuty(uint8_t percent) {
+  if (percent > 100) percent = 100;
+
+  uint32_t activeHighDuty = (uint32_t)percent * PWM_MAX_DUTY / 100;
+
+  if (LED_ACTIVE_LOW) {
+    // Active-low PWM inversion:
+    // brightness 100% -> duty 0   -> GPIO mostly LOW  -> LED brightest
+    // brightness 0%   -> duty 255 -> GPIO mostly HIGH -> LED dimmest/off
+    return PWM_MAX_DUTY - activeHighDuty;
+  }
+
+  // Active-high MOSFET gate drive:
+  // brightness 100% -> duty 255 -> GPIO mostly HIGH -> LED brightest
+  // brightness 0%   -> duty 0   -> GPIO mostly LOW  -> LED dimmest/off
+  return activeHighDuty;
+}
+
+void setBrightnessPercent(uint8_t percent) {
+  writePwmDuty(brightnessPercentToDuty(percent));
+}
+
+void txIdle() {
+  setBrightnessPercent(LED_IDLE_BRIGHTNESS_PERCENT);
+}
+
+void txBright() {
+  setBrightnessPercent(LED_BRIGHT_PERCENT);
+}
+
+void txDim() {
+  setBrightnessPercent(LED_DIM_PERCENT);
+}
+
+void txBoundaryCarrier() {
+  // Continuous boundary carrier: frame boundaries should sit at the same
+  // average optical brightness as the Manchester stream, not at full bright
+  // or full dim. This avoids visible brightness jumps without changing the
+  // optical frame format or the RX decoder.
+  txIdle();
 }
 
 void setup() {
@@ -32,13 +135,21 @@ void setup() {
   Serial.begin(115200);
   Serial.setTimeout(25);
 
-  pinMode(TX_PIN, OUTPUT);
-
-  txLightOn();
+  setupPwmOutput();
+  txIdle();
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 TX Ready - carousel active-low idle ON");
+  Serial.println("ESP32 TX Ready - DC-biased PWM Manchester idle bright");
+  Serial.print("PWM carrier = ");
+  Serial.print(PWM_FREQ_HZ);
+  Serial.print(" Hz | bright = ");
+  Serial.print(LED_BRIGHT_PERCENT);
+  Serial.print("% | dim = ");
+  Serial.print(LED_DIM_PERCENT);
+  Serial.println("%");
+  Serial.print("LED polarity = ");
+  Serial.println(LED_ACTIVE_LOW ? "active-low" : "active-high");
 }
 
 void loop() {
@@ -46,7 +157,7 @@ void loop() {
 
   int peeked = Serial.peek();
 
-  if (peeked == 'F') {
+  if (peeked >= 'A' && peeked <= 'Z') {
     handleCommand();
     return;
   }
@@ -61,6 +172,7 @@ void loop() {
   int typeRead = readByteWithTimeout(1000);
   if (typeRead < 0) {
     Serial.println("TX_ERROR: timeout reading frame type");
+    txIdle();
     return;
   }
 
@@ -71,6 +183,7 @@ void loop() {
 
   if (msb < 0 || lsb < 0) {
     Serial.println("TX_ERROR: timeout reading size");
+    txIdle();
     return;
   }
 
@@ -81,6 +194,7 @@ void loop() {
 
   if (crcMsb < 0 || crcLsb < 0) {
     Serial.println("TX_ERROR: timeout reading CRC");
+    txIdle();
     return;
   }
 
@@ -90,6 +204,7 @@ void loop() {
     Serial.print("TX_ERROR: unknown frame type 0x");
     Serial.println(frameType, HEX);
     discardBytes(size);
+    txIdle();
     return;
   }
 
@@ -101,12 +216,14 @@ void loop() {
     if (!payload) {
       Serial.println("TX_ERROR: cannot allocate payload buffer");
       discardBytes(size);
+      txIdle();
       return;
     }
 
     if (!readExact(payload, size, 15000)) {
       Serial.println("TX_ERROR: timeout reading payload from GUI");
       free(payload);
+      txIdle();
       return;
     }
   }
@@ -127,13 +244,23 @@ void loop() {
     sendManchesterByte(payload[i], txDeadline);
   }
 
-  txLightOn();
+  txBoundaryCarrier();
 
   if (payload) free(payload);
 
-  Serial.print("TX_CAROUSEL_FRAME_SENT: ");
-  Serial.print(size);
-  Serial.println(" bytes payload");
+  framesSentSinceBoot++;
+
+  if (quietMode) {
+    if (framesSentSinceBoot % QUIET_PROGRESS_EVERY_FRAMES == 0) {
+      Serial.print("TX_BULK_PROGRESS: ");
+      Serial.print(framesSentSinceBoot);
+      Serial.println(" frames");
+    }
+  } else {
+    Serial.print("TX_CAROUSEL_FRAME_SENT: ");
+    Serial.print(size);
+    Serial.println(" bytes payload");
+  }
 }
 
 int readByteWithTimeout(uint32_t timeoutMs) {
@@ -189,19 +316,51 @@ void handleCommand() {
     return;
   }
 
+  if (line.startsWith("QUIET=")) {
+    quietMode = (line.substring(6).toInt() != 0);
+    Serial.print("TX quiet mode ");
+    Serial.println(quietMode ? "enabled" : "disabled");
+    return;
+  }
+
+  if (line.startsWith("LEDTEST")) {
+    runLedTest();
+    return;
+  }
+
   Serial.print("TX: unknown command ");
   Serial.println(line);
 }
 
+void runLedTest() {
+  Serial.println("TX_LED_TEST_START");
+
+  // Make this a true human-visible control test, not a PWM brightness test.
+  // PWM at 40 kHz reads as an average voltage on a multimeter and may not look
+  // like an obvious blink. Detach PWM briefly and drive the gate fully ON/OFF.
+  detachPwmOutput();
+  pinMode(TX_PIN, OUTPUT);
+
+  for (uint8_t i = 0; i < 5; i++) {
+    writeLedDigital(false);
+    delay(450);
+    writeLedDigital(true);
+    delay(450);
+  }
+
+  writeLedDigital(false);
+  delay(250);
+  setupPwmOutput();
+  txIdle();
+  Serial.println("TX_LED_TEST_DONE");
+}
+
 void sendFrameGap() {
-  txLightOn();
+  txBoundaryCarrier();
 
-  uint32_t gapUs = halfBitUs * 80;
-
-  if (gapUs < 2000) gapUs = 2000;
-  if (gapUs > 12000) gapUs = 12000;
-
-  delayMicroseconds(gapUs);
+  if (FRAME_GAP_US > 0) {
+    delayMicroseconds(FRAME_GAP_US);
+  }
 }
 
 void sendManchesterPreamble(uint8_t count, uint32_t &deadline) {
@@ -245,27 +404,28 @@ void waitNextHalfBit(uint32_t &deadline) {
 }
 
 void sendManchesterByte(uint8_t b, uint32_t &deadline) {
-  txLightOff();
+  // Start symbol: still Manchester-shaped, but uses bright/dim levels.
+  txDim();
   waitNextHalfBit(deadline);
-  txLightOn();
+  txBright();
   waitNextHalfBit(deadline);
 
   for (int i = 7; i >= 0; i--) {
     bool bit = (b >> i) & 0x01;
 
     if (bit) {
-      txLightOn();
+      txBright();
       waitNextHalfBit(deadline);
-      txLightOff();
+      txDim();
       waitNextHalfBit(deadline);
     } else {
-      txLightOff();
+      txDim();
       waitNextHalfBit(deadline);
-      txLightOn();
+      txBright();
       waitNextHalfBit(deadline);
     }
   }
 
-  txLightOn();
+  txBoundaryCarrier();
   waitNextHalfBit(deadline);
 }
