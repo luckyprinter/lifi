@@ -1,0 +1,163 @@
+LiFi TX diagnostic log
+saved_at=2026-05-17 22:47:21
+port=/dev/ttyUSB0 - CP2102 USB to UART Bridge Controller - CP2102 USB to UART Bridge Controller [USB VID:PID=10C4:EA60 SER=0001 LOCATION=1-8]
+connected=True
+frequency_hz=100
+tx_mode=ON/OFF
+chunk_bytes=256
+carousel_rounds=1
+round_gap_ms=0
+frame_gap_ms=2
+fec_enabled=True
+wait_for_tx_done=True
+
+log:
+22:44:28  TX  FREQ=1000
+22:44:28  TX  Optical TX mode: ON/OFF
+22:44:28  TX  Debug wait mode
+22:44:28  TX  Connected.
+22:44:28  TX  TX FREQ = 1000 Hz | halfBit = 500 us
+22:44:28  TX  TXMODE_SET:ON_OFF
+22:44:28  TX  TX_MODE:ON_OFF
+22:44:28  TX  TX_LED_PIN:5
+22:44:28  TX  TX_LED_ACTIVE_LOW:0
+22:44:28  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:44:28  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:44:28  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:44:28  TX  TX_FREQ:1000:halfBitUs=500
+22:44:28  TX  TX quiet mode disabled
+22:44:54  TX  Optical TX mode: ON/OFF
+22:44:54  TX  TXMODE_SET:ON_OFF
+22:44:54  TX  TX_MODE:ON_OFF
+22:44:54  TX  TX_LED_PIN:5
+22:44:54  TX  TX_LED_ACTIVE_LOW:0
+22:44:54  TX  Debug wait mode
+22:44:54  TX  SENT_TEXT filename=text_message.txt bytes=32 crc=0xD908 sha256=366a208c90be879af1cf0b4b462ee758d3fca4a86c4b2395c8c21d66644869dd
+22:44:54  TX  SENT_TEXT_CONTENT='hellow there meow lowkey sadboy\n'
+22:44:54  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:44:54  TX  Carousel start: text 'text_message.txt', tid=40276, size=32 B, chunks=1, chunk=256, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0xD908
+22:44:54  TX  Estimated optical time: 1s per round, 1s total at 1000 Hz
+22:44:54  TX  Round 1/1 start
+22:44:55  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:44:55  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:44:55  TX  TX_FREQ:1000:halfBitUs=500
+22:44:55  TX  TX quiet mode disabled
+22:44:55  TX  Sent tid=40276 chunk 1/1 (32 bytes), frame_crc=0xFDEF
+22:44:55  TX  TX_CAROUSEL_FRAME_SENT: 64 bytes payload
+22:44:55  TX  Carousel done: sent 1/1 frames in 0s
+22:45:03  TX  TXMODE_SET:ON_OFF
+22:45:03  TX  Optical TX mode: ON/OFF
+22:45:03  TX  TX_MODE:ON_OFF
+22:45:03  TX  TX_LED_PIN:5
+22:45:03  TX  TX_LED_ACTIVE_LOW:0
+22:45:03  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:45:03  TX  Debug wait mode
+22:45:03  TX  SENT_TEXT filename=text_message.txt bytes=32 crc=0xD908 sha256=366a208c90be879af1cf0b4b462ee758d3fca4a86c4b2395c8c21d66644869dd
+22:45:03  TX  SENT_TEXT_CONTENT='hellow there meow lowkey sadboy\n'
+22:45:03  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:45:03  TX  Carousel start: text 'text_message.txt', tid=29675, size=32 B, chunks=1, chunk=256, rounds=1, fec=on, tx=ON/OFF, mode=debug wait, file_crc=0xD908
+22:45:03  TX  Estimated optical time: 4s per round, 4s total at 1000 Hz
+22:45:03  TX  Round 1/1 start
+22:45:03  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:45:03  TX  TX_FREQ:1000:halfBitUs=500
+22:45:03  TX  TX quiet mode disabled
+22:45:03  TX  Sent tid=29675 chunk 1/1 (32 bytes), frame_crc=0x7E6E
+22:45:04  TX  TX_CAROUSEL_FRAME_SENT: 64 bytes payload
+22:45:04  TX  Sent tid=29675 parity group 1-1/1 (256 bytes), frame_crc=0x815E
+22:45:07  TX  TX_CAROUSEL_FRAME_SENT: 291 bytes payload
+22:45:07  TX  Carousel done: sent 2/2 frames in 4s
+22:45:14  TX  STATS requested
+22:45:14  TX  TX_MODE:ON_OFF
+22:45:14  TX  TX_LED_PIN:5
+22:45:14  TX  TX_LED_ACTIVE_LOW:0
+22:45:14  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:45:14  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:45:14  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:45:14  TX  TX_FREQ:1000:halfBitUs=500
+22:45:18  TX  TXMODE_SET:ON_OFF
+22:45:18  TX  Optical TX mode: ON/OFF
+22:45:18  TX  TX_MODE:ON_OFF
+22:45:18  TX  TX_LED_PIN:5
+22:45:18  TX  TX_LED_ACTIVE_LOW:0
+22:45:18  TX  Debug wait mode
+22:45:18  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:45:18  TX  SENT_TEXT filename=text_message.txt bytes=32 crc=0xD908 sha256=366a208c90be879af1cf0b4b462ee758d3fca4a86c4b2395c8c21d66644869dd
+22:45:18  TX  SENT_TEXT_CONTENT='hellow there meow lowkey sadboy\n'
+22:45:18  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:45:18  TX  Carousel start: text 'text_message.txt', tid=21017, size=32 B, chunks=1, chunk=256, rounds=1, fec=on, tx=ON/OFF, mode=debug wait, file_crc=0xD908
+22:45:18  TX  Estimated optical time: 4s per round, 4s total at 1000 Hz
+22:45:18  TX  Round 1/1 start
+22:45:18  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:45:18  TX  TX_FREQ:1000:halfBitUs=500
+22:45:18  TX  TX quiet mode disabled
+22:45:18  TX  Sent tid=21017 chunk 1/1 (32 bytes), frame_crc=0x4E50
+22:45:19  TX  TX_CAROUSEL_FRAME_SENT: 64 bytes payload
+22:45:19  TX  Sent tid=21017 parity group 1-1/1 (256 bytes), frame_crc=0x8160
+22:45:22  TX  TX_CAROUSEL_FRAME_SENT: 291 bytes payload
+22:45:22  TX  Carousel done: sent 2/2 frames in 4s
+22:45:24  TX  STATS requested
+22:45:24  TX  TX_MODE:ON_OFF
+22:45:24  TX  TX_LED_PIN:5
+22:45:24  TX  TX_LED_ACTIVE_LOW:0
+22:45:24  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:45:24  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:45:24  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:45:24  TX  TX_FREQ:1000:halfBitUs=500
+22:45:48  TX  FREQ=100
+22:45:48  TX  TX FREQ = 100 Hz | halfBit = 5000 us
+22:45:58  TX  STATS requested
+22:45:58  TX  TX_MODE:ON_OFF
+22:45:58  TX  TX_LED_PIN:5
+22:45:58  TX  TX_LED_ACTIVE_LOW:0
+22:45:58  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:45:58  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:45:58  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:45:58  TX  TX_FREQ:100:halfBitUs=5000
+22:46:04  TX  TXMODE_SET:ON_OFF
+22:46:04  TX  Optical TX mode: ON/OFF
+22:46:04  TX  TX_MODE:ON_OFF
+22:46:04  TX  TX_LED_PIN:5
+22:46:04  TX  TX_LED_ACTIVE_LOW:0
+22:46:04  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:46:04  TX  Debug wait mode
+22:46:04  TX  SENT_TEXT filename=text_message.txt bytes=32 crc=0xD908 sha256=366a208c90be879af1cf0b4b462ee758d3fca4a86c4b2395c8c21d66644869dd
+22:46:04  TX  SENT_TEXT_CONTENT='hellow there meow lowkey sadboy\n'
+22:46:04  TX  Carousel start: text 'text_message.txt', tid=4668, size=32 B, chunks=1, chunk=256, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0xD908
+22:46:04  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:46:04  TX  Estimated optical time: 10s per round, 10s total at 100 Hz
+22:46:04  TX  Round 1/1 start
+22:46:04  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:46:04  TX  TX_FREQ:100:halfBitUs=5000
+22:46:04  TX  TX quiet mode disabled
+22:46:04  TX  Sent tid=4668 chunk 1/1 (32 bytes), frame_crc=0x9FAA
+22:46:14  TX  TX_CAROUSEL_FRAME_SENT: 64 bytes payload
+22:46:14  TX  Carousel done: sent 1/1 frames in 9s
+22:46:31  TX  STATS requested
+22:46:31  TX  TX_MODE:ON_OFF
+22:46:31  TX  TX_LED_PIN:5
+22:46:31  TX  TX_LED_ACTIVE_LOW:0
+22:46:31  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:46:31  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:46:31  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:46:31  TX  TX_FREQ:100:halfBitUs=5000
+22:46:34  TX  TXMODE_SET:ON_OFF
+22:46:34  TX  Optical TX mode: ON/OFF
+22:46:34  TX  TX_MODE:ON_OFF
+22:46:34  TX  TX_LED_PIN:5
+22:46:34  TX  TX_LED_ACTIVE_LOW:0
+22:46:34  TX  Debug wait mode
+22:46:34  TX  SENT_TEXT filename=text_message.txt bytes=32 crc=0xD908 sha256=366a208c90be879af1cf0b4b462ee758d3fca4a86c4b2395c8c21d66644869dd
+22:46:34  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+22:46:34  TX  SENT_TEXT_CONTENT='hellow there meow lowkey sadboy\n'
+22:46:34  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+22:46:34  TX  Carousel start: text 'text_message.txt', tid=58406, size=32 B, chunks=1, chunk=256, rounds=1, fec=on, tx=ON/OFF, mode=debug wait, file_crc=0xD908
+22:46:34  TX  Estimated optical time: 43s per round, 43s total at 100 Hz
+22:46:34  TX  Round 1/1 start
+22:46:34  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+22:46:34  TX  TX_FREQ:100:halfBitUs=5000
+22:46:34  TX  TX quiet mode disabled
+22:46:34  TX  Sent tid=58406 chunk 1/1 (32 bytes), frame_crc=0xD617
+22:46:44  TX  TX_CAROUSEL_FRAME_SENT: 64 bytes payload
+22:46:44  TX  Sent tid=58406 parity group 1-1/1 (256 bytes), frame_crc=0xA4F3
+22:47:15  TX  TX_CAROUSEL_FRAME_SENT: 291 bytes payload
+22:47:15  TX  Carousel done: sent 2/2 frames in 41s
