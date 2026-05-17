@@ -12,9 +12,16 @@ const uint8_t MIN_PREAMBLE_COUNT = 8;
 const uint16_t CAROUSEL_HEADER_MIN = 16;
 const uint16_t PARITY_HEADER_MIN = 19;
 
-uint32_t frequencyHz = 9000;
-uint32_t halfBitUs = 55;
+uint32_t frequencyHz = 1000;
+uint32_t halfBitUs = 500;
 bool rxDebug = false;
+bool rxDiagnostics = false;
+
+uint32_t decodedBytes = 0;
+uint32_t unstableBits = 0;
+uint32_t framesOk = 0;
+uint32_t badCrcFrames = 0;
+uint32_t badHeaderFrames = 0;
 
 inline int readRxPin() {
   return gpio_get_level((gpio_num_t)RX_PIN);
@@ -87,6 +94,22 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("RXDIAG=") || cmd.startsWith("DIAG=")) {
+      int equals = cmd.indexOf('=');
+      rxDiagnostics = (cmd.substring(equals + 1).toInt() != 0);
+      Serial.print("RX diagnostics ");
+      Serial.println(rxDiagnostics ? "enabled" : "disabled");
+      printRxStats();
+      handled = true;
+      continue;
+    }
+
+    if (cmd.startsWith("STATS")) {
+      printRxStats();
+      handled = true;
+      continue;
+    }
+
     if (cmd.startsWith("RXTEST")) {
       runRxInputTest();
       resetFrame();
@@ -139,6 +162,29 @@ void runRxInputTest() {
   Serial.println(transitions);
 }
 
+void printRxStats() {
+  Serial.print("RX_STATS:freq=");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.print(halfBitUs);
+  Serial.print(":pin=");
+  Serial.print(RX_PIN);
+  Serial.print(":debug=");
+  Serial.print(rxDebug ? 1 : 0);
+  Serial.print(":diag=");
+  Serial.print(rxDiagnostics ? 1 : 0);
+  Serial.print(":decodedBytes=");
+  Serial.print(decodedBytes);
+  Serial.print(":framesOk=");
+  Serial.print(framesOk);
+  Serial.print(":badCrc=");
+  Serial.print(badCrcFrames);
+  Serial.print(":badHeader=");
+  Serial.print(badHeaderFrames);
+  Serial.print(":unstableBits=");
+  Serial.println(unstableBits);
+}
+
 int receiveManchesterByte() {
   while (true) {
     while (readRxPin() == HIGH) {
@@ -177,10 +223,12 @@ int receiveManchesterByte() {
     }
 
     if (!valid) {
+      unstableBits++;
       if (rxDebug) Serial.println("RX_ERROR: unstable Manchester bit");
       continue;
     }
 
+    decodedBytes++;
     return value;
   }
 }
@@ -285,7 +333,9 @@ void processReceivedByte(uint8_t data) {
       uint16_t minHeader = (frameType == TYPE_CAROUSEL_PARITY) ? PARITY_HEADER_MIN : CAROUSEL_HEADER_MIN;
 
       if (expectedSize < minHeader) {
+        badHeaderFrames++;
         Serial.println("RX_CAROUSEL_BAD_HEADER: too small");
+        if (rxDiagnostics) printRxStats();
         resetFrame();
         break;
       }
@@ -294,6 +344,7 @@ void processReceivedByte(uint8_t data) {
 
       if (!payloadBuffer) {
         Serial.println("RX_ERROR: cannot allocate payload buffer");
+        if (rxDiagnostics) printRxStats();
         resetFrame();
         break;
       }
@@ -325,16 +376,34 @@ void processReceivedByte(uint8_t data) {
 
       if (bytesRemaining == 0) {
         if (computedCRC == expectedCRC) {
+          framesOk++;
           if (frameType == TYPE_CAROUSEL_CHUNK) {
             handleCarouselFrame();
           } else if (frameType == TYPE_CAROUSEL_PARITY) {
             handleParityFrame();
           }
         } else {
+          badCrcFrames++;
           Serial.print("RX_CAROUSEL_BAD_CRC:");
           Serial.print(computedCRC, HEX);
           Serial.print(":expected=");
           Serial.println(expectedCRC, HEX);
+          if (rxDiagnostics) {
+            Serial.print("RX_CRC_CONTEXT:type=0x");
+            Serial.print(frameType, HEX);
+            Serial.print(":size=");
+            Serial.print(expectedSize);
+            Serial.print(":freq=");
+            Serial.print(frequencyHz);
+            Serial.print(":halfBitUs=");
+            Serial.print(halfBitUs);
+            Serial.print(":decodedBytes=");
+            Serial.print(decodedBytes);
+            Serial.print(":badCrc=");
+            Serial.print(badCrcFrames);
+            Serial.print(":unstableBits=");
+            Serial.println(unstableBits);
+          }
         }
 
         resetFrame();

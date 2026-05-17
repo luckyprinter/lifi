@@ -12,10 +12,11 @@ except ImportError:
     from serial_utils import build_port_choices, extract_device, friendly_serial_error, open_serial
 
 BAUDRATE = 115200
-DEFAULT_FREQUENCY_HZ = 9000
+DEFAULT_FREQUENCY_HZ = 1000
 MIN_FREQUENCY_HZ = 1
 MAX_FREQUENCY_HZ = 50000
 FEC_GROUP_SIZE = 8
+DEBUG_LOG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "debug_logs"))
 
 THEMES = {
     "Dark": {
@@ -206,6 +207,7 @@ class RXGui(tk.Tk):
         self.transfers = {}
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
+        self.diag_var = tk.BooleanVar(value=False)
         self.port_map = {}
 
         self.receive_folder = os.path.expanduser("~/LiFiReceived")
@@ -264,6 +266,13 @@ class RXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
+        self.diag_check.configure(
+            bg=self.colors["panel"],
+            fg=self.colors["text"],
+            activebackground=self.colors["panel"],
+            activeforeground=self.colors["text"],
+            selectcolor=self.colors["field"],
+        )
         self.folder_entry.configure(
             bg=self.colors["field"],
             fg=self.colors["text"],
@@ -314,7 +323,10 @@ class RXGui(tk.Tk):
         self.debug_check = tk.Checkbutton(top, text="RX Debug", variable=self.debug_var, command=self.set_debug, bg=self.colors["panel"], fg=self.colors["text"], activebackground=self.colors["panel"], activeforeground=self.colors["text"], selectcolor=self.colors["field"])
         self.debug_check.grid(row=1, column=3, sticky="w", padx=(0, 10), pady=(3, 0))
 
-        ttk.Label(top, text="Theme", style="Muted.TLabel").grid(row=0, column=4, sticky="w")
+        self.diag_check = tk.Checkbutton(top, text="Diagnostics", variable=self.diag_var, command=self.set_diagnostics, bg=self.colors["panel"], fg=self.colors["text"], activebackground=self.colors["panel"], activeforeground=self.colors["text"], selectcolor=self.colors["field"])
+        self.diag_check.grid(row=1, column=4, sticky="w", padx=(0, 10), pady=(3, 0))
+
+        ttk.Label(top, text="Theme", style="Muted.TLabel").grid(row=0, column=5, sticky="w")
         self.theme_box = ttk.Combobox(
             top,
             textvariable=self.theme_var,
@@ -322,15 +334,16 @@ class RXGui(tk.Tk):
             state="readonly",
             width=8,
         )
-        self.theme_box.grid(row=1, column=4, sticky="ew", padx=(0, 10), pady=(3, 0))
+        self.theme_box.grid(row=1, column=5, sticky="ew", padx=(0, 10), pady=(3, 0))
         self.theme_box.bind("<<ComboboxSelected>>", self.change_theme)
 
         self.connect_btn = ttk.Button(top, text="Connect", style="Accent.TButton", command=self.toggle_connection)
-        self.connect_btn.grid(row=1, column=5, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=6, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=7, padx=3, pady=(3, 0))
-        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=8, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=9, padx=3, pady=(3, 0))
+        self.connect_btn.grid(row=1, column=6, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=7, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=9, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Stats", command=self.request_rx_stats).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=11, padx=3, pady=(3, 0))
 
         folder = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         folder.columnconfigure(1, weight=1)
@@ -370,7 +383,8 @@ class RXGui(tk.Tk):
         log_header.grid(row=0, column=0, sticky="ew")
         log_header.columnconfigure(0, weight=1)
         ttk.Label(log_header, text="RX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=1, sticky="e")
+        ttk.Button(log_header, text="Save Log", command=self.save_log).grid(row=0, column=1, sticky="e", padx=(0, 6))
+        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=2, sticky="e")
 
         self.log = scrolledtext.ScrolledText(
             right,
@@ -432,6 +446,48 @@ class RXGui(tk.Tk):
         self.log.delete("1.0", tk.END)
         self.log.config(state="disabled")
 
+    def log_snapshot(self):
+        self.log.config(state="normal")
+        content = self.log.get("1.0", tk.END).strip()
+        self.log.config(state="disabled")
+
+        settings = [
+            "LiFi RX diagnostic log",
+            f"saved_at={time.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"port={self.port_var.get()}",
+            f"connected={bool(self.ser and self.ser.is_open)}",
+            f"frequency_hz={self.freq_var.get()}",
+            f"rx_debug={self.debug_var.get()}",
+            f"rx_diagnostics={self.diag_var.get()}",
+            f"receive_folder={self.receive_folder}",
+            f"active_transfers={len(self.transfers)}",
+            "",
+            "log:",
+            content,
+            "",
+        ]
+        return "\n".join(settings)
+
+    def save_log(self):
+        os.makedirs(DEBUG_LOG_DIR, exist_ok=True)
+        default_name = f"lifi_rx_debug_{time.strftime('%Y%m%d_%H%M%S')}.log"
+        path = filedialog.asksaveasfilename(
+            title="Save RX log",
+            initialdir=DEBUG_LOG_DIR,
+            initialfile=default_name,
+            defaultextension=".log",
+            filetypes=[("Log files", "*.log"), ("Text files", "*.txt"), ("All files", "*.*")],
+        )
+        if not path:
+            return
+
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(self.log_snapshot())
+            self.log_msg(f"Saved log: {path}")
+        except Exception as e:
+            self.log_msg(f"Save log error: {e}")
+
     def text_msg(self, msg):
         def ui():
             self.text_out.config(state="normal")
@@ -479,6 +535,7 @@ class RXGui(tk.Tk):
         time.sleep(1)
         self.set_freq()
         self.set_debug()
+        self.set_diagnostics()
         self.log_msg("Connected.")
 
     def disconnect(self, log_message=True):
@@ -515,6 +572,26 @@ class RXGui(tk.Tk):
         self.ser.write(f"DEBUG={value}\n".encode())
         self.ser.flush()
         self.log_msg(f"DEBUG={value}")
+
+    def set_diagnostics(self):
+        if not self.ser or not self.ser.is_open:
+            return
+        value = 1 if self.diag_var.get() else 0
+        self.ser.write(f"RXDIAG={value}\n".encode())
+        self.ser.flush()
+        self.log_msg(f"RXDIAG={value}")
+
+    def request_rx_stats(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect RX first.")
+            return
+
+        try:
+            self.ser.write(b"STATS\n")
+            self.ser.flush()
+            self.log_msg("STATS requested")
+        except Exception as e:
+            self.log_msg(f"RX stats error: {e}")
 
     def rx_test(self):
         if not self.ser or not self.ser.is_open:

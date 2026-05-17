@@ -29,6 +29,7 @@ FEC_GROUP_SIZE = 8
 MAX_FRAME_PAYLOAD = 65535
 MAX_TOTAL_CHUNKS = 65535
 FUTURE_TARGET_FILE_SIZE = 1024 * 1024
+DEBUG_LOG_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "debug_logs"))
 
 THEMES = {
     "Dark": {
@@ -376,7 +377,9 @@ class TXGui(tk.Tk):
         log_header.grid(row=0, column=0, sticky="ew")
         log_header.columnconfigure(0, weight=1)
         ttk.Label(log_header, text="TX Event Log", style="PanelTitle.TLabel").grid(row=0, column=0, sticky="w")
-        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=1, sticky="e")
+        ttk.Button(log_header, text="TX Stats", command=self.request_tx_stats).grid(row=0, column=1, sticky="e", padx=(0, 6))
+        ttk.Button(log_header, text="Save Log", command=self.save_log).grid(row=0, column=2, sticky="e", padx=(0, 6))
+        ttk.Button(log_header, text="Clear Log", command=self.clear_log).grid(row=0, column=3, sticky="e")
 
         self.log = scrolledtext.ScrolledText(
             right,
@@ -437,6 +440,63 @@ class TXGui(tk.Tk):
         self.log.config(state="normal")
         self.log.delete("1.0", tk.END)
         self.log.config(state="disabled")
+
+    def log_snapshot(self):
+        self.log.config(state="normal")
+        content = self.log.get("1.0", tk.END).strip()
+        self.log.config(state="disabled")
+
+        settings = [
+            "LiFi TX diagnostic log",
+            f"saved_at={time.strftime('%Y-%m-%d %H:%M:%S')}",
+            f"port={self.port_var.get()}",
+            f"connected={bool(self.ser and self.ser.is_open)}",
+            f"frequency_hz={self.freq_var.get()}",
+            f"tx_mode={self.tx_optical_mode_var.get()}",
+            f"chunk_bytes={self.chunk_var.get()}",
+            f"carousel_rounds={self.rounds_var.get()}",
+            f"round_gap_ms={self.gap_var.get()}",
+            f"frame_gap_ms={self.frame_gap_var.get()}",
+            f"fec_enabled={self.fec_var.get()}",
+            f"wait_for_tx_done={self.wait_done_var.get()}",
+            "",
+            "log:",
+            content,
+            "",
+        ]
+        return "\n".join(settings)
+
+    def save_log(self):
+        os.makedirs(DEBUG_LOG_DIR, exist_ok=True)
+        default_name = f"lifi_tx_debug_{time.strftime('%Y%m%d_%H%M%S')}.log"
+        path = filedialog.asksaveasfilename(
+            title="Save TX log",
+            initialdir=DEBUG_LOG_DIR,
+            initialfile=default_name,
+            defaultextension=".log",
+            filetypes=[("Log files", "*.log"), ("Text files", "*.txt"), ("All files", "*.*")],
+        )
+        if not path:
+            return
+
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(self.log_snapshot())
+            self.log_msg(f"Saved log: {path}")
+        except Exception as e:
+            self.log_msg(f"Save log error: {e}")
+
+    def request_tx_stats(self):
+        if not self.ser or not self.ser.is_open:
+            messagebox.showwarning("Serial", "Connect TX first.")
+            return
+
+        try:
+            self.ser.write(b"STATS\n")
+            self.ser.flush()
+            self.log_msg("STATS requested")
+        except Exception as e:
+            self.log_msg(f"TX stats error: {e}")
 
     def update_transmission_mode_label(self):
         if not hasattr(self, "mode_label"):

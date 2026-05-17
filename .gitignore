@@ -24,6 +24,10 @@ Thumbs.db
 
 # Local logs and generated receive output
 *.log
+!debug_logs/
+!debug_logs/.gitkeep
+!debug_logs/*.log
+!debug_logs/**/*.log
 LiFiReceived/
 received_*
 samples/received_*

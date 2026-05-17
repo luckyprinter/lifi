@@ -55,8 +55,8 @@ const uint8_t LED_IDLE_BRIGHTNESS_PERCENT = 75;
 const uint8_t LED_BRIGHT_PERCENT = 100;
 const uint8_t LED_DIM_PERCENT = 50;
 
-uint32_t frequencyHz = 9000;
-uint32_t halfBitUs = 55;
+uint32_t frequencyHz = 1000;
+uint32_t halfBitUs = 500;
 bool quietMode = false;
 TxOpticalMode txMode = TX_MODE_OOK;
 uint32_t framesSentSinceBoot = 0;
