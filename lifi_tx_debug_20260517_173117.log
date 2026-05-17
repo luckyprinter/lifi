@@ -1,0 +1,30 @@
+17:30:23 TX FREQ=5000
+17:30:23 TX TX FREQ = 5000 Hz | halfBit = 100 us
+17:30:26 TX STATS requested
+17:30:26 TX TX_STATS:freq=5000:halfBitUs=100:serialFrames=4:opticalFrames=4:payloadBytes=1166:errors=0:pin=1
+17:30:35 TX TX quiet mode unsupported in this historical firmware
+17:30:35 TX Smooth streaming mode
+17:30:35 TX Carousel start: text 'text_message.txt', tid=50729, size=4 B, chunks=1, chunk=512, rounds=2, fec=on, mode=smooth streaming, file_crc=0x9796
+17:30:35 TX Estimated optical time: 1s per round, 2s total at 5000 Hz
+17:30:35 TX Round 1/2 start
+17:30:35 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+17:30:36 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:30:36 TX Round 2/2 start
+17:30:37 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+17:30:38 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:30:38 TX Carousel done: sent 4/4 frames in 3s
+17:30:42 TX STATS requested
+17:30:42 TX TX_STATS:freq=5000:halfBitUs=100:serialFrames=8:opticalFrames=8:payloadBytes=2332:errors=0:pin=1
+17:31:07 TX Smooth streaming mode
+17:31:07 TX Carousel start: text 'text_message.txt', tid=65411, size=19 B, chunks=1, chunk=512, rounds=2, fec=on, mode=smooth streaming, file_crc=0x207C
+17:31:07 TX Estimated optical time: 1s per round, 2s total at 5000 Hz
+17:31:07 TX TX quiet mode unsupported in this historical firmware
+17:31:07 TX Round 1/2 start
+17:31:07 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:31:09 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:31:09 TX Round 2/2 start
+17:31:09 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:31:10 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:31:10 TX Carousel done: sent 4/4 frames in 3s
+17:31:16 TX STATS requested
+17:31:16 TX TX_STATS:freq=5000:halfBitUs=100:serialFrames=12:opticalFrames=12:payloadBytes=3528:errors=0:pin=1
