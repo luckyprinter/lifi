@@ -1,0 +1,87 @@
+18:05:50 TX FW? requested
+18:05:50 TX TX: unknown command FW?
+18:05:50 TX FREQ=2000
+18:05:50 TX DEBUG=0
+18:05:50 TX Smooth streaming mode
+18:05:50 TX Connected.
+18:05:50 TX TX FREQ = 2000 Hz | halfBit = 250 us
+18:05:51 TX TX debug disabled
+18:05:51 TX TX quiet mode unsupported in this historical firmware
+18:05:51 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=48:opticalFrames=48:payloadBytes=12040:errors=0:pin=1
+18:05:52 TX STATS requested
+18:05:52 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=48:opticalFrames=48:payloadBytes=12040:errors=0:pin=1
+18:05:54 TX Smooth streaming mode
+18:05:54 TX TX quiet mode unsupported in this historical firmware
+18:05:54 TX Carousel start: text 'text_message.txt', tid=34996, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:05:54 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:05:54 TX Round 1/2 start
+18:05:54 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:05:55 TX Round 2/2 start
+18:05:55 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:05:55 TX Carousel done: sent 2/2 frames in 1s
+18:06:14 TX STATS requested
+18:06:14 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=50:opticalFrames=50:payloadBytes=12112:errors=0:pin=1
+18:06:15 TX Smooth streaming mode
+18:06:15 TX TX quiet mode unsupported in this historical firmware
+18:06:15 TX Carousel start: text 'text_message.txt', tid=39854, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:06:15 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:06:15 TX Round 1/2 start
+18:06:15 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:15 TX Round 2/2 start
+18:06:16 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:16 TX Carousel done: sent 2/2 frames in 1s
+18:06:27 TX STATS requested
+18:06:27 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=52:opticalFrames=52:payloadBytes=12184:errors=0:pin=1
+18:06:28 TX TX quiet mode unsupported in this historical firmware
+18:06:28 TX Smooth streaming mode
+18:06:28 TX Carousel start: text 'text_message.txt', tid=57220, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:06:28 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:06:28 TX Round 1/2 start
+18:06:29 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:29 TX Round 2/2 start
+18:06:29 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:29 TX Carousel done: sent 2/2 frames in 1s
+18:06:39 TX STATS requested
+18:06:39 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=54:opticalFrames=54:payloadBytes=12256:errors=0:pin=1
+18:06:40 TX TX quiet mode unsupported in this historical firmware
+18:06:40 TX Smooth streaming mode
+18:06:40 TX Carousel start: text 'text_message.txt', tid=41371, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:06:40 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:06:40 TX Round 1/2 start
+18:06:40 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:41 TX Round 2/2 start
+18:06:41 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:41 TX Carousel done: sent 2/2 frames in 1s
+18:06:57 TX STATS requested
+18:06:57 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=56:opticalFrames=56:payloadBytes=12328:errors=0:pin=1
+18:06:58 TX TX quiet mode unsupported in this historical firmware
+18:06:58 TX Smooth streaming mode
+18:06:58 TX Carousel start: text 'text_message.txt', tid=55333, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:06:58 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:06:58 TX Round 1/2 start
+18:06:59 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:59 TX Round 2/2 start
+18:06:59 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:06:59 TX Carousel done: sent 2/2 frames in 1s
+18:07:09 TX STATS requested
+18:07:09 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=58:opticalFrames=58:payloadBytes=12400:errors=0:pin=1
+18:07:10 TX Smooth streaming mode
+18:07:10 TX Carousel start: text 'text_message.txt', tid=46056, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:07:10 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:07:10 TX TX quiet mode unsupported in this historical firmware
+18:07:10 TX Round 1/2 start
+18:07:10 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:07:10 TX Round 2/2 start
+18:07:11 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:07:11 TX Carousel done: sent 2/2 frames in 1s
+18:07:19 TX Smooth streaming mode
+18:07:19 TX TX quiet mode unsupported in this historical firmware
+18:07:19 TX Carousel start: text 'text_message.txt', tid=29103, size=4 B, chunks=1, chunk=256, rounds=2, fec=off, mode=smooth streaming, file_crc=0x9796
+18:07:19 TX Estimated optical time: 0s per round, 0s total at 2000 Hz
+18:07:19 TX Round 1/2 start
+18:07:19 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:07:19 TX Round 2/2 start
+18:07:20 TX TX_CAROUSEL_FRAME_SENT: 36 bytes payload
+18:07:20 TX Carousel done: sent 2/2 frames in 1s
+18:07:43 TX STATS requested
+18:07:43 TX TX_STATS:freq=2000:halfBitUs=250:serialFrames=62:opticalFrames=62:payloadBytes=12544:errors=0:pin=1
