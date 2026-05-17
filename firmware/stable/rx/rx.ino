@@ -284,22 +284,20 @@ int receiveManchesterByte() {
 
     candidateStarts++;
 
-    // The TEPT4400 plus a large load resistor such as 47k can delay threshold
-    // crossings. A configurable phase lets us sample slightly before or after
-    // the ideal center. Start near center; tune with PHASE=45..70 if CRC fails.
-    uint32_t sampleDeadline = micros() + ((uint32_t)halfBitUs * sampleOffsetPercent / 100);
-    waitUntilMicros(sampleDeadline);
+    // Match the older working receiver style: delay from the detected start
+    // edge, then use relative half-bit delays. The configurable phase still
+    // compensates for sensor threshold delay, but avoids long-frame deadline
+    // coupling while we are recovering the stable hardware baseline.
+    delayMicroseconds((uint32_t)halfBitUs * sampleOffsetPercent / 100);
 
     uint8_t value = 0;
     bool valid = true;
 
     for (int i = 7; i >= 0; i--) {
-      sampleDeadline += halfBitUs;
-      waitUntilMicros(sampleDeadline);
+      delayMicroseconds(halfBitUs);
       bool first = majorityRead();
 
-      sampleDeadline += halfBitUs;
-      waitUntilMicros(sampleDeadline);
+      delayMicroseconds(halfBitUs);
       bool second = majorityRead();
 
       if (first == second) {
@@ -325,12 +323,6 @@ int receiveManchesterByte() {
     }
 
     return value;
-  }
-}
-
-void waitUntilMicros(uint32_t deadline) {
-  while ((int32_t)(micros() - deadline) < 0) {
-    ;
   }
 }
 

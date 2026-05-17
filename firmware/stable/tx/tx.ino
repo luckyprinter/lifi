@@ -137,19 +137,19 @@ void loop() {
   }
 
   sendFrameGap();
-  uint32_t txDeadline = micros();
 
-  sendManchesterPreamble(PREAMBLE_COUNT, txDeadline);
+  sendManchesterPreamble(PREAMBLE_COUNT);
 
-  sendManchesterByte(START_BYTE, txDeadline);
-  sendManchesterByte(frameType, txDeadline);
-  sendManchesterByte((size >> 8) & 0xFF, txDeadline);
-  sendManchesterByte(size & 0xFF, txDeadline);
-  sendManchesterByte((frameCRC >> 8) & 0xFF, txDeadline);
-  sendManchesterByte(frameCRC & 0xFF, txDeadline);
+  sendManchesterByte(START_BYTE);
+  sendManchesterByte(frameType);
+  sendManchesterByte((size >> 8) & 0xFF);
+  sendManchesterByte(size & 0xFF);
+  sendManchesterByte((frameCRC >> 8) & 0xFF);
+  sendManchesterByte(frameCRC & 0xFF);
 
   for (uint16_t i = 0; i < size; i++) {
-    sendManchesterByte(payload[i], txDeadline);
+    sendManchesterByte(payload[i]);
+    delayMicroseconds(halfBitUs);
   }
 
   txLightOn();
@@ -292,9 +292,9 @@ void sendFrameGap() {
   delayMicroseconds(gapUs);
 }
 
-void sendManchesterPreamble(uint8_t count, uint32_t &deadline) {
+void sendManchesterPreamble(uint8_t count) {
   for (uint8_t i = 0; i < count; i++) {
-    sendManchesterByte(PREAMBLE_BYTE, deadline);
+    sendManchesterByte(PREAMBLE_BYTE);
   }
 }
 
@@ -321,39 +321,28 @@ void setFrequency(uint32_t f) {
   Serial.println(" us");
 }
 
-void waitUntilMicros(uint32_t deadline) {
-  while ((int32_t)(micros() - deadline) < 0) {
-    ;
-  }
-}
-
-void waitNextHalfBit(uint32_t &deadline) {
-  deadline += halfBitUs;
-  waitUntilMicros(deadline);
-}
-
-void sendManchesterByte(uint8_t b, uint32_t &deadline) {
+void sendManchesterByte(uint8_t b) {
   txLightOff();
-  waitNextHalfBit(deadline);
+  delayMicroseconds(halfBitUs);
   txLightOn();
-  waitNextHalfBit(deadline);
+  delayMicroseconds(halfBitUs);
 
   for (int i = 7; i >= 0; i--) {
     bool bit = (b >> i) & 0x01;
 
     if (bit) {
       txLightOn();
-      waitNextHalfBit(deadline);
+      delayMicroseconds(halfBitUs);
       txLightOff();
-      waitNextHalfBit(deadline);
+      delayMicroseconds(halfBitUs);
     } else {
       txLightOff();
-      waitNextHalfBit(deadline);
+      delayMicroseconds(halfBitUs);
       txLightOn();
-      waitNextHalfBit(deadline);
+      delayMicroseconds(halfBitUs);
     }
   }
 
   txLightOn();
-  waitNextHalfBit(deadline);
+  delayMicroseconds(halfBitUs);
 }

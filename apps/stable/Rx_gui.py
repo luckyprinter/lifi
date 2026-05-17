@@ -669,6 +669,38 @@ class RXGui(tk.Tk):
                 self.handle_line(text)
 
     def handle_line(self, line):
+        known_prefixes = (
+            "ESP32 RX Ready",
+            "RX_FW:",
+            "RX FREQ",
+            "RX debug",
+            "RX sync edge",
+            "RX sample phase",
+            "RX_STATS:",
+            "RX_INPUT_TEST",
+            "RX_CAROUSEL_",
+            "RX_FILE_",
+            "RX_TEXT_",
+            "RX_ERROR:",
+            "RX_BINARY_NOISE:",
+            "Transfers reset.",
+            "Saved debug log:",
+            "Connected.",
+            "Disconnected.",
+            "FREQ=",
+            "DEBUG=",
+            "EDGE=",
+            "PHASE=",
+            "STATS requested",
+            "RXTEST sent",
+            "FW? requested",
+        )
+
+        if not line.startswith(known_prefixes):
+            if self.debug_var.get():
+                self.log_msg(f"RX_IGNORED_LINE:{line[:120]}")
+            return
+
         if line.startswith("RX_CAROUSEL_CHUNK:"):
             try:
                 parts = line.split(":")
