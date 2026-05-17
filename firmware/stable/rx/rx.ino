@@ -15,6 +15,7 @@ const uint16_t PARITY_HEADER_MIN = 19;
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 bool rxDebug = false;
+bool syncHighToLow = true;
 uint32_t decodedBytes = 0;
 uint32_t invalidManchester = 0;
 uint32_t candidateStarts = 0;
@@ -103,6 +104,27 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("EDGE=")) {
+      String edge = cmd.substring(5);
+      edge.trim();
+      edge.toUpperCase();
+
+      if (edge == "HL" || edge == "HIGH_TO_LOW") {
+        syncHighToLow = true;
+        Serial.println("RX sync edge = HIGH_TO_LOW");
+      } else if (edge == "LH" || edge == "LOW_TO_HIGH") {
+        syncHighToLow = false;
+        Serial.println("RX sync edge = LOW_TO_HIGH");
+      } else {
+        Serial.print("RX_ERROR: unknown EDGE=");
+        Serial.println(edge);
+      }
+
+      resetFrame();
+      handled = true;
+      continue;
+    }
+
     if (cmd.startsWith("RXTEST")) {
       runRxInputTest();
       resetFrame();
@@ -160,6 +182,8 @@ void printRxStats() {
   Serial.print(frequencyHz);
   Serial.print(":halfBitUs=");
   Serial.print(halfBitUs);
+  Serial.print(":edge=");
+  Serial.print(syncHighToLow ? "HL" : "LH");
   Serial.print(":pin=");
   Serial.print(readRxPin());
   Serial.print(":decodedBytes=");
@@ -198,16 +222,35 @@ void printRxStatsIfDue() {
 
 int receiveManchesterByte() {
   while (true) {
-    while (readRxPin() == HIGH) {
-      if (handleSerialCommands()) return -2;
-      printRxStatsIfDue();
-      yield();
-    }
+    if (syncHighToLow) {
+      // Current TEPT4400 divider with TX idle LED ON usually idles LOW.
+      // A Manchester byte starts when TX briefly turns the LED OFF then ON,
+      // which appears at the RX GPIO as HIGH then LOW. Sync on that falling
+      // edge so the following samples align with the data bit centers.
+      while (readRxPin() == LOW) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
 
-    while (readRxPin() == LOW) {
-      if (handleSerialCommands()) return -2;
-      printRxStatsIfDue();
-      yield();
+      while (readRxPin() == HIGH) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
+    } else {
+      // Legacy/inverted receiver wiring path.
+      while (readRxPin() == HIGH) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
+
+      while (readRxPin() == LOW) {
+        if (handleSerialCommands()) return -2;
+        printRxStatsIfDue();
+        yield();
+      }
     }
 
     candidateStarts++;
