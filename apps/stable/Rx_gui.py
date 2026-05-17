@@ -16,6 +16,7 @@ DEFAULT_FREQUENCY_HZ = 9000
 MIN_FREQUENCY_HZ = 1
 MAX_FREQUENCY_HZ = 50000
 FEC_GROUP_SIZE = 8
+DEFAULT_RX_PHASE_PERCENT = 55
 
 THEMES = {
     "Dark": {
@@ -221,6 +222,7 @@ class RXGui(tk.Tk):
         self.transfers = {}
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
+        self.phase_var = tk.StringVar(value=str(DEFAULT_RX_PHASE_PERCENT))
         self.log_lines = []
         self.port_map = {}
 
@@ -333,13 +335,17 @@ class RXGui(tk.Tk):
         self.theme_box.grid(row=1, column=4, sticky="ew", padx=(0, 10), pady=(3, 0))
         self.theme_box.bind("<<ComboboxSelected>>", self.change_theme)
 
+        ttk.Label(top, text="RX phase %", style="Muted.TLabel").grid(row=0, column=5, sticky="w")
+        ttk.Entry(top, textvariable=self.phase_var, width=8).grid(row=1, column=5, sticky="ew", padx=(0, 10), pady=(3, 0))
+
         self.connect_btn = ttk.Button(top, text="Connect", style="Accent.TButton", command=self.toggle_connection)
-        self.connect_btn.grid(row=1, column=5, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=6, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=7, padx=3, pady=(3, 0))
-        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=8, padx=3, pady=(3, 0))
-        ttk.Button(top, text="RX Stats", command=self.request_stats).grid(row=1, column=9, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=10, padx=3, pady=(3, 0))
+        self.connect_btn.grid(row=1, column=6, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=7, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Phase", command=self.set_phase).grid(row=1, column=9, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Stats", command=self.request_stats).grid(row=1, column=11, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=12, padx=3, pady=(3, 0))
 
         folder = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         folder.columnconfigure(1, weight=1)
@@ -509,6 +515,7 @@ class RXGui(tk.Tk):
         self.request_firmware_id()
         self.set_freq()
         self.set_edge_high_to_low()
+        self.set_phase()
         self.set_debug()
         self.request_stats(log_request=False)
         self.log_msg("Connected.")
@@ -569,6 +576,20 @@ class RXGui(tk.Tk):
             self.log_msg("EDGE=HL")
         except Exception as e:
             self.log_msg(f"RX edge error: {e}")
+
+    def set_phase(self):
+        if not self.ser or not self.ser.is_open:
+            return
+
+        try:
+            phase = int(self.phase_var.get())
+            if phase < 35 or phase > 80:
+                raise ValueError("Use 35-80")
+            self.ser.write(f"PHASE={phase}\n".encode())
+            self.ser.flush()
+            self.log_msg(f"PHASE={phase}")
+        except Exception as e:
+            self.log_msg(f"RX phase error: {e}")
 
     def request_stats(self, log_request=True):
         if not self.ser or not self.ser.is_open:

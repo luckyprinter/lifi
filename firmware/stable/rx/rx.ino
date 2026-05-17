@@ -17,6 +17,7 @@ uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 bool rxDebug = false;
 bool syncHighToLow = true;
+uint8_t sampleOffsetPercent = 55;
 uint32_t decodedBytes = 0;
 uint32_t invalidManchester = 0;
 uint32_t candidateStarts = 0;
@@ -134,6 +135,21 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("PHASE=")) {
+      int value = cmd.substring(6).toInt();
+
+      if (value < 35) value = 35;
+      if (value > 80) value = 80;
+
+      sampleOffsetPercent = (uint8_t)value;
+      Serial.print("RX sample phase = ");
+      Serial.print(sampleOffsetPercent);
+      Serial.println("%");
+      resetFrame();
+      handled = true;
+      continue;
+    }
+
     if (cmd.startsWith("RXTEST")) {
       runRxInputTest();
       resetFrame();
@@ -195,6 +211,8 @@ void printRxStats() {
   Serial.print(halfBitUs);
   Serial.print(":edge=");
   Serial.print(syncHighToLow ? "HL" : "LH");
+  Serial.print(":phase=");
+  Serial.print(sampleOffsetPercent);
   Serial.print(":pin=");
   Serial.print(readRxPin());
   Serial.print(":decodedBytes=");
@@ -266,7 +284,10 @@ int receiveManchesterByte() {
 
     candidateStarts++;
 
-    uint32_t sampleDeadline = micros() + (halfBitUs / 2);
+    // The TEPT4400 plus a large load resistor such as 47k can delay threshold
+    // crossings. A configurable phase lets us sample slightly before or after
+    // the ideal center. Start near center; tune with PHASE=45..70 if CRC fails.
+    uint32_t sampleDeadline = micros() + ((uint32_t)halfBitUs * sampleOffsetPercent / 100);
     waitUntilMicros(sampleDeadline);
 
     uint8_t value = 0;
