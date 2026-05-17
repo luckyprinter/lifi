@@ -1,6 +1,17 @@
 #include "driver/gpio.h"
 
-#define RX_PIN 5
+#define RX_DIGITAL_PIN 5
+#define RX_ANALOG_PIN 34
+
+// GPIO5 digital input is unstable with the measured TEPT4400 levels:
+// idle light is about 1.39 V and transmit transitions reach about 2.30 V.
+// 1.39 V is not a reliable ESP32 digital LOW. For timing recovery, use an ADC
+// pin and threshold the measured voltage in firmware. Wire the TEPT4400 signal
+// to GPIO34 for this mode. Set RX_USE_ANALOG_THRESHOLD to false to return to
+// the older GPIO5 digital receiver path.
+const bool RX_USE_ANALOG_THRESHOLD = true;
+const uint8_t RX_PIN = RX_USE_ANALOG_THRESHOLD ? RX_ANALOG_PIN : RX_DIGITAL_PIN;
+uint16_t rxAnalogThresholdMv = 1800;
 
 const uint8_t START_BYTE = 0x02;
 const uint8_t PREAMBLE_BYTE = 0xAA;
@@ -30,6 +41,10 @@ uint32_t badCrcFrames = 0;
 uint32_t badHeaderFrames = 0;
 
 inline int readRxRawPin() {
+  if (RX_USE_ANALOG_THRESHOLD) {
+    return analogReadMilliVolts(RX_PIN) >= rxAnalogThresholdMv ? HIGH : LOW;
+  }
+
   return gpio_get_level((gpio_num_t)RX_PIN);
 }
 
@@ -65,6 +80,13 @@ void setup() {
   Serial.setTimeout(25);
 
   pinMode(RX_PIN, INPUT);
+
+  if (RX_USE_ANALOG_THRESHOLD) {
+    analogReadResolution(12);
+#if defined(ARDUINO_ARCH_ESP32)
+    analogSetPinAttenuation(RX_PIN, ADC_11db);
+#endif
+  }
 
   setFrequency(frequencyHz);
 
@@ -115,6 +137,21 @@ bool handleSerialCommands() {
       continue;
     }
 
+    if (cmd.startsWith("THRESH=")) {
+      uint16_t mv = cmd.substring(7).toInt();
+      if (mv < 100 || mv > 3200) {
+        Serial.println("RX_ERROR: THRESH must be 100-3200 mV");
+      } else {
+        rxAnalogThresholdMv = mv;
+        Serial.print("RX analog threshold mV = ");
+        Serial.println(rxAnalogThresholdMv);
+        resetFrame();
+        printRxStats();
+      }
+      handled = true;
+      continue;
+    }
+
     if (cmd.startsWith("STATS")) {
       printRxStats();
       handled = true;
@@ -146,6 +183,9 @@ void runRxInputTest() {
   uint32_t lightHighCount = 0;
   uint32_t lightLowCount = 0;
   uint32_t transitions = 0;
+  uint32_t analogMinMv = 5000;
+  uint32_t analogMaxMv = 0;
+  uint64_t analogSumMv = 0;
   int last = readRxRawPin();
 
   Serial.println("RX_INPUT_TEST_START");
@@ -153,6 +193,13 @@ void runRxInputTest() {
   while (millis() - startMs < durationMs) {
     int current = readRxRawPin();
     int light = RX_LIGHT_ACTIVE_LOW ? !current : current;
+
+    if (RX_USE_ANALOG_THRESHOLD) {
+      uint32_t mv = analogReadMilliVolts(RX_PIN);
+      if (mv < analogMinMv) analogMinMv = mv;
+      if (mv > analogMaxMv) analogMaxMv = mv;
+      analogSumMv += mv;
+    }
 
     if (current == HIGH) rawHighCount++;
     else rawLowCount++;
@@ -182,7 +229,20 @@ void runRxInputTest() {
   Serial.print(":transitions=");
   Serial.print(transitions);
   Serial.print(":activeLow=");
-  Serial.println(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
+  Serial.print(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
+  Serial.print(":analog=");
+  Serial.print(RX_USE_ANALOG_THRESHOLD ? 1 : 0);
+  Serial.print(":thresholdMv=");
+  Serial.print(rxAnalogThresholdMv);
+  if (RX_USE_ANALOG_THRESHOLD && samples > 0) {
+    Serial.print(":minMv=");
+    Serial.print(analogMinMv);
+    Serial.print(":maxMv=");
+    Serial.print(analogMaxMv);
+    Serial.print(":avgMv=");
+    Serial.print((uint32_t)(analogSumMv / samples));
+  }
+  Serial.println();
 }
 
 void printRxStats() {
@@ -192,6 +252,10 @@ void printRxStats() {
   Serial.print(halfBitUs);
   Serial.print(":pin=");
   Serial.print(RX_PIN);
+  Serial.print(":analog=");
+  Serial.print(RX_USE_ANALOG_THRESHOLD ? 1 : 0);
+  Serial.print(":thresholdMv=");
+  Serial.print(rxAnalogThresholdMv);
   Serial.print(":lightActiveLow=");
   Serial.print(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
   Serial.print(":debug=");

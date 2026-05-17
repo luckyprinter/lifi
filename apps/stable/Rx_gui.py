@@ -208,6 +208,7 @@ class RXGui(tk.Tk):
         self.last_file = None
         self.theme_var = tk.StringVar(value="Light")
         self.diag_var = tk.BooleanVar(value=False)
+        self.threshold_var = tk.StringVar(value="1800")
         self.noise_lines = 0
         self.port_map = {}
 
@@ -320,14 +321,17 @@ class RXGui(tk.Tk):
         self.freq_var = tk.StringVar(value=str(DEFAULT_FREQUENCY_HZ))
         ttk.Entry(top, textvariable=self.freq_var, width=10).grid(row=1, column=2, sticky="ew", padx=(0, 10), pady=(3, 0))
 
+        ttk.Label(top, text="ADC threshold mV", style="Muted.TLabel").grid(row=0, column=3, sticky="w")
+        ttk.Entry(top, textvariable=self.threshold_var, width=10).grid(row=1, column=3, sticky="ew", padx=(0, 10), pady=(3, 0))
+
         self.debug_var = tk.BooleanVar(value=False)
         self.debug_check = tk.Checkbutton(top, text="RX Debug", variable=self.debug_var, command=self.set_debug, bg=self.colors["panel"], fg=self.colors["text"], activebackground=self.colors["panel"], activeforeground=self.colors["text"], selectcolor=self.colors["field"])
-        self.debug_check.grid(row=1, column=3, sticky="w", padx=(0, 10), pady=(3, 0))
+        self.debug_check.grid(row=1, column=4, sticky="w", padx=(0, 10), pady=(3, 0))
 
         self.diag_check = tk.Checkbutton(top, text="Diagnostics", variable=self.diag_var, command=self.set_diagnostics, bg=self.colors["panel"], fg=self.colors["text"], activebackground=self.colors["panel"], activeforeground=self.colors["text"], selectcolor=self.colors["field"])
-        self.diag_check.grid(row=1, column=4, sticky="w", padx=(0, 10), pady=(3, 0))
+        self.diag_check.grid(row=1, column=5, sticky="w", padx=(0, 10), pady=(3, 0))
 
-        ttk.Label(top, text="Theme", style="Muted.TLabel").grid(row=0, column=5, sticky="w")
+        ttk.Label(top, text="Theme", style="Muted.TLabel").grid(row=0, column=6, sticky="w")
         self.theme_box = ttk.Combobox(
             top,
             textvariable=self.theme_var,
@@ -335,16 +339,17 @@ class RXGui(tk.Tk):
             state="readonly",
             width=8,
         )
-        self.theme_box.grid(row=1, column=5, sticky="ew", padx=(0, 10), pady=(3, 0))
+        self.theme_box.grid(row=1, column=6, sticky="ew", padx=(0, 10), pady=(3, 0))
         self.theme_box.bind("<<ComboboxSelected>>", self.change_theme)
 
         self.connect_btn = ttk.Button(top, text="Connect", style="Accent.TButton", command=self.toggle_connection)
-        self.connect_btn.grid(row=1, column=6, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=7, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=8, padx=3, pady=(3, 0))
-        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=9, padx=3, pady=(3, 0))
-        ttk.Button(top, text="RX Stats", command=self.request_rx_stats).grid(row=1, column=10, padx=3, pady=(3, 0))
-        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=11, padx=3, pady=(3, 0))
+        self.connect_btn.grid(row=1, column=7, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=8, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=9, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Set Thresh", command=self.set_threshold).grid(row=1, column=10, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Test", command=self.rx_test).grid(row=1, column=11, padx=3, pady=(3, 0))
+        ttk.Button(top, text="RX Stats", command=self.request_rx_stats).grid(row=1, column=12, padx=3, pady=(3, 0))
+        ttk.Button(top, text="Reset Transfers", command=self.reset_transfers).grid(row=1, column=13, padx=3, pady=(3, 0))
 
         folder = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         folder.columnconfigure(1, weight=1)
@@ -458,6 +463,7 @@ class RXGui(tk.Tk):
             f"port={self.port_var.get()}",
             f"connected={bool(self.ser and self.ser.is_open)}",
             f"frequency_hz={self.freq_var.get()}",
+            f"adc_threshold_mv={self.threshold_var.get()}",
             f"rx_debug={self.debug_var.get()}",
             f"rx_diagnostics={self.diag_var.get()}",
             f"receive_folder={self.receive_folder}",
@@ -535,6 +541,7 @@ class RXGui(tk.Tk):
 
         time.sleep(1)
         self.set_freq()
+        self.set_threshold()
         self.set_debug()
         self.set_diagnostics()
         self.log_msg("Connected.")
@@ -565,6 +572,19 @@ class RXGui(tk.Tk):
             self.log_msg(f"FREQ={freq}")
         except Exception as e:
             self.log_msg(f"Frequency error: {e}")
+
+    def set_threshold(self):
+        if not self.ser or not self.ser.is_open:
+            return
+        try:
+            mv = int(self.threshold_var.get())
+            if mv < 100 or mv > 3200:
+                raise ValueError("Use 100-3200 mV")
+            self.ser.write(f"THRESH={mv}\n".encode())
+            self.ser.flush()
+            self.log_msg(f"THRESH={mv}")
+        except Exception as e:
+            self.log_msg(f"Threshold error: {e}")
 
     def set_debug(self):
         if not self.ser or not self.ser.is_open:
