@@ -1,0 +1,38 @@
+17:37:28 TX Disconnected.
+17:37:30 TX TX FREQ = 5000 Hz | halfBit = 100 us
+17:37:30 TX FREQ=5000
+17:37:30 TX DEBUG=0
+17:37:30 TX Smooth streaming mode
+17:37:30 TX Connected.
+17:37:30 TX TX debug disabled
+17:37:30 TX TX quiet mode unsupported in this historical firmware
+17:37:31 TX STATS requested
+17:37:31 TX TX_STATS:freq=5000:halfBitUs=100:serialFrames=12:opticalFrames=12:payloadBytes=3528:errors=0:pin=1
+17:38:55 TX Smooth streaming mode
+17:38:55 TX Carousel start: text 'text_message.txt', tid=37058, size=19 B, chunks=1, chunk=512, rounds=2, fec=on, mode=smooth streaming, file_crc=0x207C
+17:38:55 TX Estimated optical time: 1s per round, 2s total at 5000 Hz
+17:38:55 TX TX quiet mode unsupported in this historical firmware
+17:38:55 TX Round 1/2 start
+17:38:55 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:38:56 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:38:56 TX Round 2/2 start
+17:38:57 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:38:58 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:38:58 TX Carousel done: sent 4/4 frames in 3s
+17:39:04 TX STATS requested
+17:39:04 TX TX_STATS:freq=5000:halfBitUs=100:serialFrames=16:opticalFrames=16:payloadBytes=4724:errors=0:pin=1
+17:39:19 TX FREQ=3000
+17:39:19 TX TX FREQ = 3000 Hz | halfBit = 166 us
+17:39:20 TX STATS requested
+17:39:20 TX TX_STATS:freq=3000:halfBitUs=166:serialFrames=16:opticalFrames=16:payloadBytes=4724:errors=0:pin=1
+17:39:34 TX Smooth streaming mode
+17:39:34 TX Carousel start: text 'text_message.txt', tid=63749, size=19 B, chunks=1, chunk=512, rounds=2, fec=on, mode=smooth streaming, file_crc=0x207C
+17:39:34 TX Estimated optical time: 2s per round, 4s total at 3000 Hz
+17:39:34 TX TX quiet mode unsupported in this historical firmware
+17:39:34 TX Round 1/2 start
+17:39:34 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:39:36 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:39:36 TX Round 2/2 start
+17:39:37 TX TX_CAROUSEL_FRAME_SENT: 51 bytes payload
+17:39:39 TX TX_CAROUSEL_FRAME_SENT: 547 bytes payload
+17:39:39 TX Carousel done: sent 4/4 frames in 4s
