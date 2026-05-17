@@ -1,0 +1,9 @@
+/home/luckyprinter/.arduino15/packages/esp32/tools/esp-x32/2601/bin/../lib/gcc/xtensa-esp-elf/14.2.0/../../../../xtensa-esp-elf/bin/ld: /home/luckyprinter/.cache/arduino/cores/5918f7e71e183b2a09c650aeed0b8cbe/core.a(main.cpp.o):(.literal._Z8loopTaskPv+0xc): undefined reference to `_Z5setupv'
+/home/luckyprinter/.arduino15/packages/esp32/tools/esp-x32/2601/bin/../lib/gcc/xtensa-esp-elf/14.2.0/../../../../xtensa-esp-elf/bin/ld: /home/luckyprinter/.cache/arduino/cores/5918f7e71e183b2a09c650aeed0b8cbe/core.a(main.cpp.o):(.literal._Z8loopTaskPv+0x10): undefined reference to `_Z4loopv'
+/home/luckyprinter/.arduino15/packages/esp32/tools/esp-x32/2601/bin/../lib/gcc/xtensa-esp-elf/14.2.0/../../../../xtensa-esp-elf/bin/ld: /home/luckyprinter/.cache/arduino/cores/5918f7e71e183b2a09c650aeed0b8cbe/core.a(main.cpp.o): in function `_Z8loopTaskPv':
+/home/luckyprinter/.arduino15/packages/esp32/hardware/esp32/3.3.8/cores/esp32/main.cpp:63:(.text._Z8loopTaskPv+0x22): undefined reference to `_Z5setupv'
+/home/luckyprinter/.arduino15/packages/esp32/tools/esp-x32/2601/bin/../lib/gcc/xtensa-esp-elf/14.2.0/../../../../xtensa-esp-elf/bin/ld: /home/luckyprinter/.arduino15/packages/esp32/hardware/esp32/3.3.8/cores/esp32/main.cpp:71:(.text._Z8loopTaskPv+0x3b): undefined reference to `_Z4loopv'
+collect2: error: ld returned 1 exit status
+exit status 1
+
+Compilation error: exit status 1
