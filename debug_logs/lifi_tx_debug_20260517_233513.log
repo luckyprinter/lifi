@@ -1,0 +1,229 @@
+LiFi TX diagnostic log
+saved_at=2026-05-17 23:35:14
+port=/dev/ttyUSB0 - CP2102 USB to UART Bridge Controller - CP2102 USB to UART Bridge Controller [USB VID:PID=10C4:EA60 SER=0001 LOCATION=1-8]
+connected=False
+frequency_hz=500
+tx_mode=ON/OFF
+chunk_bytes=16
+carousel_enabled=False
+carousel_rounds=1
+round_gap_ms=0
+frame_gap_ms=2
+fec_enabled=False
+wait_for_tx_done=True
+
+log:
+23:31:50  TX  STATS requested
+23:31:50  TX  TX_MODE:ON_OFF
+23:31:50  TX  TX_LED_PIN:5
+23:31:50  TX  TX_LED_ACTIVE_LOW:0
+23:31:50  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:31:50  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:31:50  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:31:50  TX  TX_FREQ:1000:halfBitUs=500
+23:31:55  TX  TXMODE_SET:ON_OFF
+23:31:55  TX  Optical TX mode: ON/OFF
+23:31:55  TX  TX_MODE:ON_OFF
+23:31:55  TX  TX_LED_PIN:5
+23:31:55  TX  TX_LED_ACTIVE_LOW:0
+23:31:55  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:31:55  TX  Debug wait mode
+23:31:55  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:31:55  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:31:55  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:31:55  TX  Single-pass start: text 'text_message.txt', tid=4685, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:31:55  TX  Estimated optical time: 0s per round, 0s total at 1000 Hz
+23:31:55  TX  Round 1/1 start
+23:31:55  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:31:55  TX  TX_FREQ:1000:halfBitUs=500
+23:31:55  TX  TX quiet mode disabled
+23:31:55  TX  Sent tid=4685 chunk 1/1 (7 bytes), frame_crc=0xAE67
+23:31:55  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:31:55  TX  Single-pass done: sent 1/1 frames in 0s
+23:32:40  TX  TXMODE_SET:ON_OFF
+23:32:40  TX  Optical TX mode: ON/OFF
+23:32:40  TX  TX_MODE:ON_OFF
+23:32:40  TX  TX_LED_PIN:5
+23:32:40  TX  TX_LED_ACTIVE_LOW:0
+23:32:40  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:32:40  TX  Debug wait mode
+23:32:40  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:32:40  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:32:40  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:32:40  TX  Single-pass start: text 'text_message.txt', tid=53081, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:32:40  TX  Estimated optical time: 0s per round, 0s total at 1000 Hz
+23:32:40  TX  Round 1/1 start
+23:32:40  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:32:40  TX  Sent tid=53081 chunk 1/1 (7 bytes), frame_crc=0x3B7C
+23:32:40  TX  TX_FREQ:1000:halfBitUs=500
+23:32:40  TX  TX quiet mode disabled
+23:32:40  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:32:40  TX  Single-pass done: sent 1/1 frames in 0s
+23:32:49  TX  TXMODE_SET:ON_OFF
+23:32:49  TX  Optical TX mode: ON/OFF
+23:32:49  TX  TX_MODE:ON_OFF
+23:32:49  TX  TX_LED_PIN:5
+23:32:49  TX  TX_LED_ACTIVE_LOW:0
+23:32:49  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:32:49  TX  Debug wait mode
+23:32:49  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:32:49  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:32:49  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:32:49  TX  Carousel start: text 'text_message.txt', tid=13119, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:32:49  TX  Estimated optical time: 0s per round, 0s total at 1000 Hz
+23:32:49  TX  Round 1/1 start
+23:32:49  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:32:49  TX  Sent tid=13119 chunk 1/1 (7 bytes), frame_crc=0xAD07
+23:32:49  TX  TX_FREQ:1000:halfBitUs=500
+23:32:49  TX  TX quiet mode disabled
+23:32:50  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:32:50  TX  Carousel done: sent 1/1 frames in 0s
+23:33:26  TX  FREQ=500
+23:33:26  TX  TX FREQ = 500 Hz | halfBit = 1000 us
+23:33:27  TX  STATS requested
+23:33:27  TX  TX_MODE:ON_OFF
+23:33:27  TX  TX_LED_PIN:5
+23:33:27  TX  TX_LED_ACTIVE_LOW:0
+23:33:27  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:27  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:27  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:27  TX  TX_FREQ:500:halfBitUs=1000
+23:33:27  TX  TXMODE_SET:ON_OFF
+23:33:27  TX  Optical TX mode: ON/OFF
+23:33:27  TX  TX_MODE:ON_OFF
+23:33:27  TX  TX_LED_PIN:5
+23:33:27  TX  TX_LED_ACTIVE_LOW:0
+23:33:27  TX  Debug wait mode
+23:33:27  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:33:27  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:33:27  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:27  TX  Carousel start: text 'text_message.txt', tid=22650, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:33:27  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:33:27  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:27  TX  Round 1/1 start
+23:33:27  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:27  TX  TX_FREQ:500:halfBitUs=1000
+23:33:27  TX  TX quiet mode disabled
+23:33:27  TX  Sent tid=22650 chunk 1/1 (7 bytes), frame_crc=0x8ACB
+23:33:29  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:33:29  TX  Carousel done: sent 1/1 frames in 1s
+23:33:36  TX  TXMODE_SET:ON_OFF
+23:33:36  TX  Optical TX mode: ON/OFF
+23:33:36  TX  TX_MODE:ON_OFF
+23:33:36  TX  TX_LED_PIN:5
+23:33:36  TX  TX_LED_ACTIVE_LOW:0
+23:33:36  TX  Debug wait mode
+23:33:36  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:36  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:33:36  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:33:36  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:36  TX  Carousel start: text 'text_message.txt', tid=13958, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:33:36  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:33:36  TX  Round 1/1 start
+23:33:36  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:36  TX  TX_FREQ:500:halfBitUs=1000
+23:33:36  TX  TX quiet mode disabled
+23:33:36  TX  Sent tid=13958 chunk 1/1 (7 bytes), frame_crc=0x5A57
+23:33:37  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:33:37  TX  Carousel done: sent 1/1 frames in 1s
+23:33:43  TX  STATS requested
+23:33:43  TX  TX_MODE:ON_OFF
+23:33:43  TX  TX_LED_PIN:5
+23:33:43  TX  TX_LED_ACTIVE_LOW:0
+23:33:43  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:43  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:43  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:43  TX  TX_FREQ:500:halfBitUs=1000
+23:33:50  TX  Optical TX mode: ON/OFF
+23:33:50  TX  TXMODE_SET:ON_OFF
+23:33:50  TX  TX_MODE:ON_OFF
+23:33:50  TX  TX_LED_PIN:5
+23:33:50  TX  TX_LED_ACTIVE_LOW:0
+23:33:50  TX  Debug wait mode
+23:33:50  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:33:50  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:33:50  TX  Single-pass start: text 'text_message.txt', tid=32096, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:33:50  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:50  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:33:50  TX  Round 1/1 start
+23:33:50  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:50  TX  Sent tid=32096 chunk 1/1 (7 bytes), frame_crc=0x865B
+23:33:50  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:50  TX  TX_FREQ:500:halfBitUs=1000
+23:33:50  TX  TX quiet mode disabled
+23:33:51  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:33:51  TX  Single-pass done: sent 1/1 frames in 1s
+23:33:55  TX  STATS requested
+23:33:55  TX  TX_MODE:ON_OFF
+23:33:55  TX  TX_LED_PIN:5
+23:33:55  TX  TX_LED_ACTIVE_LOW:0
+23:33:55  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:33:55  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:33:55  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:33:55  TX  TX_FREQ:500:halfBitUs=1000
+23:34:16  TX  STATS requested
+23:34:16  TX  TX_MODE:ON_OFF
+23:34:16  TX  TX_LED_PIN:5
+23:34:16  TX  TX_LED_ACTIVE_LOW:0
+23:34:16  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:34:16  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:34:16  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:34:16  TX  TX_FREQ:500:halfBitUs=1000
+23:34:56  TX  TXMODE_SET:ON_OFF
+23:34:56  TX  Optical TX mode: ON/OFF
+23:34:56  TX  TX_MODE:ON_OFF
+23:34:56  TX  TX_LED_PIN:5
+23:34:56  TX  TX_LED_ACTIVE_LOW:0
+23:34:56  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:34:56  TX  Debug wait mode
+23:34:56  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:34:56  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:34:56  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:34:56  TX  Single-pass start: text 'text_message.txt', tid=22381, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:34:56  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:34:56  TX  Round 1/1 start
+23:34:56  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:34:56  TX  TX_FREQ:500:halfBitUs=1000
+23:34:56  TX  TX quiet mode disabled
+23:34:56  TX  Sent tid=22381 chunk 1/1 (7 bytes), frame_crc=0x6911
+23:34:58  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:34:58  TX  Single-pass done: sent 1/1 frames in 1s
+23:35:00  TX  TXMODE_SET:ON_OFF
+23:35:00  TX  TX_MODE:ON_OFF
+23:35:00  TX  TX_LED_PIN:5
+23:35:00  TX  Optical TX mode: ON/OFF
+23:35:00  TX  TX_LED_ACTIVE_LOW:0
+23:35:00  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:35:00  TX  Debug wait mode
+23:35:00  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:35:00  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:35:00  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:35:00  TX  Single-pass start: text 'text_message.txt', tid=32414, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:35:00  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:35:00  TX  Round 1/1 start
+23:35:00  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:35:00  TX  TX_FREQ:500:halfBitUs=1000
+23:35:00  TX  TX quiet mode disabled
+23:35:00  TX  Sent tid=32414 chunk 1/1 (7 bytes), frame_crc=0xB8CE
+23:35:02  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:35:02  TX  Single-pass done: sent 1/1 frames in 1s
+23:35:04  TX  TXMODE_SET:ON_OFF
+23:35:04  TX  Optical TX mode: ON/OFF
+23:35:04  TX  TX_MODE:ON_OFF
+23:35:04  TX  TX_LED_PIN:5
+23:35:04  TX  TX_LED_ACTIVE_LOW:0
+23:35:04  TX  TX_POLARITY:ACTIVE_HIGH_IRLZ44N_LOW_SIDE
+23:35:04  TX  TX_PWM:freq=40000:resolution=8:maxDuty=255
+23:35:04  TX  Debug wait mode
+23:35:04  TX  SENT_TEXT filename=text_message.txt bytes=7 crc=0x830B sha256=c18c6e02abe4fa501cc7a3ee8af019019016d977f1bc67578efda926f84dfb1d
+23:35:04  TX  SENT_TEXT_CONTENT='sadzxc\n'
+23:35:04  TX  TX_BRIGHTNESS:bright=100:dim=50:idle=75
+23:35:04  TX  TX_FREQ:500:halfBitUs=1000
+23:35:04  TX  Single-pass start: text 'text_message.txt', tid=65270, size=7 B, chunks=1, chunk=16, rounds=1, fec=off, tx=ON/OFF, mode=debug wait, file_crc=0x830B
+23:35:04  TX  Estimated optical time: 1s per round, 1s total at 500 Hz
+23:35:04  TX  TX quiet mode disabled
+23:35:04  TX  Round 1/1 start
+23:35:04  TX  Sent tid=65270 chunk 1/1 (7 bytes), frame_crc=0x5AC4
+23:35:05  TX  TX_CAROUSEL_FRAME_SENT: 39 bytes payload
+23:35:05  TX  Single-pass done: sent 1/1 frames in 1s
+23:35:06  TX  Disconnected.
