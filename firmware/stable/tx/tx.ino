@@ -13,15 +13,15 @@ const uint32_t MAX_FREQUENCY_HZ = 50000;
 uint32_t frequencyHz = 9000;
 uint32_t halfBitUs = 55;
 
-// Your hardware is active-low:
-// ESP32 LOW  = LED ON
-// ESP32 HIGH = LED OFF
+// Current IRLZ44N low-side driver is active-high:
+// ESP32 HIGH = MOSFET ON  = LED ON
+// ESP32 LOW  = MOSFET OFF = LED OFF
 inline void txLightOn() {
-  gpio_set_level((gpio_num_t)TX_PIN, 0);
+  gpio_set_level((gpio_num_t)TX_PIN, 1);
 }
 
 inline void txLightOff() {
-  gpio_set_level((gpio_num_t)TX_PIN, 1);
+  gpio_set_level((gpio_num_t)TX_PIN, 0);
 }
 
 void setup() {
@@ -38,7 +38,7 @@ void setup() {
 
   setFrequency(frequencyHz);
 
-  Serial.println("ESP32 TX Ready - carousel active-low idle ON");
+  Serial.println("ESP32 TX Ready - carousel active-high IRLZ44N idle ON");
 }
 
 void loop() {
