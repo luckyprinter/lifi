@@ -1,0 +1,135 @@
+LiFi RX diagnostic log
+saved_at=2026-05-17 23:35:21
+port=/dev/ttyUSB0 - CP2102 USB to UART Bridge Controller - CP2102 USB to UART Bridge Controller [USB VID:PID=10C4:EA60 SER=0001 LOCATION=1-3]
+connected=True
+frequency_hz=500
+adc_threshold_mv=1500
+rx_debug=True
+rx_diagnostics=True
+receive_folder=/home/luckyprinter/LiFiReceived
+active_transfers=0
+
+log:
+23:31:25  RX  FREQ=1000
+23:31:25  RX  THRESH=1800
+23:31:25  RX  DEBUG=0
+23:31:25  RX  RXDIAG=0
+23:31:25  RX  Connected.
+23:31:25  RX  Discarded non-protocol serial/noise lines: 1
+23:31:25  RX  RX analog threshold mV = 1800
+23:31:25  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1800:lightActiveLow=0:debug=0:diag=0:decodedBytes=0:framesOk=0:badCrc=0:badHeader=0:unstableBits=0
+23:31:25  RX  RX debug disabled
+23:31:25  RX  RX diagnostics disabled
+23:31:25  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1800:lightActiveLow=0:debug=0:diag=0:decodedBytes=0:framesOk=0:badCrc=0:badHeader=0:unstableBits=0
+23:31:34  RX  RXDIAG=1
+23:31:34  RX  RX diagnostics enabled
+23:31:34  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1800:lightActiveLow=0:debug=0:diag=1:decodedBytes=0:framesOk=0:badCrc=0:badHeader=0:unstableBits=0
+23:31:36  RX  DEBUG=1
+23:31:36  RX  RX debug enabled
+23:31:46  RX  STATS requested
+23:31:46  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1800:lightActiveLow=0:debug=1:diag=1:decodedBytes=0:framesOk=0:badCrc=0:badHeader=0:unstableBits=0
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=1
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=2
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=3
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=4
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=5
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=6
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=7
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=8
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=9
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=10
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=25
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=50
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=75
+23:31:55  RX  RX_ERROR: unstable Manchester bit count=100
+23:32:09  RX  RX_ERROR: unstable Manchester bit count=125
+23:32:29  RX  THRESH=1500
+23:32:29  RX  RX analog threshold mV = 1500
+23:32:29  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=23:framesOk=0:badCrc=0:badHeader=0:unstableBits=129
+23:32:31  RX  RXTEST sent
+23:32:31  RX  RX_INPUT_TEST_START
+23:32:32  RX  RX_INPUT_TEST_DONE:samples=4231:rawHigh=0:rawLow=4231:lightHigh=0:lightLow=4231:transitions=0:activeLow=0:analog=1:thresholdMv=1500:minMv=1290:maxMv=1508:avgMv=1428
+23:32:32  RX  RX_ERROR: unstable Manchester bit count=150
+23:32:33  RX  STATS requested
+23:32:33  RX  RX_STATS:freq=1000:halfBitUs=500:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=23:framesOk=0:badCrc=0:badHeader=0:unstableBits=168
+23:32:34  RX  RX_ERROR: unstable Manchester bit count=175
+23:32:35  RX  RX_ERROR: unstable Manchester bit count=200
+23:32:36  RX  RX_ERROR: unstable Manchester bit count=225
+23:32:37  RX  RX_ERROR: unstable Manchester bit count=250
+23:32:38  RX  RX_ERROR: unstable Manchester bit count=275
+23:32:39  RX  RX_ERROR: unstable Manchester bit count=300
+23:32:39  RX  RX_ERROR: unstable Manchester bit count=325
+23:32:40  RX  RX_ERROR: unstable Manchester bit count=350
+23:32:40  RX  RX_ERROR: unstable Manchester bit count=375
+23:32:40  RX  RX_ERROR: unstable Manchester bit count=400
+23:32:40  RX  RX_ERROR: unstable Manchester bit count=425
+23:32:42  RX  RX_ERROR: unstable Manchester bit count=450
+23:32:43  RX  RX_ERROR: unstable Manchester bit count=475
+23:32:44  RX  RX_ERROR: unstable Manchester bit count=500
+23:32:46  RX  RX_ERROR: unstable Manchester bit count=525
+23:32:46  RX  RXTEST sent
+23:32:46  RX  RX_INPUT_TEST_START
+23:32:47  RX  RX_INPUT_TEST_DONE:samples=4232:rawHigh=6:rawLow=4226:lightHigh=6:lightLow=4226:transitions=12:activeLow=0:analog=1:thresholdMv=1500:minMv=1333:maxMv=1535:avgMv=1445
+23:32:49  RX  RX_ERROR: unstable Manchester bit count=550
+23:32:49  RX  RX_ERROR: unstable Manchester bit count=575
+23:32:50  RX  RX_ERROR: unstable Manchester bit count=600
+23:32:50  RX  RX_ERROR: unstable Manchester bit count=625
+23:32:50  RX  RX_ERROR: unstable Manchester bit count=650
+23:32:52  RX  RX_ERROR: unstable Manchester bit count=675
+23:32:53  RX  RX_ERROR: unstable Manchester bit count=700
+23:32:55  RX  RX_ERROR: unstable Manchester bit count=725
+23:32:55  RX  RXTEST sent
+23:32:55  RX  RX_INPUT_TEST_START
+23:32:56  RX  RX_INPUT_TEST_DONE:samples=4231:rawHigh=6:rawLow=4225:lightHigh=6:lightLow=4225:transitions=12:activeLow=0:analog=1:thresholdMv=1500:minMv=1244:maxMv=1593:avgMv=1460
+23:32:57  RX  RX_ERROR: unstable Manchester bit count=750
+23:32:58  RX  RX_ERROR: unstable Manchester bit count=775
+23:32:59  RX  RX_ERROR: unstable Manchester bit count=800
+23:33:00  RX  RX_ERROR: unstable Manchester bit count=825
+23:33:03  RX  RX_ERROR: unstable Manchester bit count=850
+23:33:04  RX  RX_ERROR: unstable Manchester bit count=875
+23:33:06  RX  RX_ERROR: unstable Manchester bit count=900
+23:33:09  RX  RX_ERROR: unstable Manchester bit count=925
+23:33:10  RX  RX_ERROR: unstable Manchester bit count=950
+23:33:10  RX  RX_ERROR: unstable Manchester bit count=975
+23:33:12  RX  RX_ERROR: unstable Manchester bit count=1000
+23:33:13  RX  RX_ERROR: unstable Manchester bit count=1025
+23:33:14  RX  RX_ERROR: unstable Manchester bit count=1050
+23:33:15  RX  RX_ERROR: unstable Manchester bit count=1075
+23:33:16  RX  FREQ=500
+23:33:16  RX  RX FREQ = 500 Hz | halfBit = 1000 us
+23:33:17  RX  RX_ERROR: unstable Manchester bit count=1100
+23:33:18  RX  RX_ERROR: unstable Manchester bit count=1125
+23:33:19  RX  RX_ERROR: unstable Manchester bit count=1150
+23:33:21  RX  RX_ERROR: unstable Manchester bit count=1175
+23:33:22  RX  RX_ERROR: unstable Manchester bit count=1200
+23:33:24  RX  RX_ERROR: unstable Manchester bit count=1225
+23:33:26  RX  RX_ERROR: unstable Manchester bit count=1250
+23:33:27  RX  RX_ERROR: unstable Manchester bit count=1275
+23:33:29  RX  RX_ERROR: unstable Manchester bit count=1300
+23:33:30  RX  RX_ERROR: unstable Manchester bit count=1325
+23:33:33  RX  RX_ERROR: unstable Manchester bit count=1350
+23:33:36  RX  RX_ERROR: unstable Manchester bit count=1375
+23:33:37  RX  RX_ERROR: unstable Manchester bit count=1400
+23:33:38  RX  RX_ERROR: unstable Manchester bit count=1425
+23:33:41  RX  RXTEST sent
+23:33:41  RX  RX_INPUT_TEST_START
+23:33:42  RX  STATS requested
+23:33:42  RX  RX_INPUT_TEST_DONE:samples=4231:rawHigh=0:rawLow=4231:lightHigh=0:lightLow=4231:transitions=0:activeLow=0:analog=1:thresholdMv=1500:minMv=1295:maxMv=1518:avgMv=1413
+23:33:42  RX  RX_STATS:freq=500:halfBitUs=1000:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=192:framesOk=0:badCrc=0:badHeader=0:unstableBits=1439
+23:33:44  RX  RX_ERROR: unstable Manchester bit count=1450
+23:33:45  RX  RX_ERROR: unstable Manchester bit count=1475
+23:33:49  RX  RX_ERROR: unstable Manchester bit count=1500
+23:33:51  RX  RX_ERROR: unstable Manchester bit count=1525
+23:33:52  RX  RX_ERROR: unstable Manchester bit count=1550
+23:33:54  RX  RX_ERROR: unstable Manchester bit count=1575
+23:33:54  RX  STATS requested
+23:33:54  RX  RX_STATS:freq=500:halfBitUs=1000:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=247:framesOk=0:badCrc=0:badHeader=0:unstableBits=1575
+23:34:00  RX  RX_ERROR: unstable Manchester bit count=1600
+23:34:01  RX  RX_ERROR: unstable Manchester bit count=1625
+23:34:01  RX  RX_ERROR: unstable Manchester bit count=1650
+23:34:01  RX  RX_ERROR: unstable Manchester bit count=1675
+23:34:01  RX  RX_ERROR: unstable Manchester bit count=1700
+23:34:19  RX  STATS requested
+23:34:19  RX  RX_STATS:freq=500:halfBitUs=1000:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=247:framesOk=0:badCrc=0:badHeader=0:unstableBits=1704
+23:35:17  RX  STATS requested
+23:35:17  RX  RX_STATS:freq=500:halfBitUs=1000:pin=34:analog=1:thresholdMv=1500:lightActiveLow=0:debug=1:diag=1:decodedBytes=247:framesOk=0:badCrc=0:badHeader=0:unstableBits=1704
