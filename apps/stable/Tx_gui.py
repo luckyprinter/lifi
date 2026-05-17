@@ -20,7 +20,7 @@ TYPE_CAROUSEL_PARITY = 0x21
 DEFAULT_FREQUENCY_HZ = 1000
 MIN_FREQUENCY_HZ = 1
 MAX_FREQUENCY_HZ = 50000
-DEFAULT_CHUNK_SIZE = 256
+DEFAULT_CHUNK_SIZE = 64
 DEFAULT_CAROUSEL_ROUNDS = 1
 DEFAULT_ROUND_GAP_MS = 0
 DEFAULT_INTER_FRAME_GAP_MS = 2
@@ -153,6 +153,7 @@ class TXGui(tk.Tk):
         self.transfer_running = False
         self.tx_done = threading.Event()
         self.theme_var = tk.StringVar(value="Light")
+        self.carousel_var = tk.BooleanVar(value=False)
         self.fec_var = tk.BooleanVar(value=False)
         self.wait_done_var = tk.BooleanVar(value=DEFAULT_WAIT_TX_DONE)
         self.tx_optical_mode_var = tk.StringVar(value=DEFAULT_TX_OPTICAL_MODE)
@@ -206,6 +207,13 @@ class TXGui(tk.Tk):
         self.status.configure(bg=self.colors["status_bg"], fg=status_color)
         self.subtitle.configure(foreground=self.colors["muted"])
         self.fec_check.configure(
+            bg=self.colors["panel"],
+            fg=self.colors["text"],
+            activebackground=self.colors["panel"],
+            activeforeground=self.colors["text"],
+            selectcolor=self.colors["field"],
+        )
+        self.carousel_check.configure(
             bg=self.colors["panel"],
             fg=self.colors["text"],
             activebackground=self.colors["panel"],
@@ -267,7 +275,7 @@ class TXGui(tk.Tk):
         ttk.Combobox(
             top,
             textvariable=self.chunk_var,
-            values=["256", "512", "1024", "2048"],
+            values=["16", "32", "64", "128", "256", "512", "1024", "2048"],
             width=7,
             state="readonly",
         ).grid(row=1, column=3, sticky="ew", padx=(0, 10), pady=(3, 0))
@@ -311,6 +319,17 @@ class TXGui(tk.Tk):
         ttk.Button(top, text="Refresh", command=self.refresh_ports).grid(row=1, column=10, padx=3, pady=(3, 0))
         ttk.Button(top, text="Set Freq", command=self.set_freq).grid(row=1, column=11, padx=3, pady=(3, 0))
         ttk.Button(top, text="LED Test", command=self.led_test).grid(row=1, column=12, padx=3, pady=(3, 0))
+        self.carousel_check = tk.Checkbutton(
+            top,
+            text="Carousel",
+            variable=self.carousel_var,
+            bg=self.colors["panel"],
+            fg=self.colors["text"],
+            activebackground=self.colors["panel"],
+            activeforeground=self.colors["text"],
+            selectcolor=self.colors["field"],
+        )
+        self.carousel_check.grid(row=1, column=13, padx=3, pady=(3, 0))
         self.fec_check = tk.Checkbutton(
             top,
             text="FEC",
@@ -321,7 +340,7 @@ class TXGui(tk.Tk):
             activeforeground=self.colors["text"],
             selectcolor=self.colors["field"],
         )
-        self.fec_check.grid(row=1, column=13, padx=3, pady=(3, 0))
+        self.fec_check.grid(row=1, column=14, padx=3, pady=(3, 0))
 
         progress_panel = self.panel(shell, row=2, column=0, sticky="ew", pady=(0, 10))
         progress_panel.columnconfigure(0, weight=1)
@@ -455,6 +474,7 @@ class TXGui(tk.Tk):
             f"frequency_hz={self.freq_var.get()}",
             f"tx_mode={self.tx_optical_mode_var.get()}",
             f"chunk_bytes={self.chunk_var.get()}",
+            f"carousel_enabled={self.carousel_var.get()}",
             f"carousel_rounds={self.rounds_var.get()}",
             f"round_gap_ms={self.gap_var.get()}",
             f"frame_gap_ms={self.frame_gap_var.get()}",
@@ -747,7 +767,13 @@ class TXGui(tk.Tk):
             self.after(0, lambda: self.stop_btn.config(state="disabled"))
             return
 
-        if self.fec_var.get() and 19 + len(name) + chunk_size > MAX_FRAME_PAYLOAD:
+        use_carousel = self.carousel_var.get()
+        effective_rounds = rounds if use_carousel else 1
+        effective_gap = gap if use_carousel else 0
+        fec_enabled = self.fec_var.get() if use_carousel else False
+        transfer_label = "Carousel" if use_carousel else "Single-pass"
+
+        if fec_enabled and 19 + len(name) + chunk_size > MAX_FRAME_PAYLOAD:
             self.after(0, lambda: messagebox.showerror("Transfer Settings", "Parity frame exceeds 65535 bytes. Use a smaller chunk size or shorter filename."))
             self.transfer_running = False
             self.after(0, lambda: self.stop_btn.config(state="disabled"))
@@ -755,9 +781,8 @@ class TXGui(tk.Tk):
 
         tid = random.randint(1, 65535)
 
-        fec_enabled = self.fec_var.get()
         parity_groups = math.ceil(total_chunks / FEC_GROUP_SIZE) if fec_enabled else 0
-        total_frames = (total_chunks + parity_groups) * rounds
+        total_frames = (total_chunks + parity_groups) * effective_rounds
         sent_frames = 0
         try:
             freq = int(self.freq_var.get())
@@ -771,12 +796,12 @@ class TXGui(tk.Tk):
             estimated_payload_bytes += parity_groups * (19 + len(name) + chunk_size)
         estimated_optical_bytes = (total_chunks + parity_groups) * (32 + 1 + 1 + 2 + 2) + estimated_payload_bytes
         estimated_one_round = estimated_optical_bytes * 10 / max(1, freq)
-        estimated_all_rounds = estimated_one_round * rounds
+        estimated_all_rounds = estimated_one_round * effective_rounds
 
         self.log_msg(
-            f"Carousel start: {KIND_NAMES[kind]} '{filename}', "
+            f"{transfer_label} start: {KIND_NAMES[kind]} '{filename}', "
             f"tid={tid}, size={fmt_bytes(total_size)}, chunks={total_chunks}, "
-            f"chunk={chunk_size}, rounds={rounds}, fec={'on' if fec_enabled else 'off'}, "
+            f"chunk={chunk_size}, rounds={effective_rounds}, fec={'on' if fec_enabled else 'off'}, "
             f"tx={optical_mode}, "
             f"mode={'debug wait' if wait_for_done else 'smooth streaming'}, "
             f"file_crc=0x{file_crc:04X}"
@@ -788,11 +813,11 @@ class TXGui(tk.Tk):
 
         start = time.time()
 
-        for r in range(rounds):
+        for r in range(effective_rounds):
             if not self.transfer_running:
                 break
 
-            self.log_msg(f"Round {r + 1}/{rounds} start")
+            self.log_msg(f"Round {r + 1}/{effective_rounds} start")
 
             for group_start in range(0, total_chunks, FEC_GROUP_SIZE):
                 if not self.transfer_running:
@@ -841,14 +866,14 @@ class TXGui(tk.Tk):
                     self.pace_after_frame(parity_len, wait_for_done, frame_gap)
                     sent_frames = self.mark_frame_progress(sent_frames, total_frames, start, wait_for_done)
 
-            if r != rounds - 1 and gap > 0:
-                time.sleep(gap)
+            if r != effective_rounds - 1 and effective_gap > 0:
+                time.sleep(effective_gap)
 
         self.transfer_running = False
         self.after(0, lambda: self.stop_btn.config(state="disabled"))
         elapsed_total = time.time() - start
         self.after(0, lambda e=elapsed_total: self.update_progress_done(e))
-        self.log_msg(f"Carousel done: sent {sent_frames}/{total_frames} frames in {fmt_time(elapsed_total)}")
+        self.log_msg(f"{transfer_label} done: sent {sent_frames}/{total_frames} frames in {fmt_time(elapsed_total)}")
 
     def log_sent_payload(self, data, kind, filename, file_crc):
         sha256 = hashlib.sha256(data).hexdigest()

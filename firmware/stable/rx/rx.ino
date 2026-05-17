@@ -212,12 +212,16 @@ void printRxStats() {
 
 int receiveManchesterByte() {
   while (true) {
-    while (readRxPin() == HIGH) {
+    // Current TX idles LED ON. With the TEPT4400 divider this is raw LOW.
+    // The TX Manchester start symbol is OFF then ON, so the raw RX waveform is
+    // HIGH then LOW. Lock to the falling edge in the middle of that start
+    // symbol; then the normal half-bit delay sequence lands on data centers.
+    while (readRxPin() == LOW) {
       if (handleSerialCommands()) return -2;
       yield();
     }
 
-    while (readRxPin() == LOW) {
+    while (readRxPin() == HIGH) {
       if (handleSerialCommands()) return -2;
       yield();
     }
