@@ -215,6 +215,81 @@ The latest logs show the ADC threshold was often too close to the measured signa
 
 That means the receiver is not getting a strong enough digital waveform after thresholding. The TX is probably not the first suspect because the TX logs show frame send markers and LED test support.
 
+## Reliable Commit Comparison
+
+Baseline commit compared here:
+
+```text
+4d78a01518c4d2498311b291501e6e98577580e3
+```
+
+This is the commit remembered as working well with the same RX circuit.
+
+### RX Firmware Differences
+
+| Area | Commit `4d78a` | Current |
+| --- | --- | --- |
+| RX input | `#define RX_PIN 5` digital GPIO | `GPIO34` ADC threshold by default, GPIO5 optional |
+| Default frequency | `9000 Hz` | `1000 Hz` |
+| Default half bit | `55 us` | `500 us` |
+| Threshold | ESP32 digital threshold only | firmware threshold, default `1800 mV`, GUI can send `THRESH=` |
+| Sync search | waits through HIGH, then waits through LOW; exits on LOW-to-HIGH transition | waits through LOW, then waits through HIGH; exits on HIGH-to-LOW transition |
+| Sample timing | absolute `micros()` deadline | relative `delayMicroseconds()` |
+| Half-bit read | `majorityRead()` with 3 samples | one `readRxPin()` sample |
+| Noise tolerance | higher, because majority read rejects short noise/glitch samples | lower, because a single threshold glitch can corrupt the bit |
+
+Most suspicious RX regression candidates:
+
+1. The sync edge changed. The old code began timing from the opposite transition.
+2. Majority sampling was effectively removed from the active decoder path.
+3. The ADC threshold mode changed the electrical interpretation of the same sensor circuit.
+4. The default frequency changed from `9000 Hz` to `1000 Hz`, which changes optical timing, frame airtime, and how the receiver waits between transitions.
+
+The current file still contains `majorityRead()`, but `receiveManchesterByte()` no longer uses it. That is a strong candidate for a quick recovery experiment: restore majority reads while keeping the newer diagnostics.
+
+### TX Firmware Differences
+
+| Area | Commit `4d78a` | Current |
+| --- | --- | --- |
+| TX polarity | active-low comment and functions: `LOW = LED ON`, `HIGH = LED OFF` | active-high IRLZ44N mode: `HIGH = LED ON`, `LOW = LED OFF` |
+| Default frequency | `9000 Hz` | `1000 Hz` |
+| Default half bit | `55 us` | `500 us` |
+| Optical modes | ON/OFF only | ON/OFF plus experimental DC PWM |
+| Frame gap | `halfBitUs * 80`, clamped `2000-12000 us` | same formula for ON/OFF mode |
+| Manchester symbol mapping | start: OFF then ON; 1: ON then OFF; 0: OFF then ON | same logical bright/dim mapping, but polarity abstraction changed |
+
+Most suspicious TX-side item:
+
+- If the physical driver is truly IRLZ44N low-side active-high, the current polarity is correct. If the remembered working circuit still behaved active-low, current `LED_ACTIVE_LOW=false` would invert the optical waveform. The LED Test should settle this: GPIO HIGH should visibly turn the LED on with the current circuit.
+
+### GUI Defaults Differences
+
+| Area | Commit `4d78a` | Current |
+| --- | --- | --- |
+| TX/RX default frequency | `9000 Hz` | `1000 Hz` |
+| Chunk size | `512` | `64` |
+| Carousel rounds | `2` | `1` |
+| Round gap | `250 ms` | `0 ms` |
+| FEC default | on | off unless carousel enabled |
+| Frame pacing | fixed `2 ms` sleep after frames | wait for `TX_CAROUSEL_FRAME_SENT` by default, optional frame gap |
+
+The current defaults are safer for debugging but do not reproduce the remembered working setup. For a controlled regression test, use:
+
+- Frequency: `9000 Hz`
+- RX input mode experiment: try the old GPIO5 digital path if the hardware is exactly the same
+- Chunk size: `512`
+- Carousel rounds: `2`
+- Round gap: `250 ms`
+- FEC: enabled
+- TX mode: ON/OFF
+
+For code recovery, test these one at a time:
+
+1. Restore `majorityRead()` in current `receiveManchesterByte()`.
+2. Add a runtime `EDGE=LH/HL` option again, or temporarily use the old LOW-to-HIGH sync behavior.
+3. Add a compile-time switch for old GPIO5 digital input versus GPIO34 ADC threshold.
+4. Verify TX polarity with `LEDTEST` before changing `LED_ACTIVE_LOW`.
+
 ## Debug Workflow For The Next Hardware Session
 
 ```mermaid
@@ -238,7 +313,7 @@ flowchart TD
 Recommended first recovery settings:
 
 - TX mode: `ON/OFF`
-- Frequency: start at `1000 Hz` for debugging, then raise gradually
+- Frequency: test across `1-15 kHz`; start near `1000 Hz` for debugging, then raise gradually toward the remembered stable `9000 Hz`
 - Chunk size: `64` or `256`
 - Carousel: on for reliability tests
 - FEC: on after basic single-frame decoding works
@@ -287,3 +362,11 @@ The first React version should support separate views for:
 - Theory/protocol flow
 - Bottleneck/debug flow
 
+Later planner/workbench additions now include:
+
+- Electronics-style schematic symbols for ESP32, resistors, MOSFET, LED, phototransistor, photodiode, TIA op-amp, and comparator.
+- Editable schematic component values so test changes such as `10k ohm` to `47k ohm` can be captured.
+- Per-node and system-level comments for handoff back into Codex.
+- A recommendations tab for recovery procedure, receiver signal recovery topics, encoding options, and paper-writing study topics.
+- Optional automatic handoff saving through `web/lifi-workflow-planner/server.mjs`; this only works while the planner host device is on.
+- Durable context files in `web/lifi-workflow-planner/handoffs/` for future Codex sessions when the planner server is unavailable.
