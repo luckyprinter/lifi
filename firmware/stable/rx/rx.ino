@@ -1,17 +1,7 @@
 #include "driver/gpio.h"
 
-#define RX_DIGITAL_PIN 5
-#define RX_ANALOG_PIN 34
-
-// GPIO5 digital input is unstable with the measured TEPT4400 levels:
-// idle light is about 1.39 V and transmit transitions reach about 2.30 V.
-// 1.39 V is not a reliable ESP32 digital LOW. For timing recovery, use an ADC
-// pin and threshold the measured voltage in firmware. Wire the TEPT4400 signal
-// to GPIO34 for this mode. Set RX_USE_ANALOG_THRESHOLD to false to return to
-// the older GPIO5 digital receiver path.
-const bool RX_USE_ANALOG_THRESHOLD = true;
-const uint8_t RX_PIN = RX_USE_ANALOG_THRESHOLD ? RX_ANALOG_PIN : RX_DIGITAL_PIN;
-uint16_t rxAnalogThresholdMv = 1800;
+#define RX_PIN 5
+#define RX_ADC_PIN 34
 
 const uint8_t START_BYTE = 0x02;
 const uint8_t PREAMBLE_BYTE = 0xAA;
@@ -23,34 +13,18 @@ const uint8_t MIN_PREAMBLE_COUNT = 8;
 const uint16_t CAROUSEL_HEADER_MIN = 16;
 const uint16_t PARITY_HEADER_MIN = 19;
 
-// Keep the Manchester decoder on the raw GPIO polarity used by the earlier
-// working receiver. With the TEPT4400 divider, light ON is a lower voltage and
-// light OFF is a higher voltage. That raw inverted waveform is already what
-// the working Manchester bit mapping expects, so do not normalize it here.
-const bool RX_LIGHT_ACTIVE_LOW = false;
-
-uint32_t frequencyHz = 1000;
-uint32_t halfBitUs = 500;
+uint32_t frequencyHz = 9000;
+uint32_t halfBitUs = 55;
 bool rxDebug = false;
-bool rxDiagnostics = false;
-
-uint32_t decodedBytes = 0;
-uint32_t unstableBits = 0;
-uint32_t framesOk = 0;
-uint32_t badCrcFrames = 0;
-uint32_t badHeaderFrames = 0;
-
-inline int readRxRawPin() {
-  if (RX_USE_ANALOG_THRESHOLD) {
-    return analogReadMilliVolts(RX_PIN) >= rxAnalogThresholdMv ? HIGH : LOW;
-  }
-
-  return gpio_get_level((gpio_num_t)RX_PIN);
-}
+uint32_t statBytes = 0;
+uint32_t statUnstableBits = 0;
+uint32_t statBadCrc = 0;
+uint32_t statGoodFrames = 0;
+uint32_t statPreambleBytes = 0;
+uint8_t statMaxPreambleRun = 0;
 
 inline int readRxPin() {
-  int raw = readRxRawPin();
-  return RX_LIGHT_ACTIVE_LOW ? !raw : raw;
+  return gpio_get_level((gpio_num_t)RX_PIN);
 }
 
 enum RxState {
@@ -80,13 +54,8 @@ void setup() {
   Serial.setTimeout(25);
 
   pinMode(RX_PIN, INPUT);
-
-  if (RX_USE_ANALOG_THRESHOLD) {
-    analogReadResolution(12);
-#if defined(ARDUINO_ARCH_ESP32)
-    analogSetPinAttenuation(RX_PIN, ADC_11db);
-#endif
-  }
+  pinMode(RX_ADC_PIN, INPUT);
+  analogReadResolution(12);
 
   setFrequency(frequencyHz);
 
@@ -127,40 +96,71 @@ bool handleSerialCommands() {
       continue;
     }
 
-    if (cmd.startsWith("RXDIAG=") || cmd.startsWith("DIAG=")) {
-      int equals = cmd.indexOf('=');
-      rxDiagnostics = (cmd.substring(equals + 1).toInt() != 0);
-      Serial.print("RX diagnostics ");
-      Serial.println(rxDiagnostics ? "enabled" : "disabled");
-      printRxStats();
+    if (cmd == "STATS") {
+      printStats();
       handled = true;
       continue;
     }
 
-    if (cmd.startsWith("THRESH=")) {
-      uint16_t mv = cmd.substring(7).toInt();
-      if (mv < 100 || mv > 3200) {
-        Serial.println("RX_ERROR: THRESH must be 100-3200 mV");
-      } else {
-        rxAnalogThresholdMv = mv;
-        Serial.print("RX analog threshold mV = ");
-        Serial.println(rxAnalogThresholdMv);
-        resetFrame();
-        printRxStats();
+    if (cmd == "RESETSTATS") {
+      resetStats();
+      Serial.println("RX_STATS_RESET");
+      handled = true;
+      continue;
+    }
+
+    if (cmd == "RXTEST" || cmd.startsWith("RXTEST=")) {
+      uint32_t durationMs = 500;
+      int eq = cmd.indexOf('=');
+      if (eq >= 0) {
+        durationMs = (uint32_t)cmd.substring(eq + 1).toInt();
       }
+      runRxDigitalTest(durationMs);
       handled = true;
       continue;
     }
 
-    if (cmd.startsWith("STATS")) {
-      printRxStats();
+    if (cmd == "RXCAP" || cmd.startsWith("RXCAP=")) {
+      uint32_t durationMs = 100;
+      uint32_t sampleUs = 10;
+      int eq = cmd.indexOf('=');
+      if (eq >= 0) {
+        String args = cmd.substring(eq + 1);
+        int comma = args.indexOf(',');
+        if (comma >= 0) {
+          durationMs = (uint32_t)args.substring(0, comma).toInt();
+          sampleUs = (uint32_t)args.substring(comma + 1).toInt();
+        } else {
+          durationMs = (uint32_t)args.toInt();
+        }
+      }
+      runRxDigitalCapture(durationMs, sampleUs);
       handled = true;
       continue;
     }
 
-    if (cmd.startsWith("RXTEST")) {
-      runRxInputTest();
-      resetFrame();
+    if (cmd == "ADCAP" || cmd.startsWith("ADCAP=")) {
+      uint32_t durationMs = 100;
+      uint32_t sampleUs = 100;
+      uint16_t thresholdMv = 1000;
+      int eq = cmd.indexOf('=');
+      if (eq >= 0) {
+        String args = cmd.substring(eq + 1);
+        int firstComma = args.indexOf(',');
+        int secondComma = firstComma >= 0 ? args.indexOf(',', firstComma + 1) : -1;
+        if (firstComma >= 0) {
+          durationMs = (uint32_t)args.substring(0, firstComma).toInt();
+          if (secondComma >= 0) {
+            sampleUs = (uint32_t)args.substring(firstComma + 1, secondComma).toInt();
+            thresholdMv = (uint16_t)args.substring(secondComma + 1).toInt();
+          } else {
+            sampleUs = (uint32_t)args.substring(firstComma + 1).toInt();
+          }
+        } else {
+          durationMs = (uint32_t)args.toInt();
+        }
+      }
+      runRxAdcCapture(durationMs, sampleUs, thresholdMv);
       handled = true;
       continue;
     }
@@ -173,137 +173,36 @@ bool handleSerialCommands() {
   return handled;
 }
 
-void runRxInputTest() {
-  const uint32_t durationMs = 1200;
-  const uint32_t sampleGapUs = 200;
-  uint32_t startMs = millis();
-  uint32_t samples = 0;
-  uint32_t rawHighCount = 0;
-  uint32_t rawLowCount = 0;
-  uint32_t lightHighCount = 0;
-  uint32_t lightLowCount = 0;
-  uint32_t transitions = 0;
-  uint32_t analogMinMv = 5000;
-  uint32_t analogMaxMv = 0;
-  uint64_t analogSumMv = 0;
-  int last = readRxRawPin();
-
-  Serial.println("RX_INPUT_TEST_START");
-
-  while (millis() - startMs < durationMs) {
-    int current = readRxRawPin();
-    int light = RX_LIGHT_ACTIVE_LOW ? !current : current;
-
-    if (RX_USE_ANALOG_THRESHOLD) {
-      uint32_t mv = analogReadMilliVolts(RX_PIN);
-      if (mv < analogMinMv) analogMinMv = mv;
-      if (mv > analogMaxMv) analogMaxMv = mv;
-      analogSumMv += mv;
-    }
-
-    if (current == HIGH) rawHighCount++;
-    else rawLowCount++;
-
-    if (light == HIGH) lightHighCount++;
-    else lightLowCount++;
-
-    if (current != last) {
-      transitions++;
-      last = current;
-    }
-
-    samples++;
-    delayMicroseconds(sampleGapUs);
-  }
-
-  Serial.print("RX_INPUT_TEST_DONE:samples=");
-  Serial.print(samples);
-  Serial.print(":rawHigh=");
-  Serial.print(rawHighCount);
-  Serial.print(":rawLow=");
-  Serial.print(rawLowCount);
-  Serial.print(":lightHigh=");
-  Serial.print(lightHighCount);
-  Serial.print(":lightLow=");
-  Serial.print(lightLowCount);
-  Serial.print(":transitions=");
-  Serial.print(transitions);
-  Serial.print(":activeLow=");
-  Serial.print(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
-  Serial.print(":analog=");
-  Serial.print(RX_USE_ANALOG_THRESHOLD ? 1 : 0);
-  Serial.print(":thresholdMv=");
-  Serial.print(rxAnalogThresholdMv);
-  if (RX_USE_ANALOG_THRESHOLD && samples > 0) {
-    Serial.print(":minMv=");
-    Serial.print(analogMinMv);
-    Serial.print(":maxMv=");
-    Serial.print(analogMaxMv);
-    Serial.print(":avgMv=");
-    Serial.print((uint32_t)(analogSumMv / samples));
-  }
-  Serial.println();
-}
-
-void printRxStats() {
-  Serial.print("RX_STATS:freq=");
-  Serial.print(frequencyHz);
-  Serial.print(":halfBitUs=");
-  Serial.print(halfBitUs);
-  Serial.print(":pin=");
-  Serial.print(RX_PIN);
-  Serial.print(":analog=");
-  Serial.print(RX_USE_ANALOG_THRESHOLD ? 1 : 0);
-  Serial.print(":thresholdMv=");
-  Serial.print(rxAnalogThresholdMv);
-  Serial.print(":lightActiveLow=");
-  Serial.print(RX_LIGHT_ACTIVE_LOW ? 1 : 0);
-  Serial.print(":debug=");
-  Serial.print(rxDebug ? 1 : 0);
-  Serial.print(":diag=");
-  Serial.print(rxDiagnostics ? 1 : 0);
-  Serial.print(":decodedBytes=");
-  Serial.print(decodedBytes);
-  Serial.print(":framesOk=");
-  Serial.print(framesOk);
-  Serial.print(":badCrc=");
-  Serial.print(badCrcFrames);
-  Serial.print(":badHeader=");
-  Serial.print(badHeaderFrames);
-  Serial.print(":unstableBits=");
-  Serial.println(unstableBits);
-}
-
 int receiveManchesterByte() {
   while (true) {
-    // Current TX idles LED ON. With the TEPT4400 divider this is raw LOW.
-    // The TX Manchester start symbol is OFF then ON, so the raw RX waveform is
-    // HIGH then LOW. Lock to the falling edge in the middle of that start
-    // symbol; then the normal half-bit delay sequence lands on data centers.
-    while (readRxPin() == LOW) {
-      if (handleSerialCommands()) return -2;
-      yield();
-    }
-
     while (readRxPin() == HIGH) {
       if (handleSerialCommands()) return -2;
       yield();
     }
 
-    delayMicroseconds(halfBitUs / 2);
+    while (readRxPin() == LOW) {
+      if (handleSerialCommands()) return -2;
+      yield();
+    }
+
+    uint32_t sampleDeadline = micros() + (halfBitUs / 2);
+    waitUntilMicros(sampleDeadline);
 
     uint8_t value = 0;
     bool valid = true;
 
     for (int i = 7; i >= 0; i--) {
-      delayMicroseconds(halfBitUs);
-      bool first = readRxPin();
+      sampleDeadline += halfBitUs;
+      waitUntilMicros(sampleDeadline);
+      bool first = majorityRead();
 
-      delayMicroseconds(halfBitUs);
-      bool second = readRxPin();
+      sampleDeadline += halfBitUs;
+      waitUntilMicros(sampleDeadline);
+      bool second = majorityRead();
 
       if (first == second) {
         valid = false;
+        statUnstableBits++;
         break;
       }
 
@@ -313,15 +212,17 @@ int receiveManchesterByte() {
     }
 
     if (!valid) {
-      unstableBits++;
-      if (rxDebug && (unstableBits <= 10 || unstableBits % 25 == 0)) {
-        Serial.print("RX_ERROR: unstable Manchester bit count=");
-        Serial.println(unstableBits);
-      }
+      if (rxDebug) Serial.println("RX_ERROR: unstable Manchester bit");
       continue;
     }
 
-    decodedBytes++;
+    statBytes++;
+    if (rxDebug) {
+      Serial.print("RX_BYTE:0x");
+      if (value < 16) Serial.print("0");
+      Serial.println(value, HEX);
+    }
+
     return value;
   }
 }
@@ -390,7 +291,13 @@ void processReceivedByte(uint8_t data) {
     case WAIT_START:
       if (data == PREAMBLE_BYTE) {
         if (preambleSeen < 255) preambleSeen++;
+        statPreambleBytes++;
+        if (preambleSeen > statMaxPreambleRun) statMaxPreambleRun = preambleSeen;
       } else if (data == START_BYTE && preambleSeen >= MIN_PREAMBLE_COUNT) {
+        if (rxDebug) {
+          Serial.print("RX_FRAME_START:preamble=");
+          Serial.println(preambleSeen);
+        }
         preambleSeen = 0;
         rxState = READ_TYPE;
       } else {
@@ -426,9 +333,7 @@ void processReceivedByte(uint8_t data) {
       uint16_t minHeader = (frameType == TYPE_CAROUSEL_PARITY) ? PARITY_HEADER_MIN : CAROUSEL_HEADER_MIN;
 
       if (expectedSize < minHeader) {
-        badHeaderFrames++;
         Serial.println("RX_CAROUSEL_BAD_HEADER: too small");
-        if (rxDiagnostics) printRxStats();
         resetFrame();
         break;
       }
@@ -437,7 +342,6 @@ void processReceivedByte(uint8_t data) {
 
       if (!payloadBuffer) {
         Serial.println("RX_ERROR: cannot allocate payload buffer");
-        if (rxDiagnostics) printRxStats();
         resetFrame();
         break;
       }
@@ -469,34 +373,17 @@ void processReceivedByte(uint8_t data) {
 
       if (bytesRemaining == 0) {
         if (computedCRC == expectedCRC) {
-          framesOk++;
           if (frameType == TYPE_CAROUSEL_CHUNK) {
             handleCarouselFrame();
           } else if (frameType == TYPE_CAROUSEL_PARITY) {
             handleParityFrame();
           }
         } else {
-          badCrcFrames++;
+          statBadCrc++;
           Serial.print("RX_CAROUSEL_BAD_CRC:");
           Serial.print(computedCRC, HEX);
           Serial.print(":expected=");
           Serial.println(expectedCRC, HEX);
-          if (rxDiagnostics) {
-            Serial.print("RX_CRC_CONTEXT:type=0x");
-            Serial.print(frameType, HEX);
-            Serial.print(":size=");
-            Serial.print(expectedSize);
-            Serial.print(":freq=");
-            Serial.print(frequencyHz);
-            Serial.print(":halfBitUs=");
-            Serial.print(halfBitUs);
-            Serial.print(":decodedBytes=");
-            Serial.print(decodedBytes);
-            Serial.print(":badCrc=");
-            Serial.print(badCrcFrames);
-            Serial.print(":unstableBits=");
-            Serial.println(unstableBits);
-          }
         }
 
         resetFrame();
@@ -581,6 +468,7 @@ void handleParityFrame() {
   Serial.print(groupStart);
   Serial.print(":");
   Serial.println(groupCount);
+  statGoodFrames++;
 }
 
 void handleCarouselFrame() {
@@ -647,6 +535,194 @@ void handleCarouselFrame() {
   Serial.print(totalChunks);
   Serial.print(":");
   Serial.println(chunkLen);
+  statGoodFrames++;
+}
+
+void resetStats() {
+  statBytes = 0;
+  statUnstableBits = 0;
+  statBadCrc = 0;
+  statGoodFrames = 0;
+  statPreambleBytes = 0;
+  statMaxPreambleRun = 0;
+}
+
+void printStats() {
+  Serial.print("RX_STATS:freq=");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.print(halfBitUs);
+  Serial.print(":pin=");
+  Serial.print(RX_PIN);
+  Serial.print(":raw=");
+  Serial.print(readRxPin());
+  Serial.print(":bytes=");
+  Serial.print(statBytes);
+  Serial.print(":unstableBits=");
+  Serial.print(statUnstableBits);
+  Serial.print(":badCrc=");
+  Serial.print(statBadCrc);
+  Serial.print(":framesOk=");
+  Serial.print(statGoodFrames);
+  Serial.print(":preambleBytes=");
+  Serial.print(statPreambleBytes);
+  Serial.print(":maxPreambleRun=");
+  Serial.println(statMaxPreambleRun);
+}
+
+void runRxDigitalTest(uint32_t durationMs) {
+  if (durationMs < 50) durationMs = 50;
+  if (durationMs > 5000) durationMs = 5000;
+
+  uint32_t start = millis();
+  uint32_t samples = 0;
+  uint32_t highs = 0;
+  uint32_t lows = 0;
+  uint32_t transitions = 0;
+  int last = readRxPin();
+
+  while ((uint32_t)(millis() - start) < durationMs) {
+    int current = readRxPin();
+    if (current) highs++;
+    else lows++;
+    if (current != last) {
+      transitions++;
+      last = current;
+    }
+    samples++;
+    delayMicroseconds(50);
+  }
+
+  Serial.print("RX_DIGITAL_TEST:durationMs=");
+  Serial.print(durationMs);
+  Serial.print(":samples=");
+  Serial.print(samples);
+  Serial.print(":high=");
+  Serial.print(highs);
+  Serial.print(":low=");
+  Serial.print(lows);
+  Serial.print(":transitions=");
+  Serial.print(transitions);
+  Serial.print(":final=");
+  Serial.println(readRxPin());
+}
+
+void runRxDigitalCapture(uint32_t durationMs, uint32_t sampleUs) {
+  if (durationMs < 5) durationMs = 5;
+  if (durationMs > 2000) durationMs = 2000;
+  if (sampleUs < 2) sampleUs = 2;
+  if (sampleUs > 1000) sampleUs = 1000;
+
+  uint32_t startUs = micros();
+  uint32_t endUs = startUs + (durationMs * 1000UL);
+  uint32_t samples = 0;
+  uint32_t highs = 0;
+  uint32_t lows = 0;
+  uint32_t transitions = 0;
+  uint32_t minRunUs = 0xFFFFFFFF;
+  uint32_t maxRunUs = 0;
+  uint32_t lastEdgeUs = startUs;
+  int last = readRxPin();
+
+  while ((int32_t)(micros() - endUs) < 0) {
+    uint32_t now = micros();
+    int current = readRxPin();
+    if (current) highs++;
+    else lows++;
+    if (current != last) {
+      uint32_t runUs = now - lastEdgeUs;
+      if (runUs < minRunUs) minRunUs = runUs;
+      if (runUs > maxRunUs) maxRunUs = runUs;
+      transitions++;
+      lastEdgeUs = now;
+      last = current;
+    }
+    samples++;
+    delayMicroseconds(sampleUs);
+  }
+
+  if (transitions == 0) minRunUs = 0;
+
+  Serial.print("RX_DIGITAL_CAPTURE:durationMs=");
+  Serial.print(durationMs);
+  Serial.print(":sampleUs=");
+  Serial.print(sampleUs);
+  Serial.print(":freq=");
+  Serial.print(frequencyHz);
+  Serial.print(":halfBitUs=");
+  Serial.print(halfBitUs);
+  Serial.print(":samples=");
+  Serial.print(samples);
+  Serial.print(":high=");
+  Serial.print(highs);
+  Serial.print(":low=");
+  Serial.print(lows);
+  Serial.print(":transitions=");
+  Serial.print(transitions);
+  Serial.print(":minRunUs=");
+  Serial.print(minRunUs);
+  Serial.print(":maxRunUs=");
+  Serial.print(maxRunUs);
+  Serial.print(":final=");
+  Serial.println(readRxPin());
+}
+
+void runRxAdcCapture(uint32_t durationMs, uint32_t sampleUs, uint16_t thresholdMv) {
+  if (durationMs < 5) durationMs = 5;
+  if (durationMs > 2000) durationMs = 2000;
+  if (sampleUs < 50) sampleUs = 50;
+  if (sampleUs > 5000) sampleUs = 5000;
+  if (thresholdMv > 3300) thresholdMv = 3300;
+
+  uint32_t startUs = micros();
+  uint32_t endUs = startUs + (durationMs * 1000UL);
+  uint32_t samples = 0;
+  uint32_t above = 0;
+  uint32_t below = 0;
+  uint32_t transitions = 0;
+  uint32_t sumMv = 0;
+  uint16_t minMv = 5000;
+  uint16_t maxMv = 0;
+  int lastLevel = -1;
+
+  while ((int32_t)(micros() - endUs) < 0) {
+    uint16_t mv = analogReadMilliVolts(RX_ADC_PIN);
+    int level = mv >= thresholdMv ? 1 : 0;
+    if (mv < minMv) minMv = mv;
+    if (mv > maxMv) maxMv = mv;
+    sumMv += mv;
+    if (level) above++;
+    else below++;
+    if (lastLevel >= 0 && level != lastLevel) transitions++;
+    lastLevel = level;
+    samples++;
+    delayMicroseconds(sampleUs);
+  }
+
+  uint32_t avgMv = samples ? (sumMv / samples) : 0;
+
+  Serial.print("RX_ADC_CAPTURE:durationMs=");
+  Serial.print(durationMs);
+  Serial.print(":sampleUs=");
+  Serial.print(sampleUs);
+  Serial.print(":pin=");
+  Serial.print(RX_ADC_PIN);
+  Serial.print(":thresholdMv=");
+  Serial.print(thresholdMv);
+  Serial.print(":samples=");
+  Serial.print(samples);
+  Serial.print(":minMv=");
+  Serial.print(minMv);
+  Serial.print(":maxMv=");
+  Serial.print(maxMv);
+  Serial.print(":avgMv=");
+  Serial.print(avgMv);
+  Serial.print(":above=");
+  Serial.print(above);
+  Serial.print(":below=");
+  Serial.print(below);
+  Serial.print(":transitions=");
+  Serial.println(transitions);
 }
 
 void setFrequency(uint32_t f) {

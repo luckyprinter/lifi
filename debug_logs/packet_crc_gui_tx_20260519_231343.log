@@ -1,0 +1,293 @@
+23:13:57 TX: > FREQ=9000
+23:13:57 TX: > TYPE=1
+23:13:57 TX: TX FREQ = 9000 Hz | halfBit = 55 us
+23:13:57 TX: TX_TYPE=1
+23:14:00 TX: > TYPE=1
+23:14:00 TX: > SEND=1
+23:14:00 TX: TX_TYPE=1
+23:14:00 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:00 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:00 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:07 TX: > TYPE=1
+23:14:07 TX: > SEND=1
+23:14:07 TX: TX_TYPE=1
+23:14:07 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:08 TX: > TYPE=1
+23:14:08 TX: > SEND=1
+23:14:08 TX: TX_TYPE=1
+23:14:08 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:08 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:08 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:11 TX: > TYPE=1
+23:14:11 TX: > SEND=1
+23:14:11 TX: TX_TYPE=1
+23:14:11 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:11 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:11 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:26 TX: > TYPE=1
+23:14:26 TX: > SEND=1
+23:14:26 TX: TX_TYPE=1
+23:14:26 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:26 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:26 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:27 TX: > TYPE=1
+23:14:27 TX: > SEND=1
+23:14:27 TX: TX_TYPE=1
+23:14:27 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:14:27 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:14:27 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:14:46 TX: READ_ERROR:device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+23:19:39 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:19:39 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:19:43 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:19:43 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:21:20 TX: SEND_ERROR:TX serial is not connected
+23:21:27 TX: SEND_ERROR:TX serial is not connected
+23:21:43 TX: > FREQ=1000
+23:21:43 TX: > TYPE=1
+23:21:43 TX: TX FREQ = 1000 Hz | halfBit = 500 us
+23:21:43 TX: TX_TYPE=1
+23:21:45 TX: > TYPE=1
+23:21:45 TX: > SEND=1
+23:21:45 TX: TX_TYPE=1
+23:21:45 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:45 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:45 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:21:47 TX: > TYPE=1
+23:21:47 TX: > SEND=1
+23:21:47 TX: TX_TYPE=1
+23:21:47 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:47 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:47 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:21:50 TX: > FREQ=1000
+23:21:50 TX: TX FREQ = 1000 Hz | halfBit = 500 us
+23:21:52 TX: > TYPE=1
+23:21:52 TX: > SEND=1
+23:21:52 TX: TX_TYPE=1
+23:21:52 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:52 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:52 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:21:53 TX: > TYPE=1
+23:21:53 TX: > SEND=1
+23:21:53 TX: TX_TYPE=1
+23:21:53 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:53 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:53 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:21:55 TX: > TYPE=1
+23:21:55 TX: > SEND=1
+23:21:55 TX: TX_TYPE=1
+23:21:55 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:55 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:55 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:21:56 TX: > TYPE=1
+23:21:56 TX: > SEND=1
+23:21:56 TX: TX_TYPE=1
+23:21:56 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:21:56 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:21:56 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:10 TX: > TYPE=1
+23:22:10 TX: > SEND=1
+23:22:10 TX: TX_TYPE=1
+23:22:10 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:10 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:10 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:12 TX: > TYPE=1
+23:22:12 TX: > SEND=1
+23:22:12 TX: TX_TYPE=1
+23:22:12 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:12 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:12 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:17 TX: > TYPE=1
+23:22:17 TX: > SEND=1
+23:22:17 TX: TX_TYPE=1
+23:22:17 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:17 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:17 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:23 TX: > TYPE=1
+23:22:23 TX: > SEND=1
+23:22:23 TX: TX_TYPE=1
+23:22:23 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:23 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:23 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:25 TX: > TYPE=1
+23:22:25 TX: > SEND=1
+23:22:25 TX: TX_TYPE=1
+23:22:25 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:25 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:25 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:27 TX: > TYPE=1
+23:22:27 TX: > SEND=1
+23:22:27 TX: TX_TYPE=1
+23:22:27 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:27 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:27 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:32 TX: > TYPE=1
+23:22:32 TX: > SEND=1
+23:22:32 TX: TX_TYPE=1
+23:22:32 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:32 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:32 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:33 TX: > TYPE=1
+23:22:33 TX: > SEND=1
+23:22:33 TX: TX_TYPE=1
+23:22:33 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:33 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:33 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:36 TX: > TYPE=1
+23:22:36 TX: > SEND=1
+23:22:36 TX: TX_TYPE=1
+23:22:37 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:37 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:37 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:48 TX: > TYPE=1
+23:22:48 TX: > SEND=1
+23:22:48 TX: TX_TYPE=1
+23:22:48 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:48 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:48 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:49 TX: > TYPE=1
+23:22:49 TX: > SEND=1
+23:22:49 TX: TX_TYPE=1
+23:22:50 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:50 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:50 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:51 TX: > TYPE=1
+23:22:51 TX: > SEND=1
+23:22:51 TX: TX_TYPE=1
+23:22:51 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:22:51 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:22:51 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:22:56 TX: �t(�ݹ��� detector was triggered
+23:22:56 TX: 
+23:22:56 TX: 
+23:22:56 TX: ets Jul 29 2019 12:21:46
+23:22:56 TX: 
+23:22:56 TX: rst:0x3 (SW_RESET),boot:0x12 (SPI_FAST_FLASH_BOOT)
+23:22:56 TX: configsip: 0, SPIWP:0xee
+23:22:56 TX: clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+23:22:56 TX: READ_ERROR:device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+23:25:04 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:25:14 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:25:14 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:25:16 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:25:16 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:25:33 TX: > FREQ=500
+23:25:33 TX: > TYPE=1
+23:25:33 TX: TX FREQ = 500 Hz | halfBit = 1000 us
+23:25:33 TX: TX_TYPE=1
+23:26:03 TX: > TYPE=1
+23:26:03 TX: > SEND=1
+23:26:03 TX: ����������������������������������������������������������������TYPE=1
+23:26:03 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:03 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:03 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:06 TX: > TYPE=1
+23:26:06 TX: > SEND=1
+23:26:06 TX: TX_TYPE=1
+23:26:06 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:06 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:06 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:07 TX: > TYPE=1
+23:26:07 TX: > SEND=1
+23:26:07 TX: TX_TYPE=1
+23:26:07 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:12 TX: > TYPE=1
+23:26:12 TX: > SEND=1
+23:26:12 TX: TX_TYPE=1
+23:26:12 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:12 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:12 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:14 TX: > TYPE=1
+23:26:14 TX: > SEND=1
+23:26:14 TX: TX_TYPE=1
+23:26:14 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:14 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:14 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:17 TX: > TYPE=1
+23:26:17 TX: > SEND=1
+23:26:17 TX: TX_TYPE=1
+23:26:17 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:26:17 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:26:17 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:26:25 TX: READ_ERROR:device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+23:27:22 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:27:22 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:27:23 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:27:23 TX: SEND_ERROR:write failed: [Errno 5] Input/output error
+23:27:39 TX: > FREQ=500
+23:27:39 TX: > TYPE=1
+23:27:39 TX: TX FREQ = 500 Hz | halfBit = 1000 us
+23:27:39 TX: TX_TYPE=1
+23:27:43 TX: > TYPE=1
+23:27:43 TX: > SEND=1
+23:27:43 TX: TX_TYPE=1
+23:27:43 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:27:44 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:27:44 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:27:45 TX: > TYPE=1
+23:27:45 TX: > SEND=1
+23:27:45 TX: TX_TYPE=1
+23:27:45 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:27:45 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:27:45 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:27:51 TX: > TYPE=1
+23:27:51 TX: > SEND=1
+23:27:51 TX: TX_TYPE=1
+23:27:51 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:27:51 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:27:51 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:27:53 TX: > TYPE=1
+23:27:53 TX: > SEND=1
+23:27:53 TX: TX_TYPE=1
+23:27:53 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:27:53 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:27:53 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:27:59 TX: > FREQ=100
+23:27:59 TX: TX FREQ = 100 Hz | halfBit = 5000 us
+23:28:02 TX: > TYPE=1
+23:28:02 TX: > SEND=1
+23:28:02 TX: TX_TYPE=1
+23:28:02 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:28:03 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:03 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:28:07 TX: > TYPE=1
+23:28:07 TX: > SEND=1
+23:28:07 TX: TX_TYPE=1
+23:28:08 TX: TX_PACKET_SENT:type=1:seq=0:len=1:crc=0x31
+23:28:08 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:08 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=1
+23:28:13 TX: > TYPE=2
+23:28:13 TX: > SEND=1
+23:28:13 TX: TX_TYPE=2
+23:28:14 TX: TX_PACKET_SENT:type=2:seq=0:len=1:crc=0x32
+23:28:14 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:14 TX: TX_PACKET_MESSAGE_SENT:type=2:bytes=1
+23:28:19 TX: > TYPE=2
+23:28:19 TX: > SEND=1
+23:28:19 TX: TX_TYPE=2
+23:28:19 TX: TX_PACKET_SENT:type=2:seq=0:len=1:crc=0x32
+23:28:20 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:20 TX: TX_PACKET_MESSAGE_SENT:type=2:bytes=1
+23:28:27 TX: > TYPE=3
+23:28:27 TX: > SEND=1
+23:28:27 TX: TX_TYPE=3
+23:28:28 TX: TX_PACKET_SENT:type=3:seq=0:len=1:crc=0x33
+23:28:28 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:28 TX: TX_PACKET_MESSAGE_SENT:type=3:bytes=1
+23:28:32 TX: > TYPE=3
+23:28:32 TX: > SEND=1
+23:28:32 TX: TX_TYPE=3
+23:28:32 TX: TX_PACKET_SENT:type=3:seq=0:len=1:crc=0x33
+23:28:33 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:33 TX: TX_PACKET_MESSAGE_SENT:type=3:bytes=1
+23:28:39 TX: > TYPE=3
+23:28:39 TX: > SEND=1
+23:28:39 TX: TX_TYPE=3
+23:28:40 TX: TX_PACKET_SENT:type=3:seq=0:len=1:crc=0x33
+23:28:40 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+23:28:40 TX: TX_PACKET_MESSAGE_SENT:type=3:bytes=1
+23:33:37 TX: Saved shared log copy: /home/luckyprinter/Projects/lifi/lifi/debug_logs/packet_crc_shared_copy_20260519_233337.log

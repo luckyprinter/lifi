@@ -43,7 +43,10 @@ npm run build
 - `Circuit`: physical LED-to-sensor path.
 - `Theory`: protocol and Manchester/FEC flow.
 - `Bottleneck`: current debug focus around RX signal threshold and voltage swing.
+- `Firmware Patterns`: historical churn map for RX timing, TX polarity, experimental firmware, and counterpart TX/RX matching.
 - `Evolution`: repo and commit-history timeline.
+
+Use the version selector in the toolbar to switch the diagrams between the current working tree and important older repo versions, including the known-good `4d78a01` RX baseline. Older versions show historical flow and schematic values as read-only references; the current version remains editable.
 
 ## Handoff Notes
 

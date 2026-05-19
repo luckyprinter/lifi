@@ -1,0 +1,975 @@
+15:23:15 RX: SEND_ERROR:RX serial is not connected
+15:23:18 RX: > FREQ=1000
+15:23:18 RX: > INV=0
+15:23:18 RX: > DEBUG=1
+15:23:18 RX: RX FREQ = 1000 Hz | halfBit = 500 us
+15:23:18 RX: RX_INV=0
+15:23:18 RX: RX_DEBUG=1
+15:23:19 RX: > FREQ=1000
+15:23:19 RX: RX FREQ = 1000 Hz | halfBit = 500 us
+15:23:37 TX: > FREQ=1000
+15:23:37 TX: > TYPE=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: TX FREQ = 1000 Hz | halfBit = 500 us
+15:23:37 TX: TX_TYPE=1
+15:24:29 TX: > TYPE=1
+15:24:29 TX: > SEND=sad
+15:24:29 RX: RX_BYTE:0x03
+15:24:29 TX: TX_TYPE=1
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:29 RX: RX_BYTE:0xC8
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_BYTE:0xA6
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:29 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:29 RX: RX_ERROR:unstable_manchester_bit
+15:24:34 RX: > STATS
+15:24:34 RX: RX_PACKET_STATS:freq=1000:halfBitUs=500:pin=5:raw=0:level=0:inv=0:bytes=12:sof=0:ok=0:crcFail=0:unstable=13
+15:24:39 RX: > INV=1
+15:24:40 RX: RX_INV=1
+15:24:43 TX: > TYPE=1
+15:24:43 TX: > SEND=sad
+15:24:43 TX: TX_TYPE=1
+15:24:43 RX: RX_BYTE:0xF8
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:43 RX: RX_BYTE:0x00
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 RX: RX_BYTE:0xB9
+15:24:43 RX: RX_BYTE:0x61
+15:24:43 RX: RX_BYTE:0x91
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:43 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:24:43 RX: RX_BYTE:0xF8
+15:24:43 RX: RX_BYTE:0xFF
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 RX: RX_BYTE:0x00
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:43 RX: RX_ERROR:unstable_manchester_bit
+15:24:47 RX: > INV=0
+15:24:47 RX: RX_INV=0
+15:24:49 TX: > TYPE=1
+15:24:49 TX: > SEND=sad
+15:24:49 TX: TX_TYPE=1
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_BYTE:0xC8
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_BYTE:0xA6
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 RX: RX_ERROR:unstable_manchester_bit
+15:24:49 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:49 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:05 RX: > FREQ=7000
+15:25:05 RX: RX FREQ = 7000 Hz | halfBit = 71 us
+15:25:07 TX: > TYPE=1
+15:25:07 TX: > SEND=sad
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 TX: ����������������������������������������������������������������TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:07 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 TX: > TYPE=1
+15:25:09 TX: > SEND=sad
+15:25:09 TX: TX_TYPE=1
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:09 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:09 RX: RX_ERROR:unstable_manchester_bit
+15:25:16 RX: > FREQ=500
+15:25:16 RX: RX FREQ = 500 Hz | halfBit = 1000 us
+15:25:19 TX: > FREQ=500
+15:25:19 TX: ����������������������������������������������������������������0 us
+15:25:21 TX: > TYPE=1
+15:25:21 TX: > SEND=sad
+15:25:21 TX: TX_TYPE=1
+15:25:21 RX: RX_BYTE:0x03
+15:25:21 RX: RX_BYTE:0xFB
+15:25:21 RX: RX_BYTE:0xFF
+15:25:21 RX: RX_BYTE:0xC8
+15:25:21 RX: RX_BYTE:0x93
+15:25:21 RX: RX_BYTE:0xA6
+15:25:21 RX: RX_BYTE:0xC5
+15:25:21 RX: RX_ERROR:unstable_manchester_bit
+15:25:21 RX: RX_BYTE:0x03
+15:25:21 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:21 RX: RX_BYTE:0xFF
+15:25:21 RX: RX_BYTE:0xF7
+15:25:21 RX: RX_BYTE:0xFF
+15:25:22 RX: RX_ERROR:unstable_manchester_bit
+15:25:22 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:22 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:23 TX: > TYPE=1
+15:25:23 TX: > SEND=sad
+15:25:23 TX: TX_TYPE=1
+15:25:23 RX: RX_BYTE:0x03
+15:25:23 RX: RX_BYTE:0xFB
+15:25:23 RX: RX_BYTE:0xFF
+15:25:23 RX: RX_BYTE:0xC8
+15:25:23 RX: RX_BYTE:0x93
+15:25:23 RX: RX_BYTE:0xA6
+15:25:23 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:23 RX: RX_BYTE:0xC5
+15:25:23 RX: RX_ERROR:unstable_manchester_bit
+15:25:23 RX: RX_BYTE:0x03
+15:25:24 RX: RX_BYTE:0xFF
+15:25:24 RX: RX_BYTE:0xF7
+15:25:24 RX: RX_BYTE:0xFF
+15:25:24 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:24 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:24 RX: RX_ERROR:unstable_manchester_bit
+15:25:30 TX: > TYPE=1
+15:25:30 TX: > SEND=sad
+15:25:30 TX: TX_TYPE=1
+15:25:30 RX: RX_BYTE:0x03
+15:25:30 RX: RX_BYTE:0xFB
+15:25:30 RX: RX_BYTE:0xFF
+15:25:30 RX: RX_BYTE:0xC8
+15:25:30 RX: RX_BYTE:0x93
+15:25:30 RX: RX_BYTE:0xA6
+15:25:30 RX: RX_BYTE:0xC5
+15:25:30 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:30 RX: RX_ERROR:unstable_manchester_bit
+15:25:30 RX: RX_BYTE:0x03
+15:25:30 RX: RX_BYTE:0xFF
+15:25:30 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:30 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:30 RX: RX_BYTE:0xF7
+15:25:30 RX: RX_BYTE:0xFF
+15:25:30 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 TX: > TYPE=1
+15:25:59 TX: > SEND=sad
+15:25:59 TX: TX_TYPE=1
+15:25:59 RX: RX_BYTE:0x03
+15:25:59 RX: RX_BYTE:0xFB
+15:25:59 RX: RX_BYTE:0xFF
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_BYTE:0x19
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:59 RX: RX_BYTE:0xE9
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_BYTE:0xE2
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:25:59 RX: RX_BYTE:0xFF
+15:25:59 RX: RX_BYTE:0xFD
+15:25:59 RX: RX_BYTE:0x00
+15:25:59 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:59 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:59 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 TX: > TYPE=1
+15:26:01 TX: > SEND=sad
+15:26:01 TX: TX_TYPE=1
+15:26:01 RX: RX_BYTE:0x03
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_BYTE:0xFF
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_BYTE:0xE9
+15:26:01 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:01 RX: RX_BYTE:0x71
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 RX: RX_BYTE:0xFF
+15:26:01 RX: RX_ERROR:unstable_manchester_bit
+15:26:01 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:01 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:03 TX: > TYPE=1
+15:26:03 TX: > SEND=sad
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 TX: TX_TYPE=1
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_BYTE:0xFE
+15:26:03 RX: RX_BYTE:0xFF
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:03 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:03 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_BYTE:0x46
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_BYTE:0x3D
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_BYTE:0xB8
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:03 RX: RX_BYTE:0xFF
+15:26:03 RX: RX_BYTE:0xFD
+15:26:03 RX: RX_BYTE:0x00
+15:26:03 RX: RX_ERROR:unstable_manchester_bit
+15:26:04 TX: > TYPE=1
+15:26:04 TX: > SEND=sad
+15:26:04 TX: TX_TYPE=1
+15:26:04 RX: RX_BYTE:0x03
+15:26:04 RX: RX_BYTE:0xFB
+15:26:04 RX: RX_BYTE:0xFF
+15:26:04 RX: RX_ERROR:unstable_manchester_bit
+15:26:04 RX: RX_ERROR:unstable_manchester_bit
+15:26:04 RX: RX_ERROR:unstable_manchester_bit
+15:26:04 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_BYTE:0x37
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_BYTE:0xFF
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:05 RX: RX_BYTE:0xFF
+15:26:05 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:05 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:05 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 TX: > TYPE=1
+15:26:07 TX: > SEND=sad
+15:26:07 RX: RX_BYTE:0x03
+15:26:07 TX: TX_TYPE=1
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 RX: RX_BYTE:0xFF
+15:26:07 RX: RX_BYTE:0xF2
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 RX: RX_BYTE:0x93
+15:26:07 RX: RX_BYTE:0xA6
+15:26:07 RX: RX_BYTE:0xC5
+15:26:07 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 RX: RX_BYTE:0x03
+15:26:07 RX: RX_BYTE:0xFF
+15:26:07 RX: RX_BYTE:0xF7
+15:26:07 RX: RX_BYTE:0x00
+15:26:07 RX: RX_ERROR:unstable_manchester_bit
+15:26:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:19 TX: > TYPE=1
+15:26:19 TX: > SEND=sad
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 TX: TX_TYPE=1
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:19 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:19 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 TX: > TYPE=1
+15:26:20 TX: > SEND=sad
+15:26:20 TX: TX_TYPE=1
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:20 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:20 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 TX: > TYPE=1
+15:26:22 TX: > SEND=sad
+15:26:22 TX: TX_TYPE=1
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 RX: RX_ERROR:unstable_manchester_bit
+15:26:22 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:28 RX: > STATS
+15:26:28 RX: RX_PACKET_STATS:freq=500:halfBitUs=1000:pin=5:raw=0:level=0:inv=0:bytes=93:sof=0:ok=0:crcFail=0:unstable=314
+15:26:34 RX: > FREQ=9000
+15:26:34 RX: RX FREQ = 9000 Hz | halfBit = 55 us
+15:26:36 TX: > FREQ=9000
+15:26:36 TX: ���������������������������������������������������������������� us
+15:26:39 TX: > TYPE=1
+15:26:39 TX: > SEND=sad
+15:26:39 TX: TX_TYPE=1
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:39 RX: RX_ERROR:unstable_manchester_bit
+15:26:39 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:42 TX: > TYPE=1
+15:26:42 TX: > SEND=sad
+15:26:42 TX: TX_TYPE=1
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:42 RX: RX_ERROR:unstable_manchester_bit
+15:26:42 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:58 RX: > RXCAP=2000,100
+15:27:00 RX: RX_PACKET_CAPTURE:durationMs=2000:sampleUs=100:freq=9000:samples=19790:high=0:low=19790:transitions=0:final=0
+15:27:00 RX: > RXCAP=100,10
+15:27:00 RX: RX_PACKET_CAPTURE:durationMs=100:sampleUs=10:freq=9000:samples=8950:high=0:low=8950:transitions=0:final=0
+15:27:05 TX: > TYPE=1
+15:27:05 TX: > SEND=sad
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 TX: TX_TYPE=1
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:05 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:05 RX: RX_ERROR:unstable_manchester_bit
+15:27:13 RX: > FREQ=500
+15:27:13 RX: RX FREQ = 500 Hz | halfBit = 1000 us
+15:27:19 RX: > FREQ=200
+15:27:19 RX: RX FREQ = 200 Hz | halfBit = 2500 us
+15:27:21 TX: > FREQ=200
+15:27:21 TX: TX FREQ = 200 Hz | halfBit = 2500 us
+15:27:22 TX: > TYPE=1
+15:27:22 TX: > SEND=sad
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 TX: TX_TYPE=1
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:22 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 RX: RX_ERROR:unstable_manchester_bit
+15:27:23 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:23 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:27:25 RX: > RXCAP=2000,100
+15:27:26 TX: > TYPE=1
+15:27:26 TX: > SEND=sad
+15:27:27 TX: TX_TYPE=1
+15:27:27 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:27 RX: RX_PACKET_CAPTURE:durationMs=2000:sampleUs=100:freq=200:samples=19789:high=1218:low=18571:transitions=882:final=0
+15:27:27 RX: RX_ERROR:unstable_manchester_bit
+15:27:27 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:27 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:30:38 TX: > FREQ=200
+15:30:38 TX: ����������������������������������������������������������������0 us
+15:30:40 TX: > TYPE=1
+15:30:40 TX: > SEND=sad
+15:30:40 TX: TX_TYPE=1
+15:30:40 RX: RX_BYTE:0x03
+15:30:40 RX: RX_BYTE:0xFB
+15:30:40 RX: RX_BYTE:0xFF
+15:30:40 RX: RX_BYTE:0xC8
+15:30:40 RX: RX_BYTE:0x93
+15:30:40 RX: RX_BYTE:0xA6
+15:30:40 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:30:40 RX: RX_BYTE:0xC5
+15:30:40 RX: RX_ERROR:unstable_manchester_bit
+15:30:40 RX: RX_BYTE:0x03
+15:30:40 RX: RX_BYTE:0xFF
+15:30:40 RX: RX_BYTE:0xF7
+15:30:40 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:30:40 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:30:40 RX: RX_BYTE:0xFF
+15:30:40 RX: RX_ERROR:unstable_manchester_bit
+15:30:47 RX: > FREQ=100
+15:30:47 RX: RX FREQ = 100 Hz | halfBit = 5000 us
+15:30:50 TX: > FREQ=100
+15:30:50 TX: TX FREQ = 100 Hz | halfBit = 5000 us
+15:30:52 TX: > TYPE=1
+15:30:52 TX: > SEND=sad
+15:30:52 TX: TX_TYPE=1
+15:30:52 RX: RX_BYTE:0x03
+15:30:52 RX: RX_BYTE:0xFB
+15:30:52 RX: RX_BYTE:0xFF
+15:30:52 RX: RX_BYTE:0xC8
+15:30:53 RX: RX_BYTE:0x93
+15:30:53 RX: RX_BYTE:0xA6
+15:30:53 RX: RX_BYTE:0xC5
+15:30:53 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:30:53 RX: RX_ERROR:unstable_manchester_bit
+15:30:53 RX: RX_ERROR:unstable_manchester_bit
+15:30:53 RX: RX_BYTE:0xFF
+15:30:53 RX: RX_BYTE:0xFD
+15:30:53 RX: RX_BYTE:0xFF
+15:30:53 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:30:53 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:30:53 RX: RX_ERROR:unstable_manchester_bit
+15:30:58 RX: > FREQ=50
+15:30:58 RX: RX FREQ = 50 Hz | halfBit = 10000 us
+15:31:00 TX: > FREQ=50
+15:31:00 TX: TX FREQ = 50 Hz | halfBit = 10000 us
+15:31:01 TX: > TYPE=1
+15:31:01 TX: > SEND=sad
+15:31:02 TX: TX_TYPE=1
+15:31:02 RX: RX_BYTE:0x03
+15:31:02 RX: RX_BYTE:0xFB
+15:31:02 RX: RX_BYTE:0xFF
+15:31:02 RX: RX_BYTE:0xC8
+15:31:02 RX: RX_BYTE:0x93
+15:31:03 RX: RX_BYTE:0xA6
+15:31:03 RX: RX_BYTE:0xC5
+15:31:03 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:03 RX: RX_BYTE:0x81
+15:31:03 RX: RX_BYTE:0xFF
+15:31:03 RX: RX_BYTE:0xFB
+15:31:03 RX: RX_BYTE:0xFF
+15:31:04 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:04 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:04 RX: RX_ERROR:unstable_manchester_bit
+15:31:12 RX: > FREQ=30
+15:31:12 RX: RX FREQ = 30 Hz | halfBit = 16666 us
+15:31:14 TX: > FREQ=30
+15:31:14 TX: TX FREQ = 30 Hz | halfBit = 16666 us
+15:31:16 TX: > TYPE=1
+15:31:16 TX: > SEND=sad
+15:31:16 TX: TX_TYPE=1
+15:31:16 RX: RX_BYTE:0x03
+15:31:17 RX: RX_BYTE:0xFB
+15:31:17 RX: RX_BYTE:0xFF
+15:31:17 RX: RX_BYTE:0xC8
+15:31:17 RX: RX_BYTE:0x93
+15:31:18 RX: RX_BYTE:0xA6
+15:31:18 RX: RX_BYTE:0xC5
+15:31:18 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:18 RX: RX_BYTE:0x81
+15:31:19 RX: RX_BYTE:0xFF
+15:31:19 RX: RX_BYTE:0xFB
+15:31:19 RX: RX_BYTE:0xFF
+15:31:19 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:19 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:19 RX: RX_ERROR:unstable_manchester_bit
+15:31:27 RX: > FREQ=10
+15:31:27 RX: RX FREQ = 10 Hz | halfBit = 50000 us
+15:31:29 TX: > FREQ=10
+15:31:29 TX: TX FREQ = 10 Hz | halfBit = 50000 us
+15:31:30 TX: > TYPE=1
+15:31:30 TX: > SEND=sad
+15:31:30 TX: TX_TYPE=1
+15:31:31 RX: RX_BYTE:0x03
+15:31:32 RX: RX_BYTE:0xFB
+15:31:33 RX: RX_BYTE:0xFF
+15:31:34 RX: RX_BYTE:0xC8
+15:31:35 RX: RX_BYTE:0x93
+15:31:36 RX: RX_BYTE:0xA6
+15:31:36 RX: RX_BYTE:0xC5
+15:31:37 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:37 RX: RX_BYTE:0x81
+15:31:38 RX: RX_BYTE:0xFF
+15:31:39 RX: RX_BYTE:0xFB
+15:31:40 RX: RX_BYTE:0xFF
+15:31:41 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:41 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:41 RX: RX_ERROR:unstable_manchester_bit
+

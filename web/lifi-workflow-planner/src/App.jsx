@@ -29,10 +29,18 @@ import {
   Workflow,
   Zap,
 } from "lucide-react";
-import { evolutionDetails, flows, nodeDetails, recommendations, views } from "./flowData.js";
+import { evolutionDetails, flows, lifiVersions, nodeDetails, recommendations, views } from "./flowData.js";
 
 const NOTES_KEY = "lifi-planner-notes-v1";
 const COMPONENTS_KEY = "lifi-schematic-components-v1";
+const NAV_MIN = 76;
+const NAV_MAX = 240;
+const DETAIL_MIN = 260;
+const DETAIL_MAX = 560;
+
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
 function readStorage(key, fallback) {
   try {
@@ -60,7 +68,7 @@ const statusIcon = {
   experimental: SlidersHorizontal,
 };
 
-function makeFlow(viewId, query) {
+function makeFlow(viewId, query, details = nodeDetails) {
   const flow = flows[viewId] || flows.system;
   const q = query.trim().toLowerCase();
   const nodeRows = flow.nodes || [];
@@ -68,7 +76,7 @@ function makeFlow(viewId, query) {
     nodeRows
       .filter(([id]) => {
         if (!q) return true;
-        const item = nodeDetails[id];
+        const item = details[id];
         return [item.title, item.summary, item.layer, item.system, item.status, ...(item.parameters || [])]
           .join(" ")
           .toLowerCase()
@@ -83,7 +91,7 @@ function makeFlow(viewId, query) {
       id,
       type: "lifiNode",
       position: { x, y },
-      data: nodeDetails[id],
+      data: details[id],
     }));
 
   const edges = (flow.edges || [])
@@ -94,7 +102,7 @@ function makeFlow(viewId, query) {
       target,
       animated: ["adcThreshold", "manchesterRx"].includes(source) || ["adcThreshold", "manchesterRx"].includes(target),
       type: "smoothstep",
-      className: nodeDetails[target]?.status === "bottleneck" ? "edge-warn" : "",
+      className: details[target]?.status === "bottleneck" ? "edge-warn" : "",
     }));
 
   return { nodes, edges };
@@ -125,8 +133,8 @@ function LifiNode({ data, selected }) {
 
 const nodeTypes = { lifiNode: LifiNode };
 
-function DetailPanel({ selectedId, notes, onNoteChange, onSubmit }) {
-  const item = nodeDetails[selectedId] || nodeDetails.adcThreshold;
+function DetailPanel({ selectedId, notes, onNoteChange, onSubmit, details }) {
+  const item = details[selectedId] || details.adcThreshold;
   const StatusIcon = statusIcon[item.status] || Activity;
 
   return (
@@ -343,43 +351,39 @@ function ComponentCard({ type, title, note }) {
   );
 }
 
-const defaultComponents = [
-  { id: "esp32_tx", type: "esp32", name: "TX ESP32", value: "GPIO5 Manchester", note: "Serial controlled transmitter" },
-  { id: "gate_res", type: "resistor", name: "Gate resistor", value: "220 ohm", note: "ESP32 GPIO5 to MOSFET gate" },
-  { id: "pulldown", type: "resistor", name: "Gate pulldown", value: "10k ohm", note: "Gate to ground" },
-  { id: "mosfet", type: "mosfet", name: "IRLZ44N", value: "active-high low-side", note: "LED switch" },
-  { id: "led", type: "led", name: "LED bulb", value: "12 V", note: "Visible light source" },
-  { id: "rx_load", type: "resistor", name: "RX load resistor", value: "10k ohm", note: "Try 22k/47k for sensitivity" },
-  { id: "sensor", type: "phototransistor", name: "TEPT4400", value: "phototransistor", note: "Current receiver sensor" },
-  { id: "rx_esp32", type: "esp32", name: "RX ESP32", value: "GPIO34 ADC", note: "Thresholded input" },
-];
+const defaultComponents = lifiVersions.find((version) => version.id === "current")?.schematicComponents || [];
 
-function ComponentEditor({ components, setComponents, onSubmit }) {
+function ComponentEditor({ components, setComponents, onSubmit, readOnly = false }) {
   const update = (id, field, value) => {
+    if (readOnly) return;
     setComponents((items) => items.map((item) => (item.id === id ? { ...item, [field]: value } : item)));
   };
 
   const add = () => {
+    if (readOnly) return;
     setComponents((items) => [
       ...items,
       { id: `custom_${Date.now()}`, type: "resistor", name: "New component", value: "10k ohm", note: "Edit this component" },
     ]);
   };
 
-  const remove = (id) => setComponents((items) => items.filter((item) => item.id !== id));
+  const remove = (id) => {
+    if (readOnly) return;
+    setComponents((items) => items.filter((item) => item.id !== id));
+  };
 
   return (
     <section className="component-editor">
       <div className="editor-head">
-        <h2>Editable Component Values</h2>
+        <h2>{readOnly ? "Historical Component Values" : "Editable Component Values"}</h2>
         <div>
-          <button onClick={add} type="button">Add</button>
-          <button onClick={() => onSubmit(true)} type="button"><Download size={14} /> Submit</button>
+          {!readOnly ? <button onClick={add} type="button">Add</button> : null}
+          {!readOnly ? <button onClick={() => onSubmit(true)} type="button"><Download size={14} /> Submit</button> : null}
         </div>
       </div>
       {components.map((item) => (
         <div className="component-row" key={item.id}>
-          <select value={item.type} onChange={(event) => update(item.id, "type", event.target.value)}>
+          <select disabled={readOnly} value={item.type} onChange={(event) => update(item.id, "type", event.target.value)}>
             <option value="esp32">ESP32</option>
             <option value="resistor">Resistor</option>
             <option value="mosfet">MOSFET</option>
@@ -389,10 +393,10 @@ function ComponentEditor({ components, setComponents, onSubmit }) {
             <option value="opamp">Op-Amp/TIA</option>
             <option value="comparator">Comparator</option>
           </select>
-          <input value={item.name} onChange={(event) => update(item.id, "name", event.target.value)} />
-          <input value={item.value} onChange={(event) => update(item.id, "value", event.target.value)} />
-          <input value={item.note} onChange={(event) => update(item.id, "note", event.target.value)} />
-          <button aria-label={`Remove ${item.name}`} onClick={() => remove(item.id)} type="button"><Trash2 size={15} /></button>
+          <input readOnly={readOnly} value={item.name} onChange={(event) => update(item.id, "name", event.target.value)} />
+          <input readOnly={readOnly} value={item.value} onChange={(event) => update(item.id, "value", event.target.value)} />
+          <input readOnly={readOnly} value={item.note} onChange={(event) => update(item.id, "note", event.target.value)} />
+          {!readOnly ? <button aria-label={`Remove ${item.name}`} onClick={() => remove(item.id)} type="button"><Trash2 size={15} /></button> : <span className="read-only-mark">past</span>}
         </div>
       ))}
     </section>
@@ -424,15 +428,18 @@ function Waveform({ frequency, frontEnd }) {
   );
 }
 
-function SchematicWorkbench({ components, setComponents, onSubmit }) {
+function SchematicWorkbench({ components, setComponents, onSubmit, selectedVersion }) {
   const [frequency, setFrequency] = useState(9000);
   const [sensor, setSensor] = useState("phototransistor");
   const [frontEnd, setFrontEnd] = useState("divider");
+  const isCurrentVersion = selectedVersion.id === "current";
+  const shownComponents = isCurrentVersion ? components : selectedVersion.schematicComponents;
 
   return (
     <div className="schematic-workbench">
       <section className="schematic-palette">
         <h2>Schematic Symbols</h2>
+        <p className="version-note">{selectedVersion.short}: {selectedVersion.summary}</p>
         <ComponentCard type="esp32" title="ESP32" note="TX GPIO5 / RX ADC GPIO34" />
         <ComponentCard type="resistor" title="Resistor" note="220 ohm gate, 10k load/pulldown" />
         <ComponentCard type="mosfet" title="N-MOSFET" note="IRLZ44N low-side LED switch" />
@@ -532,20 +539,57 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
         </div>
 
         <Waveform frequency={frequency} frontEnd={frontEnd} />
-        <ComponentEditor components={components} setComponents={setComponents} onSubmit={onSubmit} />
+        <ComponentEditor components={shownComponents} setComponents={setComponents} onSubmit={onSubmit} readOnly={!isCurrentVersion} />
       </section>
+    </div>
+  );
+}
+
+function VersionSelector({ selectedVersion, onSelect }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="version-selector">
+      <button className="version-trigger" onClick={() => setOpen((value) => !value)} type="button">
+        <GitBranch size={15} />
+        <span>{selectedVersion.short}</span>
+      </button>
+      {open ? (
+        <div className="version-menu">
+          <div className="version-menu-title">Repo Version Ladder</div>
+          {lifiVersions.map((version, index) => (
+            <button
+              className={`version-row ${selectedVersion.id === version.id ? "active" : ""}`}
+              key={version.id}
+              onClick={() => {
+                onSelect(version.id);
+                setOpen(false);
+              }}
+              type="button"
+            >
+              <span className="version-step">{String(index + 1).padStart(2, "0")}</span>
+              <span>
+                <strong>{version.label}</strong>
+                <small>{version.hash} · {version.period}</small>
+                <em>{version.summary}</em>
+              </span>
+            </button>
+          ))}
+        </div>
+      ) : null}
     </div>
   );
 }
 
 export default function App() {
   const [activeView, setActiveView] = useState("system");
+  const [activeVersionId, setActiveVersionId] = useState("current");
   const [query, setQuery] = useState("");
   const [selectedId, setSelectedId] = useState("adcThreshold");
   const [panelOpen, setPanelOpen] = useState(true);
   const [navOpen, setNavOpen] = useState(true);
-  const [navWidth, setNavWidth] = useState(() => Number(readStorage("lifi-nav-width-v1", 112)));
-  const [detailWidth, setDetailWidth] = useState(() => Number(readStorage("lifi-detail-width-v1", 340)));
+  const [navWidth, setNavWidth] = useState(() => clamp(Number(readStorage("lifi-nav-width-v1", 112)) || 112, NAV_MIN, NAV_MAX));
+  const [detailWidth, setDetailWidth] = useState(() => clamp(Number(readStorage("lifi-detail-width-v1", 340)) || 340, DETAIL_MIN, DETAIL_MAX));
   const [scrollMode, setScrollMode] = useState("pan");
   const [notes, setNotes] = useState(() => readStorage(NOTES_KEY, {}));
   const [components, setComponents] = useState(() => readStorage(COMPONENTS_KEY, defaultComponents));
@@ -554,7 +598,18 @@ export default function App() {
   const hydratedRef = useRef(false);
   const latestServerSavedAtRef = useRef("");
   const payloadRef = useRef(null);
-  const initial = useMemo(() => makeFlow(activeView, query), [activeView, query]);
+  const resizeRef = useRef(null);
+  const selectedVersion = useMemo(
+    () => lifiVersions.find((version) => version.id === activeVersionId) || lifiVersions[0],
+    [activeVersionId],
+  );
+  const versionDetails = useMemo(() => {
+    const overrides = selectedVersion.nodeOverrides || {};
+    return Object.fromEntries(
+      Object.entries(nodeDetails).map(([id, item]) => [id, { ...item, ...(overrides[id] || {}) }]),
+    );
+  }, [selectedVersion]);
+  const initial = useMemo(() => makeFlow(activeView, query, versionDetails), [activeView, query, versionDetails]);
   const [nodes, setNodes, onNodesChange] = useNodesState(initial.nodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initial.edges);
 
@@ -580,15 +635,43 @@ export default function App() {
   }, [detailWidth]);
 
   useEffect(() => {
+    const onPointerMove = (event) => {
+      if (!resizeRef.current) return;
+      const { kind, startX, startWidth } = resizeRef.current;
+      const delta = event.clientX - startX;
+      if (kind === "nav") {
+        setNavWidth(clamp(startWidth + delta, NAV_MIN, NAV_MAX));
+      } else {
+        setDetailWidth(clamp(startWidth - delta, DETAIL_MIN, DETAIL_MAX));
+      }
+    };
+
+    const onPointerUp = () => {
+      resizeRef.current = null;
+      document.body.classList.remove("is-resizing");
+    };
+
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerup", onPointerUp);
+    window.addEventListener("pointercancel", onPointerUp);
+    return () => {
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerup", onPointerUp);
+      window.removeEventListener("pointercancel", onPointerUp);
+    };
+  }, []);
+
+  useEffect(() => {
     payloadRef.current = {
       activeView,
+      activeVersionId,
       selectedId,
       notes,
       schematicComponents: components,
     };
-  }, [activeView, selectedId, notes, components]);
+  }, [activeView, activeVersionId, selectedId, notes, components]);
 
-  const counts = Object.values(nodeDetails).reduce(
+  const counts = Object.values(versionDetails).reduce(
     (acc, item) => {
       acc[item.status] = (acc[item.status] || 0) + 1;
       return acc;
@@ -615,6 +698,28 @@ export default function App() {
   }, []);
 
   const updateNote = (id, value) => setNotes((current) => ({ ...current, [id]: value }));
+  const startResize = (kind, event) => {
+    event.preventDefault();
+    resizeRef.current = {
+      kind,
+      startX: event.clientX,
+      startWidth: kind === "nav" ? navWidth : detailWidth,
+    };
+    document.body.classList.add("is-resizing");
+  };
+
+  const resizeWithKeyboard = (kind, event) => {
+    if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+    event.preventDefault();
+    const step = event.shiftKey ? 24 : 8;
+    const direction = event.key === "ArrowRight" ? 1 : -1;
+    if (kind === "nav") {
+      setNavWidth((width) => clamp(width + direction * step, NAV_MIN, NAV_MAX));
+    } else {
+      setDetailWidth((width) => clamp(width - direction * step, DETAIL_MIN, DETAIL_MAX));
+    }
+  };
+
   const submitPlannerState = async (archive = false) => {
     const payload = {
       ...(payloadRef.current || {}),
@@ -653,10 +758,11 @@ export default function App() {
         if (payload.savedAt && payload.savedAt !== latestServerSavedAtRef.current) {
           latestServerSavedAtRef.current = payload.savedAt;
           setLastServerSavedAt(payload.savedAt);
-          if (payload.notes) setNotes(payload.notes);
-          if (payload.schematicComponents) setComponents(payload.schematicComponents);
-          if (payload.activeView) setActiveView(payload.activeView);
-          if (payload.selectedId) setSelectedId(payload.selectedId);
+        if (payload.notes) setNotes(payload.notes);
+        if (payload.schematicComponents) setComponents(payload.schematicComponents);
+        if (payload.activeView) setActiveView(payload.activeView);
+        if (payload.activeVersionId) setActiveVersionId(payload.activeVersionId);
+        if (payload.selectedId) setSelectedId(payload.selectedId);
           setSaveStatus("synced from repo handoff");
         }
       } catch {
@@ -703,20 +809,33 @@ export default function App() {
         className={`workspace ${panelOpen ? "" : "panel-closed"} ${navOpen ? "" : "nav-closed"}`}
         style={{ "--nav-width": `${navWidth}px`, "--detail-width": `${detailWidth}px` }}
       >
-        {navOpen ? <nav className="sidebar">
-          {views.map((view) => (
-            <div key={view.id} className="nav-item-wrap">
-              {views.findIndex((item) => item.group === view.group) === views.indexOf(view) ? <span className="nav-group">{view.group}</span> : null}
-              <button
-                className={activeView === view.id ? "active" : ""}
-                onClick={() => setActiveView(view.id)}
-                type="button"
-              >
-                {view.label}
-              </button>
-            </div>
-          ))}
-        </nav> : null}
+        {navOpen ? (
+          <>
+            <nav className="sidebar">
+              {views.map((view) => (
+                <div key={view.id} className="nav-item-wrap">
+                  {views.findIndex((item) => item.group === view.group) === views.indexOf(view) ? <span className="nav-group">{view.group}</span> : null}
+                  <button
+                    className={activeView === view.id ? "active" : ""}
+                    onClick={() => setActiveView(view.id)}
+                    type="button"
+                  >
+                    {view.label}
+                  </button>
+                </div>
+              ))}
+            </nav>
+            <div
+              aria-label="Resize menu panel"
+              aria-orientation="vertical"
+              className="resize-handle nav-resize"
+              onKeyDown={(event) => resizeWithKeyboard("nav", event)}
+              onPointerDown={(event) => startResize("nav", event)}
+              role="separator"
+              tabIndex={0}
+            />
+          </>
+        ) : null}
 
         <section className="canvas-wrap">
           <div className="toolbar">
@@ -729,6 +848,7 @@ export default function App() {
               />
             </div>
             <div className="mode-label">{views.find((view) => view.id === activeView)?.label}</div>
+            <VersionSelector selectedVersion={selectedVersion} onSelect={setActiveVersionId} />
             <button className="panel-toggle" onClick={() => setPanelOpen((open) => !open)} type="button">
               {panelOpen ? "Close details" : "Open details"}
             </button>
@@ -743,18 +863,10 @@ export default function App() {
               <ZoomIn size={15} />
               {scrollMode === "pan" ? "Scroll pans" : "Scroll zooms"}
             </button>
-            <label className="size-control">
-              Menu
-              <input min="76" max="220" step="4" type="range" value={navWidth} onChange={(event) => setNavWidth(Number(event.target.value))} />
-            </label>
-            <label className="size-control">
-              Details
-              <input min="260" max="520" step="8" type="range" value={detailWidth} onChange={(event) => setDetailWidth(Number(event.target.value))} />
-            </label>
           </div>
 
           {activeView === "schematic" ? (
-            <SchematicWorkbench components={components} setComponents={setComponents} onSubmit={submitPlannerState} />
+            <SchematicWorkbench components={components} setComponents={setComponents} onSubmit={submitPlannerState} selectedVersion={selectedVersion} />
           ) : activeView === "recommendations" ? (
             <RecommendationsView />
           ) : activeView === "evolution" ? (
@@ -784,7 +896,20 @@ export default function App() {
           )}
         </section>
 
-        {panelOpen ? <DetailPanel selectedId={selectedId} notes={notes} onNoteChange={updateNote} onSubmit={submitPlannerState} /> : null}
+        {panelOpen ? (
+          <>
+            <div
+              aria-label="Resize details panel"
+              aria-orientation="vertical"
+              className="resize-handle detail-resize"
+              onKeyDown={(event) => resizeWithKeyboard("detail", event)}
+              onPointerDown={(event) => startResize("detail", event)}
+              role="separator"
+              tabIndex={0}
+            />
+            <DetailPanel selectedId={selectedId} notes={notes} onNoteChange={updateNote} onSubmit={submitPlannerState} details={versionDetails} />
+          </>
+        ) : null}
       </main>
     </div>
   );

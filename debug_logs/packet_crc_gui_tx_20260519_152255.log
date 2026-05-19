@@ -1,0 +1,415 @@
+15:23:37 TX: > FREQ=1000
+15:23:37 TX: > TYPE=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: NT:type=1:bytes=1
+15:23:37 TX: TX FREQ = 1000 Hz | halfBit = 500 us
+15:23:37 TX: TX_TYPE=1
+15:24:29 TX: > TYPE=1
+15:24:29 TX: > SEND=sad
+15:24:29 TX: TX_TYPE=1
+15:24:29 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:29 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:29 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:24:43 TX: > TYPE=1
+15:24:43 TX: > SEND=sad
+15:24:43 TX: TX_TYPE=1
+15:24:43 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:43 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:43 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:24:49 TX: > TYPE=1
+15:24:49 TX: > SEND=sad
+15:24:49 TX: TX_TYPE=1
+15:24:49 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:24:49 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:24:49 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:07 TX: > TYPE=1
+15:25:07 TX: > SEND=sad
+15:25:07 TX: ����������������������������������������������������������������TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:09 TX: > TYPE=1
+15:25:09 TX: > SEND=sad
+15:25:09 TX: TX_TYPE=1
+15:25:09 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:09 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:09 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:19 TX: > FREQ=500
+15:25:19 TX: ����������������������������������������������������������������0 us
+15:25:21 TX: > TYPE=1
+15:25:21 TX: > SEND=sad
+15:25:21 TX: TX_TYPE=1
+15:25:21 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:22 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:22 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:23 TX: > TYPE=1
+15:25:23 TX: > SEND=sad
+15:25:23 TX: TX_TYPE=1
+15:25:23 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:24 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:24 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:30 TX: > TYPE=1
+15:25:30 TX: > SEND=sad
+15:25:30 TX: TX_TYPE=1
+15:25:30 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:30 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:30 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:25:59 TX: > TYPE=1
+15:25:59 TX: > SEND=sad
+15:25:59 TX: TX_TYPE=1
+15:25:59 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:25:59 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:25:59 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:01 TX: > TYPE=1
+15:26:01 TX: > SEND=sad
+15:26:01 TX: TX_TYPE=1
+15:26:01 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:01 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:01 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:03 TX: > TYPE=1
+15:26:03 TX: > SEND=sad
+15:26:03 TX: TX_TYPE=1
+15:26:03 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:03 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:03 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:04 TX: > TYPE=1
+15:26:04 TX: > SEND=sad
+15:26:04 TX: TX_TYPE=1
+15:26:05 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:05 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:05 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:07 TX: > TYPE=1
+15:26:07 TX: > SEND=sad
+15:26:07 TX: TX_TYPE=1
+15:26:07 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:07 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:07 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:19 TX: > TYPE=1
+15:26:19 TX: > SEND=sad
+15:26:19 TX: TX_TYPE=1
+15:26:19 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:19 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:19 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:20 TX: > TYPE=1
+15:26:20 TX: > SEND=sad
+15:26:20 TX: TX_TYPE=1
+15:26:20 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:20 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:20 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:22 TX: > TYPE=1
+15:26:22 TX: > SEND=sad
+15:26:22 TX: TX_TYPE=1
+15:26:22 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:22 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:22 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:36 TX: > FREQ=9000
+15:26:36 TX: ���������������������������������������������������������������� us
+15:26:39 TX: > TYPE=1
+15:26:39 TX: > SEND=sad
+15:26:39 TX: TX_TYPE=1
+15:26:39 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:39 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:39 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:26:42 TX: > TYPE=1
+15:26:42 TX: > SEND=sad
+15:26:42 TX: TX_TYPE=1
+15:26:42 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:26:42 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:26:42 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:27:05 TX: > TYPE=1
+15:27:05 TX: > SEND=sad
+15:27:05 TX: TX_TYPE=1
+15:27:05 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:05 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:05 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:27:21 TX: > FREQ=200
+15:27:21 TX: TX FREQ = 200 Hz | halfBit = 2500 us
+15:27:22 TX: > TYPE=1
+15:27:22 TX: > SEND=sad
+15:27:22 TX: TX_TYPE=1
+15:27:23 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:23 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:23 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:27:26 TX: > TYPE=1
+15:27:26 TX: > SEND=sad
+15:27:27 TX: TX_TYPE=1
+15:27:27 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:27:27 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:27:27 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:30:38 TX: > FREQ=200
+15:30:38 TX: ����������������������������������������������������������������0 us
+15:30:40 TX: > TYPE=1
+15:30:40 TX: > SEND=sad
+15:30:40 TX: TX_TYPE=1
+15:30:40 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:30:40 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:30:40 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:30:50 TX: > FREQ=100
+15:30:50 TX: TX FREQ = 100 Hz | halfBit = 5000 us
+15:30:52 TX: > TYPE=1
+15:30:52 TX: > SEND=sad
+15:30:52 TX: TX_TYPE=1
+15:30:53 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:30:53 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:30:53 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:00 TX: > FREQ=50
+15:31:00 TX: TX FREQ = 50 Hz | halfBit = 10000 us
+15:31:01 TX: > TYPE=1
+15:31:01 TX: > SEND=sad
+15:31:02 TX: TX_TYPE=1
+15:31:03 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:04 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:04 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:14 TX: > FREQ=30
+15:31:14 TX: TX FREQ = 30 Hz | halfBit = 16666 us
+15:31:16 TX: > TYPE=1
+15:31:16 TX: > SEND=sad
+15:31:16 TX: TX_TYPE=1
+15:31:18 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:19 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:19 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:29 TX: > FREQ=10
+15:31:29 TX: TX FREQ = 10 Hz | halfBit = 50000 us
+15:31:30 TX: > TYPE=1
+15:31:30 TX: > SEND=sad
+15:31:30 TX: TX_TYPE=1
+15:31:37 TX: TX_PACKET_SENT:type=1:seq=0:len=3:crc=0x74
+15:31:41 TX: TX_PACKET_SENT:type=0:seq=1:len=0:crc=0x01
+15:31:41 TX: TX_PACKET_MESSAGE_SENT:type=1:bytes=3
+15:31:46 TX: Saved shared log copy: /home/luckyprinter/Projects/lifi/lifi/debug_logs/packet_crc_shared_copy_20260519_153146.log

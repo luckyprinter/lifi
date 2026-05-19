@@ -1,0 +1,71 @@
+{
+  "savedAt": "2026-05-19T13:45:00+08:00",
+  "branch": "experiment/4d78a-rx-current-tx-driver",
+  "activeView": "recommendations",
+  "selectedId": "adcThreshold",
+  "status": "4d78a GPIO5 digital RX retest failed before protocol decoding",
+  "ports": {
+    "rx": "/dev/ttyUSB0",
+    "tx": "/dev/ttyUSB1"
+  },
+  "measurements": {
+    "rxIdleLightOnV": 0.01,
+    "rxTransmissionVRange": [0.4, 1.5],
+    "rxNoReceivedLightV": 3.3,
+    "tept4400LightPresentV": 0,
+    "tept4400NoLightV": 2.3,
+    "rxLowFrequencyTestVRange": [0.1, 3.0],
+    "lowFrequencyTestHz": [1, 30],
+    "historicalWorkingTextTransmissionHz": 9000,
+    "mainHardwareDifference": "new MOSFET-only TX driver without previous 2N3904 stage",
+    "currentRxFrontEnd": "TEPT4400 into LM393 comparator; TEPT4400 on +IN, 10k potentiometer threshold from 3.3V on -IN"
+  },
+  "evidence": {
+    "rxMonitorLog": "debug_logs/rx_gui_monitor_20260519_133207.log",
+    "digitalTest": "RX_DIGITAL_TEST:durationMs=1000:samples=19238:high=0:low=19238:transitions=0:final=0",
+    "stats": "RX_STATS:freq=1000:halfBitUs=500:pin=5:raw=0:bytes=3100:unstableBits=4188:badCrc=0:framesOk=0:preambleBytes=0:maxPreambleRun=0"
+  },
+  "interpretation": [
+    "GPIO5 digital RX is not seeing valid HIGH logic from the current phototransistor node.",
+    "RX decodes mostly invalid bytes and never detects a valid 0xAA preamble run.",
+    "Failure is before CRC/FEC/file reconstruction.",
+    "Low-frequency tests at 1 Hz and 30 Hz show TX can fully turn ON/OFF and RX can swing about 0.1 V to 3 V.",
+    "The likely bottleneck is frequency response, RC settling, sampling phase, or high-rate optical contrast collapse.",
+    "An earlier matched RX/TX setup transmitted text at about 9 kHz, so current 9 kHz failure should be treated as a regression or setup mismatch rather than a hard project limit.",
+    "The only reported hardware difference is the new MOSFET-only TX driver without 2N3904, so TX driver waveform behavior at 9 kHz is a leading suspect.",
+    "Latest RX log is mostly 0xFF and 0x55, with no RX_FRAME_START, no carousel frames, and digital captures reporting high=0/transitions=0.",
+    "The 1 Hz digital capture used only 100 ms, shorter than the 500 ms half-bit, so slow tests need RXCAP=2000,100.",
+    "Repeated 0x55 during slow tests suggests alternating waveform with polarity/phase mismatch.",
+    "Older working protocol may have been the packet CRC era, not carousel. Closest repo match is firmware/experiments/packet_tx and packet_rx from around commit 1071b27.",
+    "Created branch experiment/packet-crc-active-high-mosfet with active-high packet CRC TX/RX sketches in firmware/experiments/packet_crc_active_high_tx and packet_crc_active_high_rx.",
+    "Added packet CRC GUI apps/experiments/packet_crc_gui.py and launcher scripts/run_packet_crc_gui.sh. Stable carousel GUI should not be used for this packet test.",
+    "Packet CRC GUI now has shared, RX-only, and TX-only terminals plus timestamped Save buttons. Logs live in debug_logs/packet_crc_gui_shared_*.log, packet_crc_gui_rx_*.log, and packet_crc_gui_tx_*.log.",
+    "Latest packet test 20260519_152255: TX sent packets, RX had no RX_PACKET_OK; INV=1 was tried; 9000 Hz capture had high=0/transitions=0, but 200 Hz capture saw high=1218 low=18571 transitions=882. Repeated wrong bytes 0x03 0xFB 0xFF 0xC8 suggest sync edge/phase/polarity timing issue.",
+    "Shared ChatGPT conversation https://chatgpt.com/share/69fddf92-1a34-83ec-9f7d-1dd195c277cd was fetched and saved as debug_logs/shared_chatgpt_69fddf92.html.",
+    "That shared conversation points more strongly to the carousel/file-transfer era than the packet CRC era: the old problem was missing the final short image chunk, not total RX sync failure.",
+    "The old working-style TX hardware in that conversation used a 2N3904 inverter with IRF540N gate pull-up. Firmware was active-low idle-ON: GPIO LOW means LED ON, GPIO HIGH means LED OFF.",
+    "Local matching files are .history/firmware/stable/tx/tx_20260509042645.ino, .history/apps/stable/Tx_gui_20260509042013.py, .history/apps/stable/Rx_gui_20260509042004.py, and .history/firmware/stable/rx/rx_20260509041644.ino.",
+    "Old shared-session test recipe was 9000 Hz, 512-byte chunks, 3 carousel rounds, with final short chunk padded optically while RX saves only real_len bytes.",
+    "Because current TX no longer uses 2N3904, software can mimic idle-ON/padded carousel framing, but it cannot fully reproduce the old gate-drive edge speed and optical waveform.",
+    "GPIO5 digital mode cannot use a firmware-set 1 V threshold; use GPIO34 ADC or a comparator/Schmitt stage.",
+    "A 5 V phototransistor front-end must be level-limited before any ESP32 GPIO/ADC input.",
+    "Current RX hardware update: TEPT4400 feeds LM393 comparator, with TEPT4400 on +IN and 10k potentiometer threshold on -IN.",
+    "Latest TEPT4400 measurement: light present drives the sensor node near 0 V; no light drives it to about 2.3 V.",
+    "LM393 output should be pulled up to 3.3 V when feeding ESP32 GPIO.",
+    "With this LM393 polarity, expected comparator output is light ON = LOW and light OFF/dark = HIGH. For current active-high packet TX, packet RX should try INV=1 first.",
+    "Latest packet test 20260519_231343: TX sent SEND=1 at 9000 Hz, RX was INV=0, and RX logged many RX_ERROR:unstable_manchester_bit lines with no RX_PACKET_OK. Next test should start at 1000 Hz with INV=1 and RXCAP=2000,50."
+  ],
+  "recommendedNextActions": [
+    "Add comparator/Schmitt/TIA cleanup for GPIO5 digital RX.",
+    "Or return to GPIO34 ADC threshold mode with midpoint threshold, majority sampling, edge control, and phase control.",
+    "Sweep 30, 100, 300, 500, 1000, 3000, 5000, 9000, 12000, and 15000 Hz with RXTEST=1000 to find the frequency where transitions disappear.",
+    "Compare current 9 kHz TX/RX waveform behavior against the remembered working 9 kHz setup.",
+    "Measure ESP32 TX GPIO, MOSFET gate, MOSFET drain/LED node, and RX phototransistor node at 9 kHz if tools are available.",
+    "Use RXCAP=100,10 for GPIO5 digital capture and ADCAP=100,100,1000 for GPIO34 millivolt capture if GPIO34 is safely wired.",
+    "For 1 Hz tests use RXCAP=2000,100 so the capture covers multiple half-bits.",
+    "Upload packet_crc_active_high_rx to /dev/ttyUSB0 and packet_crc_active_high_tx to /dev/ttyUSB1 when ready to retest the remembered start/type/data/stop design.",
+    "Run ./scripts/run_packet_crc_gui.sh after upload to test SEND=1 with INV=1 first for the TEPT4400 + LM393 wiring.",
+    "If reproducing the old 9 kHz success is the priority, create/use a carousel compatibility branch from the .history active-low idle-ON TX and padded GUI, then change only the TX polarity needed for the current no-2N3904 driver.",
+    "For the TEPT4400 + LM393 RX, tune the potentiometer at slow frequency first, confirm RXCAP=2000,50 shows clean high/low transitions, then test SEND=1 with INV=1 at 1000, 3000, 5000, and 9000 Hz."
+  ]
+}
