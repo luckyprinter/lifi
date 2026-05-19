@@ -1,0 +1,19 @@
+{
+  "name": "LiFi Workflow Planner",
+  "short_name": "LiFi Planner",
+  "description": "Offline-capable workflow, schematic, and bottleneck planner for a low-cost LiFi thesis system.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#dfeaf0",
+  "theme_color": "#173945",
+  "icons": [
+    {
+      "src": "./icons/lifi-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

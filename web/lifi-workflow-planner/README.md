@@ -35,6 +35,48 @@ http://localhost:5173/
 npm run build
 ```
 
+The built app is written to `dist/`. It is now a PWA, so after it is opened once from a real local/hosted URL, the browser can cache it for offline use.
+
+## Offline And Sharing
+
+Recommended sharing path:
+
+1. Build the app:
+
+```bash
+npm run build
+```
+
+2. Upload the `dist/` folder to a static host such as GitHub Pages, Netlify, or Vercel.
+3. Share the hosted link.
+4. On Android, open the link in Chrome and choose `Add to Home screen` or `Install app`.
+
+For local presentation without internet:
+
+```bash
+npm run app
+```
+
+Open:
+
+```text
+http://localhost:5174/
+```
+
+To let another phone/laptop on the same Wi-Fi view it, open the same app using this computer's LAN IP:
+
+```text
+http://YOUR_LAPTOP_IP:5174/
+```
+
+If you only share the raw `dist/` folder, use a tiny static server to view it. Browser service workers do not work reliably from a direct `file://` open.
+
+Offline limitations:
+
+- Diagrams, schematic values, and notes can work locally in the browser after first load.
+- `Submit status` only writes to repo files when using `npm run app` on the host computer.
+- Cross-device sync still needs a running host, GitHub, or another remote storage method.
+
 ## Views
 
 - `System`: end-to-end LiFi communication path.
