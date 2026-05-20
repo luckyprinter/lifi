@@ -1,5 +1,6 @@
-// RX - ESP32 Manchester File Transfer Receiver
-// Reconstructs raw binary stream from Manchester-encoded optical link.
+// RX - ESP32 Manchester File Transfer Receiver (FIXED)
+// Fixes CRC order mismatch: GUI/TX sends CRC BEFORE payload.
+// Also fixes file transfer flow: payload is written to GUI only after CRC OK.
 
 #define RX_PIN 5
 
@@ -11,9 +12,9 @@ enum RxState {
   READ_TYPE,
   READ_SIZE_MSB,
   READ_SIZE_LSB,
-  READ_DATA,
   READ_CRC_MSB,
-  READ_CRC_LSB
+  READ_CRC_LSB,
+  READ_DATA
 };
 
 RxState rxState = WAIT_START;
@@ -22,7 +23,10 @@ uint16_t expectedSize = 0;
 uint16_t bytesRemaining = 0;
 uint16_t expectedCRC = 0;
 uint16_t computedCRC = 0;
+uint8_t *filePayloadBuffer = nullptr;
 bool rxDebug = false;
+String plainTextBuffer = "";
+String textChunkBuffer = "";
 
 void setup() {
   Serial.begin(115200);
@@ -33,6 +37,8 @@ void setup() {
 }
 
 void loop() {
+  // NOTE: receiveManchesterByte() blocks while waiting for optical edges.
+  // Send FREQ/DEBUG commands before starting a transfer.
   if (Serial.available()) {
     String cmd = Serial.readStringUntil('\n');
     cmd.trim();
@@ -58,32 +64,44 @@ void loop() {
 }
 
 int receiveManchesterByte() {
-  while (digitalRead(RX_PIN) == HIGH);
-  while (digitalRead(RX_PIN) == LOW);
+  while (true) {
+    while (digitalRead(RX_PIN) == HIGH) {
+      // wait for start low
+    }
+    while (digitalRead(RX_PIN) == LOW) {
+      // wait for transition high
+    }
 
-  delayMicroseconds(halfBitUs / 2);
+    delayMicroseconds(halfBitUs / 2);
 
-  uint8_t value = 0;
-  for (int i = 7; i >= 0; i--) {
-    delayMicroseconds(halfBitUs);
-    bool first = digitalRead(RX_PIN);
-    delayMicroseconds(halfBitUs);
-    bool second = digitalRead(RX_PIN);
+    uint8_t value = 0;
+    bool valid = true;
+    for (int i = 7; i >= 0; i--) {
+      delayMicroseconds(halfBitUs);
+      bool first = digitalRead(RX_PIN);
+      delayMicroseconds(halfBitUs);
+      bool second = digitalRead(RX_PIN);
 
-    if (first == second) {
-      if (rxDebug) {
-        Serial.println("RX_ERROR: unstable Manchester bit");
+      if (first == second) {
+        valid = false;
+        break;
       }
-      return -1;
+
+      bool bit = second;
+      if (bit) {
+        value |= (1 << i);
+      }
     }
 
-    bool bit = second;
-    if (bit) {
-      value |= (1 << i);
+    if (!valid) {
+      if (rxDebug) {
+        Serial.println("RX_ERROR: unstable Manchester bit, resyncing");
+      }
+      continue;
     }
+
+    return value;
   }
-
-  return value;
 }
 
 uint16_t crc16_ccitt(uint16_t crc, uint8_t data) {
@@ -98,6 +116,20 @@ uint16_t crc16_ccitt(uint16_t crc, uint8_t data) {
   return crc & 0xFFFF;
 }
 
+void resetFrame() {
+  rxState = WAIT_START;
+  frameType = 0;
+  expectedSize = 0;
+  bytesRemaining = 0;
+  expectedCRC = 0;
+  computedCRC = 0;
+  textChunkBuffer = "";
+  if (filePayloadBuffer != nullptr) {
+    free(filePayloadBuffer);
+    filePayloadBuffer = nullptr;
+  }
+}
+
 void processReceivedByte(uint8_t data) {
   switch (rxState) {
     case WAIT_START:
@@ -106,16 +138,24 @@ void processReceivedByte(uint8_t data) {
       } else if (data == 0xAA) {
         // preamble while waiting for frame start
       } else {
-        Serial.write(data);
+        // Optional plain text fallback for non-framed bytes
+        if (data == '\n') {
+          Serial.println(plainTextBuffer);
+          plainTextBuffer = "";
+        } else if (data != '\r') {
+          plainTextBuffer += (char)data;
+        }
       }
       break;
 
     case READ_TYPE:
       frameType = data;
-      if (frameType == 0x01) {
+      if (frameType == 0x01 || frameType == 0x02) {
+        // 0x01 = binary file transfer with CRC
+        // 0x02 = text chunk with CRC
         rxState = READ_SIZE_MSB;
       } else {
-        rxState = WAIT_START;
+        resetFrame();
       }
       break;
 
@@ -127,35 +167,24 @@ void processReceivedByte(uint8_t data) {
     case READ_SIZE_LSB:
       expectedSize |= data;
       bytesRemaining = expectedSize;
-      computedCRC = 0;
+      computedCRC = 0xFFFF;
+      textChunkBuffer = "";
+
+      if (filePayloadBuffer != nullptr) {
+        free(filePayloadBuffer);
+        filePayloadBuffer = nullptr;
+      }
+
       if (expectedSize == 0) {
         Serial.println("RX_LOG: empty transfer received");
-        rxState = WAIT_START;
-      } else {
-        Serial.print("RX_FILE_START:");
-        Serial.print(expectedSize);
-        Serial.println();
-        rxState = READ_DATA;
+        resetFrame();
+        break;
       }
-      break;
 
-    case READ_DATA:
-      Serial.write(data);
-      if (frameType == 0x01) {
-        computedCRC = crc16_ccitt(computedCRC, data);
-      }
-      if (bytesRemaining > 0) {
-        bytesRemaining--;
-      }
-      if (bytesRemaining == 0) {
-        if (frameType == 0x01) {
-          rxState = READ_CRC_MSB;
-        } else {
-          Serial.println();
-          Serial.println("RX_FILE_COMPLETE");
-          rxState = WAIT_START;
-        }
-      }
+      // IMPORTANT FIX:
+      // GUI/TX frame order is: START, TYPE, SIZE, CRC, PAYLOAD
+      // so the receiver must read CRC first, then payload.
+      rxState = READ_CRC_MSB;
       break;
 
     case READ_CRC_MSB:
@@ -165,26 +194,98 @@ void processReceivedByte(uint8_t data) {
 
     case READ_CRC_LSB:
       expectedCRC |= data;
-      if (computedCRC == expectedCRC) {
-        Serial.println();
-        Serial.println("RX_FILE_CRC_OK");
-        Serial.println("RX_FILE_COMPLETE");
-      } else {
-        Serial.println();
-        Serial.print("RX_FILE_CRC_FAIL:");
-        Serial.print(computedCRC, HEX);
-        Serial.print(" expected=");
-        Serial.println(expectedCRC, HEX);
-        Serial.println("RX_FILE_COMPLETE");
+
+      if (frameType == 0x01) {
+        filePayloadBuffer = (uint8_t *)malloc(expectedSize);
+        if (filePayloadBuffer == nullptr) {
+          Serial.println("RX_ERROR: cannot allocate file buffer");
+          resetFrame();
+          break;
+        }
       }
-      rxState = WAIT_START;
+
+      rxState = READ_DATA;
+      break;
+
+    case READ_DATA:
+      computedCRC = crc16_ccitt(computedCRC, data);
+
+      if (frameType == 0x01) {
+        uint16_t index = expectedSize - bytesRemaining;
+        if (filePayloadBuffer != nullptr && index < expectedSize) {
+          filePayloadBuffer[index] = data;
+        }
+      } else if (frameType == 0x02) {
+        textChunkBuffer += (char)data;
+      }
+
+      if (bytesRemaining > 0) {
+        bytesRemaining--;
+      }
+
+      if (frameType == 0x01) {
+        uint16_t bytesReceived = expectedSize - bytesRemaining;
+        if (bytesReceived % 128 == 0 || bytesRemaining == 0) {
+          Serial.print("RX_FILE_PROGRESS: ");
+          Serial.print(bytesReceived);
+          Serial.print("/");
+          Serial.println(expectedSize);
+        }
+      }
+
+      if (bytesRemaining == 0) {
+        if (computedCRC == expectedCRC) {
+          if (frameType == 0x02) {
+            plainTextBuffer += textChunkBuffer;
+            textChunkBuffer = "";
+            int newlineIndex;
+            while ((newlineIndex = plainTextBuffer.indexOf('\n')) >= 0) {
+              String line = plainTextBuffer.substring(0, newlineIndex);
+              if (line.endsWith("\r")) {
+                line.remove(line.length() - 1);
+              }
+              Serial.print("RX: ");
+              Serial.println(line);
+              plainTextBuffer = plainTextBuffer.substring(newlineIndex + 1);
+            }
+          } else {
+            // Only now tell the GUI to expect raw file bytes.
+            Serial.print("RX_FILE_START:");
+            Serial.println(expectedSize);
+            if (filePayloadBuffer != nullptr) {
+              Serial.write(filePayloadBuffer, expectedSize);
+            }
+            Serial.println();
+            Serial.println("RX_FILE_CRC_OK");
+            Serial.println("RX_FILE_COMPLETE");
+          }
+        } else {
+          if (frameType == 0x02) {
+            Serial.print("RX_TEXT_CRC_FAIL:");
+            Serial.print(computedCRC, HEX);
+            Serial.print(" expected=");
+            Serial.println(expectedCRC, HEX);
+          } else {
+            Serial.print("RX_FILE_CRC_FAIL:");
+            Serial.print(computedCRC, HEX);
+            Serial.print(" expected=");
+            Serial.println(expectedCRC, HEX);
+            Serial.println("RX_FILE_COMPLETE");
+          }
+        }
+        resetFrame();
+      }
       break;
   }
 }
 
 void setFrequency(uint32_t f) {
-  if (f == 0) {
-    return;
+  if (f < 1) {
+    Serial.println("RX: FREQ too low, using 1 Hz");
+    f = 1;
+  } else if (f > 1000) {
+    Serial.println("RX: FREQ too high, using 1000 Hz");
+    f = 1000;
   }
 
   frequencyHz = f;

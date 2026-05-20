@@ -4,6 +4,7 @@
 #define TX_PIN 8
 const uint8_t PREAMBLE_BYTE = 0xAA;
 const uint8_t FILE_TRANSFER_TYPE = 0x01;
+const uint8_t TEXT_TRANSFER_TYPE = 0x02;
 const uint8_t PREAMBLE_COUNT = 4;
 
 uint32_t frequencyHz = 500;
@@ -36,7 +37,7 @@ void loop() {
 
     Serial.read(); // consume START byte
     int type = Serial.peek();
-    if (type == FILE_TRANSFER_TYPE) {
+    if (type == FILE_TRANSFER_TYPE || type == TEXT_TRANSFER_TYPE) {
       if (Serial.available() < 6) {
         return; // wait for full CRC header
       }
@@ -46,21 +47,36 @@ void loop() {
       uint16_t crc = (uint16_t)Serial.read() << 8;
       crc |= (uint16_t)Serial.read();
 
-      sendManchesterPreamble(PREAMBLE_COUNT);
+      sendManchesterPreamble(type == TEXT_TRANSFER_TYPE ? 16 : PREAMBLE_COUNT);
       sendManchesterByte(0x02);
-      sendManchesterByte((uint8_t)FILE_TRANSFER_TYPE);
+      sendManchesterByte((uint8_t)type);
       sendManchesterByte((size >> 8) & 0xFF);
       sendManchesterByte(size & 0xFF);
       sendManchesterByte((crc >> 8) & 0xFF);
       sendManchesterByte(crc & 0xFF);
 
+      uint16_t sentBytes = 0;
       for (uint16_t remaining = size; remaining > 0; remaining--) {
         while (!Serial.available()) {
         }
         sendManchesterByte((uint8_t)Serial.read());
+        sentBytes++;
+        if (sentBytes % 128 == 0 || remaining == 1) {
+          Serial.print("TX_FILE_PROGRESS: ");
+          Serial.print(sentBytes);
+          Serial.print("/");
+          Serial.println(size);
+        }
+        delayMicroseconds(1000);
       }
 
-      Serial.println("TX: file stream sent (CRC)");
+      if (type == FILE_TRANSFER_TYPE) {
+        Serial.println("TX: file stream sent (CRC)");
+      } else {
+        Serial.print("TX: text chunk sent (");
+        Serial.print(size);
+        Serial.println(" bytes)");
+      }
       return;
     }
 
@@ -82,6 +98,7 @@ void loop() {
         while (!Serial.available()) {
         }
         sendManchesterByte((uint8_t)Serial.read());
+        delayMicroseconds(1000);
       }
 
       Serial.println("TX: file stream sent (no CRC)");
@@ -119,8 +136,12 @@ void sendManchesterPreamble(uint8_t count) {
 }
 
 void setFrequency(uint32_t f) {
-  if (f == 0) {
-    return;
+  if (f < 1) {
+    Serial.println("TX: FREQ too low, using 1 Hz");
+    f = 1;
+  } else if (f > 1000) {
+    Serial.println("TX: FREQ too high, using 1000 Hz");
+    f = 1000;
   }
 
   frequencyHz = f;

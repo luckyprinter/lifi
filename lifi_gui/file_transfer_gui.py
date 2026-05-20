@@ -1,10 +1,13 @@
 import os
+import sys
 import threading
 import time
 import tkinter as tk
-from tkinter import filedialog, messagebox, scrolledtext
+from tkinter import filedialog, messagebox, scrolledtext, ttk
+import ctypes
 
 import serial
+import serial.tools.list_ports
 
 BAUDRATE = 115200
 HEADER_START = 0x02
@@ -59,31 +62,50 @@ class FileTransferGUI(tk.Tk):
         toolbar.pack(fill="x", padx=10, pady=8)
 
         tk.Label(toolbar, text="TX Port:").grid(row=0, column=0, sticky="w")
-        self.tx_port_entry = tk.Entry(toolbar, width=20)
-        self.tx_port_entry.insert(0, "/dev/ttyUSB0")
-        self.tx_port_entry.grid(row=0, column=1, padx=4)
+        self.tx_port_var = tk.StringVar()
+        self.tx_port_combo = ttk.Combobox(toolbar, width=20, textvariable=self.tx_port_var)
+        if os.name == 'nt':  # Windows
+            tx_default = "COM1"
+        else:  # Linux/Mac
+            tx_default = "/dev/ttyUSB0"
+        self.tx_port_var.set(tx_default)
+        self.tx_port_combo.grid(row=0, column=1, padx=4)
 
         tk.Label(toolbar, text="RX Port:").grid(row=0, column=2, sticky="w")
-        self.rx_port_entry = tk.Entry(toolbar, width=20)
-        self.rx_port_entry.insert(0, "/dev/ttyUSB1")
-        self.rx_port_entry.grid(row=0, column=3, padx=4)
+        self.rx_port_var = tk.StringVar()
+        self.rx_port_combo = ttk.Combobox(toolbar, width=20, textvariable=self.rx_port_var)
+        if os.name == 'nt':  # Windows
+            rx_default = "COM2"
+        else:  # Linux/Mac
+            rx_default = "/dev/ttyUSB1"
+        self.rx_port_var.set(rx_default)
+        self.rx_port_combo.grid(row=0, column=3, padx=4)
 
         tk.Label(toolbar, text="Frequency:").grid(row=0, column=4, sticky="w")
         self.freq_entry = tk.Entry(toolbar, width=10)
         self.freq_entry.insert(0, "500")
         self.freq_entry.grid(row=0, column=5, padx=4)
+        self.freq_entry.bind("<Return>", lambda event: self.apply_frequency())
+
+        self.set_freq_button = tk.Button(toolbar, text="Set Freq", command=self.apply_frequency)
+        self.set_freq_button.grid(row=0, column=6, padx=4)
 
         self.connect_button = tk.Button(toolbar, text="Connect", command=self.connect_ports)
-        self.connect_button.grid(row=0, column=6, padx=8)
+        self.connect_button.grid(row=0, column=7, padx=8)
 
-        self.disconnect_button = tk.Button(toolbar, text="Disconnect", command=self.disconnect_ports, state="disabled")
-        self.disconnect_button.grid(row=0, column=7)
+        self.refresh_ports_button = tk.Button(toolbar, text="Refresh Ports", command=self.refresh_serial_ports)
+        self.refresh_ports_button.grid(row=0, column=8, padx=4)
+
+        self.list_ports_button = tk.Button(toolbar, text="Show Ports", command=self.list_available_ports)
+        self.list_ports_button.grid(row=0, column=9, padx=4)
 
         self.debug_check = tk.Checkbutton(toolbar, text="RX Debug", variable=self.debug_enabled, command=self.update_rx_debug)
-        self.debug_check.grid(row=0, column=8, padx=4)
+        self.debug_check.grid(row=0, column=10, padx=4)
 
         self.crc_check = tk.Checkbutton(toolbar, text="CRC Check", variable=self.crc_enabled)
-        self.crc_check.grid(row=0, column=9, padx=4)
+        self.crc_check.grid(row=0, column=11, padx=4)
+
+        self.populate_serial_ports()
 
         folder_frame = tk.Frame(self)
         folder_frame.pack(fill="x", padx=10, pady=4)
@@ -100,6 +122,12 @@ class FileTransferGUI(tk.Tk):
         self.tx_status.pack(side="left", padx=4)
         self.rx_status = tk.Label(status_frame, text="RX: Disconnected", fg="red")
         self.rx_status.pack(side="left", padx=24)
+        self.admin_status = tk.Label(
+            status_frame,
+            text=f"Admin: {'Yes' if self.is_windows_admin() else 'No'}",
+            fg="green" if self.is_windows_admin() else "orange",
+        )
+        self.admin_status.pack(side="left", padx=24)
         self.transfer_status = tk.Label(status_frame, text="Idle", fg="blue")
         self.transfer_status.pack(side="left", padx=24)
 
@@ -142,9 +170,20 @@ class FileTransferGUI(tk.Tk):
             self.receive_folder_entry.insert(0, self.receive_folder)
 
     def connect_ports(self):
-        tx_port_name = self.tx_port_entry.get().strip()
-        rx_port_name = self.rx_port_entry.get().strip()
+        tx_port_name = self.tx_port_var.get().strip()
+        rx_port_name = self.rx_port_var.get().strip()
         freq = self.freq_entry.get().strip()
+
+        if os.name == 'nt' and not self.is_windows_admin():
+            should_restart = messagebox.askyesno(
+                "Administrator required",
+                "This app is not running as administrator. Some COM ports may fail with Access Denied.\n\nRelaunch as administrator now?",
+            )
+            if should_restart:
+                if self.relaunch_as_admin():
+                    self.destroy()
+                    sys.exit(0)
+                return
 
         if not tx_port_name or not rx_port_name:
             messagebox.showwarning("Missing Ports", "Please enter both TX and RX serial port names.")
@@ -153,18 +192,25 @@ class FileTransferGUI(tk.Tk):
         try:
             self.tx_serial = serial.Serial(tx_port_name, BAUDRATE, timeout=1)
             self.rx_serial = serial.Serial(rx_port_name, BAUDRATE, timeout=0.1)
+        except serial.SerialException as e:
+            error_msg = str(e)
+            if "Access is denied" in error_msg or "PermissionError" in error_msg:
+                error_msg += "\n\nOn Windows, try running the application as Administrator.\nAlso ensure no other programs are using the COM ports."
+            elif "could not open port" in error_msg:
+                error_msg += "\n\nCheck that the COM port exists in Device Manager and is not in use by another application."
+            messagebox.showerror("Connection Failed", error_msg)
+            return
         except Exception as e:
-            messagebox.showerror("Connection Failed", str(e))
+            messagebox.showerror("Connection Failed", f"Unexpected error: {str(e)}")
             return
 
-        self.connect_button.config(state="disabled")
-        self.disconnect_button.config(state="normal")
+        self.connect_button.config(text="Disconnect", command=self.disconnect_ports)
         self.tx_status.config(text=f"TX: {tx_port_name}", fg="green")
         self.rx_status.config(text=f"RX: {rx_port_name}", fg="green")
         self.transfer_status.config(text="Connected", fg="green")
 
         if freq.isdigit():
-            self.set_frequency(int(freq))
+            self.apply_frequency()
 
         self.update_rx_debug()
 
@@ -173,6 +219,61 @@ class FileTransferGUI(tk.Tk):
         self.rx_thread.start()
         self.add_tx_log("Connected to TX and RX ports.")
         self.add_rx_log("Waiting for RX data...")
+
+    def is_windows_admin(self):
+        if os.name != "nt":
+            return True
+        try:
+            return bool(ctypes.windll.shell32.IsUserAnAdmin())
+        except Exception:
+            return False
+
+    def relaunch_as_admin(self):
+        if os.name != "nt":
+            return False
+
+        executable = sys.executable
+        script = os.path.abspath(sys.argv[0])
+        params = " ".join(f'"{arg}"' for arg in sys.argv[1:])
+        cmd = f'"{script}" {params}'.strip()
+
+        try:
+            result = ctypes.windll.shell32.ShellExecuteW(None, "runas", executable, cmd, None, 1)
+            if result <= 32:
+                raise RuntimeError(f"ShellExecuteW failed with return code {result}")
+            return True
+        except Exception as e:
+            messagebox.showerror("Admin Launch Failed", f"Unable to relaunch as administrator:\n{e}")
+            return False
+
+    def get_serial_ports(self):
+        return [port.device for port in serial.tools.list_ports.comports()]
+
+    def populate_serial_ports(self):
+        ports = self.get_serial_ports()
+        self.tx_port_combo["values"] = ports
+        self.rx_port_combo["values"] = ports
+        if ports:
+            if self.tx_port_var.get() not in ports:
+                self.tx_port_var.set(ports[0])
+            if self.rx_port_var.get() not in ports:
+                self.rx_port_var.set(ports[1] if len(ports) > 1 else ports[0])
+
+    def refresh_serial_ports(self):
+        ports = self.get_serial_ports()
+        self.populate_serial_ports()
+        if ports:
+            messagebox.showinfo("Serial Ports Refreshed", "Detected serial ports:\n\n" + "\n".join(ports))
+        else:
+            messagebox.showwarning("Serial Ports", "No serial ports detected.")
+
+    def list_available_ports(self):
+        ports = serial.tools.list_ports.comports()
+        if not ports:
+            messagebox.showinfo("Available Ports", "No serial ports found.")
+            return
+        port_list = "\n".join([f"{port.device}: {port.description}" for port in ports])
+        messagebox.showinfo("Available Ports", f"Available serial ports:\n\n{port_list}")
 
     def disconnect_ports(self):
         self.rx_running = False
@@ -184,23 +285,41 @@ class FileTransferGUI(tk.Tk):
         if self.rx_serial and self.rx_serial.is_open:
             self.rx_serial.close()
 
-        self.connect_button.config(state="normal")
-        self.disconnect_button.config(state="disabled")
+        self.connect_button.config(text="Connect", command=self.connect_ports)
         self.tx_status.config(text="TX: Disconnected", fg="red")
         self.rx_status.config(text="RX: Disconnected", fg="red")
         self.transfer_status.config(text="Idle", fg="blue")
         self.add_tx_log("Disconnected.")
         self.add_rx_log("Disconnected.")
 
+    def apply_frequency(self):
+        freq = self.freq_entry.get().strip()
+        if not freq.isdigit():
+            messagebox.showwarning("Invalid Frequency", "Enter a frequency between 1 and 1000 Hz.")
+            return
+        frequency = int(freq)
+        if frequency < 1 or frequency > 1000:
+            messagebox.showwarning("Invalid Frequency", "Frequency must be between 1 and 1000 Hz.")
+            return
+        self.set_frequency(frequency)
+        self.transfer_status.config(text=f"Frequency set to {frequency} Hz", fg="blue")
+
     def set_frequency(self, frequency):
+        cmd = f"FREQ={frequency}\n".encode("ascii")
         if self.tx_serial and self.tx_serial.is_open:
-            cmd = f"FREQ={frequency}\n".encode("ascii")
             try:
                 self.tx_serial.write(cmd)
                 self.tx_serial.flush()
-                self.add_tx_log(f"Sent command: {cmd.decode().strip()}")
+                self.add_tx_log(f"Sent TX frequency command: {cmd.decode().strip()}")
             except Exception as e:
-                self.add_tx_log(f"Failed to set frequency: {e}")
+                self.add_tx_log(f"Failed to set TX frequency: {e}")
+        if self.rx_serial and self.rx_serial.is_open:
+            try:
+                self.rx_serial.write(cmd)
+                self.rx_serial.flush()
+                self.add_tx_log(f"Sent RX frequency command: {cmd.decode().strip()}")
+            except Exception as e:
+                self.add_tx_log(f"Failed to set RX frequency: {e}")
 
     def update_rx_debug(self):
         if self.rx_serial and self.rx_serial.is_open:
@@ -222,10 +341,32 @@ class FileTransferGUI(tk.Tk):
         if not text:
             return
 
+        data = (text + "\n").encode("utf-8")
+        chunk_size = 128
+        sent = 0
         try:
-            self.tx_serial.write((text + "\n").encode("utf-8"))
-            self.tx_serial.flush()
-            self.add_tx_log(f"Sent text ({len(text)} bytes)")
+            while sent < len(data):
+                chunk = data[sent : sent + chunk_size]
+                crc = crc16_ccitt(chunk)
+                header = bytes([
+                    HEADER_START,
+                    0x02,
+                    (len(chunk) >> 8) & 0xFF,
+                    len(chunk) & 0xFF,
+                    (crc >> 8) & 0xFF,
+                    crc & 0xFF,
+                ])
+                self.tx_serial.write(header)
+                self.tx_serial.flush()
+                self.tx_serial.write(chunk)
+                self.tx_serial.flush()
+                sent += len(chunk)
+                if self.debug_enabled.get():
+                    self.add_tx_log(f"Sent text chunk {sent}/{len(data)}")
+                self.transfer_status.config(text=f"Text sending {sent}/{len(data)}", fg="blue")
+                time.sleep(0.01)
+
+            self.add_tx_log(f"Sent text ({len(text)} bytes) in {((len(data) - 1) // chunk_size) + 1} chunks")
             self.transfer_status.config(text="Text sent", fg="blue")
         except Exception as e:
             self.add_tx_log(f"TX error sending text: {e}")
@@ -289,6 +430,8 @@ class FileTransferGUI(tk.Tk):
                 sent += len(chunk)
                 if self.debug_enabled.get():
                     self.add_tx_log(f"TX chunk sent {sent}/{size}")
+                if sent % (chunk_size * 4) == 0 or sent == size:
+                    self.transfer_status.config(text=f"File sending {sent}/{size}", fg="blue")
                 time.sleep(0.01)
 
             self.add_tx_log(f"Sent file '{self.pending_file_name}' ({size} bytes){crc_note}")
@@ -347,6 +490,11 @@ class FileTransferGUI(tk.Tk):
 
         self.add_rx_log(text)
 
+        if text.startswith("RX_FILE_PROGRESS:"):
+            progress = text.split(":", 1)[1].strip()
+            self.transfer_status.config(text=f"Receiving file {progress}", fg="blue")
+            return
+
         if text.startswith("RX_FILE_START:"):
             try:
                 size = int(text.split(":", 1)[1])
@@ -372,6 +520,10 @@ class FileTransferGUI(tk.Tk):
         elif text.startswith("RX_FILE_CRC_FAIL"):
             self.add_rx_log(text)
             self.transfer_status.config(text="File CRC mismatch", fg="red")
+
+        elif text.startswith("RX_TEXT_CRC_FAIL"):
+            self.add_rx_log(text)
+            self.transfer_status.config(text="Text chunk CRC fail", fg="red")
 
     def save_received_file(self):
         filename = f"received_{int(time.time())}{self.receive_file_extension}"
