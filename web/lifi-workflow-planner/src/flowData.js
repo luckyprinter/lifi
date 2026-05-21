@@ -116,6 +116,7 @@ export const lifiVersions = [
     label: "Current working tree",
     short: "Current",
     hash: "f8344c7+",
+    date: "2026-05-21",
     period: "latest",
     summary: "Current planner view: GPIO34 ADC threshold RX, active-high IRLZ44N TX, debug focus on RX signal recovery.",
     schematicComponents: [
@@ -135,6 +136,7 @@ export const lifiVersions = [
     label: "Known-good RX baseline",
     short: "4d78a01",
     hash: "4d78a01518c4d2498311b291501e6e98577580e3",
+    date: "2026-05-09 05:00",
     period: "stable overhaul",
     summary: "The remembered reliable RX period: GPIO5 digital input, 9000 Hz timing, absolute micros deadlines, and majority sampling.",
     schematicComponents: [
@@ -181,6 +183,7 @@ export const lifiVersions = [
     label: "Original ms Manchester",
     short: "Original",
     hash: "experiments/original_*",
+    date: "2026-05-04 to 2026-05-06",
     period: "first system shape",
     summary: "The earliest tracked TX/RX pair used simple Manchester at millisecond timing: TX pin 8, RX GPIO5, and no complex packet recovery.",
     schematicComponents: [
@@ -229,6 +232,7 @@ export const lifiVersions = [
     label: "Legacy file transfer pair",
     short: "Legacy 1k",
     hash: "file_transfer_v1_legacy",
+    date: "2026-05-09 03:52",
     period: "early file transfer",
     summary: "A simple 1 kHz file-transfer pair: TX pin 8, RX GPIO5, microsecond timing, still much simpler than the current carousel stack.",
     schematicComponents: [
@@ -262,6 +266,7 @@ export const lifiVersions = [
     label: "Packet CRC experiment",
     short: "Packet 1k",
     hash: "firmware/experiments/packet_*",
+    date: "2026-05-09 03:52",
     period: "packet protocol experiment",
     summary: "The packet experiment added packet state and CRC at 1 kHz, while keeping the simple TX pin 8 / RX GPIO5 digital Manchester pair.",
     schematicComponents: [
@@ -298,6 +303,7 @@ export const lifiVersions = [
     label: "500 Hz file-transfer experiment",
     short: "File 500",
     hash: "firmware/experiments/file_transfer_*",
+    date: "2026-05-09 03:52",
     period: "CRC file-transfer experiment",
     summary: "The 500 Hz file-transfer experiment used a slow, forgiving optical bit rate and explicit file CRC framing.",
     schematicComponents: [
@@ -334,6 +340,7 @@ export const lifiVersions = [
     label: "ESP32 active-low carousel",
     short: "Active-low",
     hash: ".history tx_20260509042644",
+    date: "2026-05-09 04:26",
     period: "pre-IRLZ44N polarity",
     summary: "Historical ESP32 carousel TX explicitly says the hardware is active-low: GPIO LOW means LED ON. This matches a 2N3904 inverter-style driver assumption.",
     schematicComponents: [
@@ -370,6 +377,7 @@ export const lifiVersions = [
     label: "IRLZ44N polarity update",
     short: "d65c327",
     hash: "d65c327",
+    date: "2026-05-17 17:08",
     period: "TX hardware alignment",
     summary: "TX changed toward active-high IRLZ44N low-side drive. Useful for separating TX polarity issues from RX timing issues.",
     schematicComponents: [
@@ -403,6 +411,7 @@ export const lifiVersions = [
     label: "Diagnostics added",
     short: "243fd2d",
     hash: "243fd2d",
+    date: "2026-05-17 17:25",
     period: "observability step",
     summary: "TX/RX diagnostics, LEDTEST, RXTEST, stats, and firmware visibility were added while the core 9 kHz majority-sampled RX was still present.",
     schematicComponents: [
@@ -431,6 +440,7 @@ export const lifiVersions = [
     label: "TEPT4400 sync-edge alignment",
     short: "56991ca",
     hash: "56991ca",
+    date: "2026-05-17 17:35",
     period: "RX polarity experiment",
     summary: "RX sync edge was changed for TEPT4400 polarity. This version is important when testing whether Manchester symbols are inverted.",
     schematicComponents: [
@@ -458,6 +468,7 @@ export const lifiVersions = [
     label: "RX phase tuning",
     short: "840bd1d",
     hash: "840bd1d",
+    date: "2026-05-17 18:01",
     period: "RX timing experiment",
     summary: "RX gained PHASE tuning to compensate for delayed TEPT4400 threshold crossings while still using majority reads.",
     schematicComponents: [
@@ -484,6 +495,7 @@ export const lifiVersions = [
     label: "Delay-based timing restore",
     short: "415f197",
     hash: "415f197",
+    date: "2026-05-17 18:12",
     period: "RX/TX timing simplification",
     summary: "Both TX and RX moved back toward simpler delayMicroseconds timing. Majority reads still existed on RX at this point.",
     schematicComponents: [
@@ -513,6 +525,7 @@ export const lifiVersions = [
     label: "ON/OFF restored after PWM",
     short: "997d3c7",
     hash: "997d3c7",
+    date: "2026-05-17 16:34",
     period: "PWM experiment rollback",
     summary: "TX gained dual ON/OFF versus DC-biased PWM behavior, but ON/OFF was restored as the stable default because the simple RX needs strong contrast.",
     schematicComponents: [
@@ -543,6 +556,7 @@ export const lifiVersions = [
     label: "GPIO34 ADC threshold version",
     short: "9fdcd9c",
     hash: "9fdcd9c",
+    date: "2026-05-17 23:28",
     period: "ADC threshold pivot",
     summary: "RX moved to GPIO34 ADC threshold because digital levels were unreliable. This is the direct ancestor of the current bottleneck.",
     schematicComponents: [
@@ -1054,25 +1068,25 @@ export const flows = {
   },
   evolution: {
     timeline: [
-      ["original", "Original ms Manchester sketches"],
-      ["legacy 1k", "Legacy 1 kHz file-transfer pair"],
-      ["packet 1k", "Packet CRC experiment"],
-      ["file 500", "500 Hz file-transfer CRC experiment"],
-      ["0bd112d", "Initial LiFi project structure"],
-      ["c980c12", "Packet protocol work"],
-      ["95080bc", "File transfer prototype"],
-      ["c8f96e3", "Serial buffer overflow fix"],
-      ["active-low", "ESP32 active-low carousel TX history"],
-      ["shared chat", "Shared ChatGPT 9 kHz carousel clue"],
-      ["4d78a01", "Stable/experiments repo overhaul"],
-      ["243fd2d", "TX/RX diagnostics"],
-      ["56991ca", "TEPT4400 sync edge alignment"],
-      ["840bd1d", "RX sampling phase tuning"],
-      ["415f197", "Delay-based Manchester timing"],
-      ["997d3c7", "Restore ON/OFF TX mode"],
-      ["d65c327", "IRLZ44N active-high polarity"],
-      ["9fdcd9c", "ADC thresholding on GPIO34"],
-      ["debug logs", "RX threshold and signal bottleneck evidence"],
+      ["original", "2026-05-04 to 2026-05-06", "Original ms Manchester sketches"],
+      ["0bd112d", "2026-05-04 19:03", "Initial LiFi project structure"],
+      ["legacy 1k", "2026-05-09 03:52", "Legacy 1 kHz file-transfer pair"],
+      ["packet 1k", "2026-05-09 03:52", "Packet CRC experiment"],
+      ["file 500", "2026-05-09 03:52", "500 Hz file-transfer CRC experiment"],
+      ["c980c12", "2026-05-09 era", "Packet protocol work"],
+      ["95080bc", "2026-05-09 era", "File transfer prototype"],
+      ["c8f96e3", "2026-05-09 era", "Serial buffer overflow fix"],
+      ["active-low", "2026-05-09 04:26", "ESP32 active-low carousel TX history"],
+      ["shared chat", "2026-05-09 era", "Shared ChatGPT 9 kHz carousel clue"],
+      ["4d78a01", "2026-05-09 05:00", "Stable/experiments repo overhaul"],
+      ["997d3c7", "2026-05-17 16:34", "Restore ON/OFF TX mode"],
+      ["d65c327", "2026-05-17 17:08", "IRLZ44N active-high polarity"],
+      ["243fd2d", "2026-05-17 17:25", "TX/RX diagnostics"],
+      ["56991ca", "2026-05-17 17:35", "TEPT4400 sync edge alignment"],
+      ["840bd1d", "2026-05-17 18:01", "RX sampling phase tuning"],
+      ["415f197", "2026-05-17 18:12", "Delay-based Manchester timing"],
+      ["9fdcd9c", "2026-05-17 23:28", "ADC thresholding on GPIO34"],
+      ["debug logs", "2026-05-17 to 2026-05-21", "RX threshold and signal bottleneck evidence"],
     ],
   },
 };

@@ -216,10 +216,11 @@ function EvolutionView() {
       </div>
       <div className="timeline-grid">
         <div>
-          {flows.evolution.timeline.map(([hash, label], index) => (
+          {flows.evolution.timeline.map(([hash, date, label], index) => (
             <button className={`timeline-row ${selected === hash ? "active" : ""}`} key={`${hash}-${label}`} onClick={() => setSelected(hash)} type="button">
               <span>{String(index + 1).padStart(2, "0")}</span>
               <strong>{hash}</strong>
+              <small>{date}</small>
               <p>{label}</p>
             </button>
           ))}
@@ -967,7 +968,7 @@ function VersionSelector({ selectedVersion, onSelect }) {
               <span className="version-step">{String(index + 1).padStart(2, "0")}</span>
               <span>
                 <strong>{version.label}</strong>
-                <small>{version.hash} · {version.period}</small>
+                <small>{version.date} · {version.hash} · {version.period}</small>
                 <em>{version.summary}</em>
               </span>
             </button>

@@ -674,7 +674,7 @@ body.is-resizing .resize-handle::after {
 .timeline-row {
   width: 100%;
   display: grid;
-  grid-template-columns: 42px 120px minmax(0, 1fr);
+  grid-template-columns: 42px 120px 150px minmax(0, 1fr);
   gap: 14px;
   align-items: center;
   max-width: 960px;
@@ -701,6 +701,12 @@ body.is-resizing .resize-handle::after {
 .timeline-row strong {
   font-family: "SFMono-Regular", Consolas, monospace;
   color: #164154;
+}
+
+.timeline-row small {
+  color: #607584;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .timeline-row p {
@@ -1572,6 +1578,7 @@ body.is-resizing .resize-handle::after {
     grid-template-columns: 34px minmax(0, 1fr);
   }
 
+  .timeline-row small,
   .timeline-row p {
     grid-column: 1 / -1;
   }
@@ -1619,6 +1626,7 @@ body.is-resizing .resize-handle::after {
     grid-template-columns: 32px minmax(0, 1fr);
   }
 
+  .timeline-row small,
   .timeline-row p {
     grid-column: 2;
   }
