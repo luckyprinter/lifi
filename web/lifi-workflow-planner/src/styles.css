@@ -949,7 +949,12 @@ body.is-resizing .resize-handle::after {
   width: 100%;
   height: auto;
   display: block;
-  background: #fffdf4;
+  border: 1px solid #d7e0df;
+  background:
+    linear-gradient(rgba(34, 71, 80, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34, 71, 80, 0.055) 1px, transparent 1px),
+    #fffdf4;
+  background-size: 20px 20px;
 }
 
 .sheet-title {
@@ -970,6 +975,44 @@ body.is-resizing .resize-handle::after {
   font-size: 14px;
 }
 
+.ece-schematic .schem-symbol,
+.ece-schematic .schem-symbol * {
+  stroke: #172f3a;
+  stroke-width: 2.2;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ece-schematic .schem-symbol text {
+  stroke: none;
+  fill: #172f3a;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.ece-schematic .schem-symbol polygon {
+  fill: #fffdf4;
+}
+
+.ic-symbol rect {
+  fill: #fffef8;
+  stroke: #172f3a;
+  stroke-width: 2.2;
+}
+
+.ic-symbol line {
+  stroke: #172f3a;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.ic-symbol text {
+  fill: #172f3a;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .transistor-block circle,
 .transistor-block line,
 .transistor-block polyline {
@@ -986,19 +1029,39 @@ body.is-resizing .resize-handle::after {
   font-weight: 700;
 }
 
+.ref-label {
+  fill: #132f3a;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.value-label {
+  fill: #435965;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.net-label {
+  fill: #0f6b75;
+  font-size: 12px;
+  font-weight: 900;
+}
+
 .junction {
-  fill: #263f4d;
+  fill: #172f3a;
   stroke: none;
 }
 
 .comparator-symbol {
-  stroke: var(--blocked);
+  stroke: #172f3a;
 }
 
 .wire {
-  stroke: #263f4d;
-  stroke-width: 2.4;
+  stroke: #172f3a;
+  stroke-width: 2.2;
   fill: none;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
 }
 
 .light-ray {
@@ -1019,9 +1082,30 @@ body.is-resizing .resize-handle::after {
 }
 
 .ground-symbol {
-  stroke: #263f4d;
+  stroke: #172f3a;
   stroke-width: 2.2;
   fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.supply-symbol {
+  fill: #fffdf4;
+  stroke: #172f3a;
+  stroke-width: 2.2;
+  stroke-linejoin: round;
+}
+
+.schem-note rect {
+  fill: #f8fbfa;
+  stroke: #b9caca;
+  stroke-width: 1.4;
+}
+
+.schem-note text {
+  fill: #405766;
+  font-size: 12px;
+  font-weight: 700;
 }
 
 #arrow path {

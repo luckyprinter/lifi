@@ -262,6 +262,28 @@ function Symbol({ type }) {
   if (type === "resistor") {
     return <polyline points="8,32 16,32 20,20 28,44 36,20 44,44 52,20 60,44 64,32 72,32" />;
   }
+  if (type === "capacitor") {
+    return (
+      <>
+        <line x1="8" y1="32" x2="32" y2="32" />
+        <line x1="32" y1="16" x2="32" y2="48" />
+        <line x1="48" y1="16" x2="48" y2="48" />
+        <line x1="48" y1="32" x2="72" y2="32" />
+      </>
+    );
+  }
+  if (type === "npn") {
+    return (
+      <>
+        <circle cx="40" cy="32" r="25" />
+        <line x1="18" y1="32" x2="36" y2="32" />
+        <line x1="36" y1="15" x2="36" y2="49" />
+        <line x1="36" y1="22" x2="60" y2="8" />
+        <line x1="36" y1="42" x2="60" y2="56" />
+        <polyline points="52,50 60,56 50,58" />
+      </>
+    );
+  }
   if (type === "mosfet") {
     return (
       <>
@@ -472,102 +494,147 @@ function PinLabel({ x, y, children }) {
   return <text className="pin-label" x={x} y={y}>{children}</text>;
 }
 
+function RefLabel({ x, y, children, anchor = "middle" }) {
+  return <text className="ref-label" x={x} y={y} textAnchor={anchor}>{children}</text>;
+}
+
+function ValueLabel({ x, y, children, anchor = "middle" }) {
+  return <text className="value-label" x={x} y={y} textAnchor={anchor}>{children}</text>;
+}
+
+function NetLabel({ x, y, children, anchor = "middle" }) {
+  return <text className="net-label" x={x} y={y} textAnchor={anchor}>{children}</text>;
+}
+
+function Ground({ x, y }) {
+  return (
+    <g className="ground-symbol" transform={`translate(${x} ${y})`}>
+      <line x1="0" y1="0" x2="0" y2="10" />
+      <line x1="-18" y1="10" x2="18" y2="10" />
+      <line x1="-12" y1="18" x2="12" y2="18" />
+      <line x1="-6" y1="26" x2="6" y2="26" />
+    </g>
+  );
+}
+
+function Supply({ x, y, label }) {
+  return (
+    <g>
+      <line className="wire" x1={x} y1={y} x2={x} y2={y + 18} />
+      <path className="supply-symbol" d={`M${x - 12} ${y} L${x} ${y - 16} L${x + 12} ${y} Z`} />
+      <NetLabel x={x} y={y - 24}>{label}</NetLabel>
+    </g>
+  );
+}
+
 function DrawTxCircuit({ variant }) {
   if (variant === "bjtIrf540n") {
     return (
-      <g>
-        <text className="sheet-title" x="26" y="34">TX Driver A: ESP32 GPIO5 -&gt; 2N3904 -&gt; IRF540N -&gt; 12 V DC LED</text>
-        <line className="ground-bus" x1="45" y1="366" x2="930" y2="366" />
-        <PinLabel x="50" y="388">common ground</PinLabel>
+      <g className="ece-schematic">
+        <text className="sheet-title" x="26" y="34">TX A - Inverting 2N3904 Gate Driver + IRF540N LED Switch</text>
 
-        <g className="schem-block" transform="translate(45 92)">
-          <rect width="155" height="190" rx="8" />
-          <text x="20" y="32">ESP32 TX</text>
-          <g className="schem-symbol" transform="translate(38 55) scale(.95)"><Symbol type="esp32" /></g>
-          <PinLabel x="20" y="166">GPIO5</PinLabel>
-          <PinLabel x="20" y="184">3.3 V logic</PinLabel>
+        <g className="ic-symbol" transform="translate(58 122)">
+          <rect width="132" height="118" rx="3" />
+          <text x="66" y="30" textAnchor="middle">U1</text>
+          <text x="66" y="52" textAnchor="middle">ESP32</text>
+          <line x1="132" y1="72" x2="166" y2="72" />
+          <text x="94" y="78">GPIO5</text>
+          <line x1="66" y1="118" x2="66" y2="156" />
         </g>
+        <Ground x={124} y={278} />
 
-        <line className="wire" x1="200" y1="196" x2="248" y2="196" />
-        <g className="schem-symbol" transform="translate(248 164)"><Symbol type="resistor" /></g>
-        <PinLabel x="258" y="154">1k-4.7k base resistor</PinLabel>
-        <line className="wire" x1="320" y1="196" x2="382" y2="196" />
+        <line className="wire" x1="224" y1="194" x2="256" y2="194" />
+        <g className="schem-symbol" transform="translate(256 162)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="328" y1="194" x2="374" y2="194" />
+        <RefLabel x="292" y="148">R1</RefLabel>
+        <ValueLabel x="292" y="232">1k-4.7k</ValueLabel>
 
-        <g className="schem-block transistor-block" transform="translate(382 126)">
-          <rect width="132" height="164" rx="8" />
-          <text x="20" y="28">2N3904 NPN</text>
-          <circle cx="66" cy="86" r="30" />
-          <line x1="38" y1="86" x2="66" y2="86" />
-          <line x1="66" y1="60" x2="92" y2="40" />
-          <line x1="66" y1="112" x2="92" y2="132" />
-          <polyline points="82,124 92,132 79,135" />
-          <PinLabel x="18" y="154">E to GND</PinLabel>
+        <g className="schem-symbol" transform="translate(374 162)"><Symbol type="npn" /></g>
+        <RefLabel x="416" y="144">Q1</RefLabel>
+        <ValueLabel x="416" y="236">2N3904</ValueLabel>
+        <line className="wire" x1="434" y1="218" x2="434" y2="278" />
+        <Ground x={434} y={278} />
+
+        <line className="wire" x1="434" y1="170" x2="434" y2="106" />
+        <line className="wire" x1="434" y1="106" x2="582" y2="106" />
+        <circle className="junction" cx="582" cy="106" r="4" />
+        <NetLabel x="512" y="96">GATE_DRV</NetLabel>
+
+        <Supply x={582} y={58} label="+12V" />
+        <g className="schem-symbol" transform="translate(542 82) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="582" y1="154" x2="582" y2="106" />
+        <RefLabel x="632" y="118" anchor="start">R2</RefLabel>
+        <ValueLabel x="632" y="138" anchor="start">10k-47k pull-up</ValueLabel>
+
+        <line className="wire" x1="582" y1="106" x2="656" y2="106" />
+        <line className="wire" x1="656" y1="106" x2="656" y2="194" />
+        <g className="schem-symbol" transform="translate(656 162) scale(1.15)"><Symbol type="mosfet" /></g>
+        <RefLabel x="696" y="146">Q2</RefLabel>
+        <ValueLabel x="714" y="250">IRF540N</ValueLabel>
+        <line className="wire" x1="738" y1="220" x2="738" y2="278" />
+        <Ground x={738} y={278} />
+
+        <line className="wire" x1="738" y1="178" x2="738" y2="132" />
+        <line className="wire" x1="738" y1="132" x2="790" y2="132" />
+        <g className="schem-symbol" transform="translate(790 100)"><Symbol type="led" /></g>
+        <line className="wire" x1="862" y1="132" x2="908" y2="132" />
+        <line className="wire" x1="908" y1="132" x2="908" y2="76" />
+        <Supply x={908} y={58} label="+12V" />
+        <RefLabel x="826" y="88">LED1</RefLabel>
+        <ValueLabel x="826" y="176">12 V DC LED bulb</ValueLabel>
+
+        <g className="schem-note" transform="translate(510 304)">
+          <rect width="350" height="56" rx="4" />
+          <text x="14" y="22">Inverting action: GPIO HIGH turns Q1 on and pulls MOSFET gate LOW.</text>
+          <text x="14" y="42">GPIO LOW lets R2 pull the IRF540N gate HIGH.</text>
         </g>
-        <line className="wire" x1="474" y1="258" x2="474" y2="366" />
-
-        <line className="wire" x1="474" y1="166" x2="610" y2="166" />
-        <circle className="junction" cx="610" cy="166" r="4" />
-        <PinLabel x="522" y="156">collector / gate node</PinLabel>
-        <line className="wire" x1="610" y1="166" x2="610" y2="112" />
-        <g className="schem-symbol" transform="translate(570 72) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <PinLabel x="625" y="92">10k-47k gate pull-up</PinLabel>
-        <line className="wire" x1="610" y1="72" x2="610" y2="56" />
-        <PinLabel x="626" y="60">+12 V gate bias</PinLabel>
-
-        <line className="wire" x1="610" y1="166" x2="668" y2="205" />
-        <g className="schem-symbol" transform="translate(650 178) scale(1.08)"><Symbol type="mosfet" /></g>
-        <PinLabel x="648" y="168">IRF540N</PinLabel>
-        <PinLabel x="650" y="288">source to GND</PinLabel>
-
-        <line className="wire" x1="726" y1="186" x2="762" y2="186" />
-        <g className="schem-symbol" transform="translate(762 154)"><Symbol type="led" /></g>
-        <PinLabel x="754" y="144">12 V DC LED bulb</PinLabel>
-        <line className="wire" x1="852" y1="186" x2="900" y2="186" />
-        <line className="wire" x1="900" y1="186" x2="900" y2="82" />
-        <PinLabel x="856" y="74">+12 V LED supply</PinLabel>
-        <line className="wire" x1="704" y1="244" x2="704" y2="366" />
-        <polyline className="ground-symbol" points="684,314 724,314 716,324 692,324 700,334 708,334" />
-        <PinLabel x="530" y="326">GPIO HIGH pulls gate LOW: LED OFF</PinLabel>
-        <PinLabel x="530" y="346">GPIO LOW lets pull-up turn LED ON</PinLabel>
       </g>
     );
   }
 
   return (
-    <g>
-      <text className="sheet-title" x="26" y="34">TX Driver B: ESP32 GPIO5 -&gt; IRLZ44N Logic-Level MOSFET -&gt; 12 V DC LED</text>
-      <line className="ground-bus" x1="45" y1="366" x2="930" y2="366" />
-      <PinLabel x="50" y="388">common ground</PinLabel>
+    <g className="ece-schematic">
+      <text className="sheet-title" x="26" y="34">TX B - Direct Logic-Level MOSFET LED Switch</text>
 
-      <g className="schem-block" transform="translate(45 88)">
-        <rect width="170" height="210" rx="8" />
-        <text x="20" y="32">ESP32 TX</text>
-        <g className="schem-symbol" transform="translate(45 55)"><Symbol type="esp32" /></g>
-        <PinLabel x="22" y="168">GPIO5 Manchester</PinLabel>
+      <g className="ic-symbol" transform="translate(64 122)">
+        <rect width="132" height="118" rx="3" />
+        <text x="66" y="30" textAnchor="middle">U1</text>
+        <text x="66" y="52" textAnchor="middle">ESP32</text>
+        <line x1="132" y1="72" x2="166" y2="72" />
+        <text x="90" y="78">GPIO5</text>
+        <line x1="66" y1="118" x2="66" y2="156" />
       </g>
+      <Ground x={130} y={278} />
 
-      <line className="wire" x1="215" y1="198" x2="300" y2="198" />
-      <g className="schem-symbol" transform="translate(300 166)"><Symbol type="resistor" /></g>
-      <PinLabel x="316" y="156">100-220 ohm gate resistor</PinLabel>
-      <line className="wire" x1="372" y1="198" x2="465" y2="198" />
+      <line className="wire" x1="230" y1="194" x2="278" y2="194" />
+      <g className="schem-symbol" transform="translate(278 162)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="350" y1="194" x2="470" y2="194" />
+      <circle className="junction" cx="470" cy="194" r="4" />
+      <RefLabel x="314" y="148">R1</RefLabel>
+      <ValueLabel x="314" y="232">100-220 ohm</ValueLabel>
 
-      <line className="wire" x1="430" y1="198" x2="430" y2="292" />
-      <g className="schem-symbol" transform="translate(390 250) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <PinLabel x="374" y="338">10k pulldown</PinLabel>
-      <line className="wire" x1="430" y1="326" x2="430" y2="366" />
+      <line className="wire" x1="470" y1="194" x2="470" y2="260" />
+      <g className="schem-symbol" transform="translate(430 230) rotate(90 40 32)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="470" y1="332" x2="470" y2="350" />
+      <Ground x={470} y={350} />
+      <RefLabel x="514" y="280" anchor="start">R2</RefLabel>
+      <ValueLabel x="514" y="300" anchor="start">10k pulldown</ValueLabel>
 
-      <g className="schem-symbol" transform="translate(455 168) scale(1.15)"><Symbol type="mosfet" /></g>
-      <PinLabel x="456" y="156">IRLZ44N / logic MOSFET</PinLabel>
-      <PinLabel x="510" y="286">source to GND</PinLabel>
-      <line className="wire" x1="532" y1="186" x2="610" y2="186" />
-      <g className="schem-symbol" transform="translate(610 154)"><Symbol type="led" /></g>
-      <PinLabel x="610" y="144">12 V DC LED bulb</PinLabel>
-      <line className="wire" x1="700" y1="186" x2="790" y2="186" />
-      <line className="wire" x1="790" y1="186" x2="790" y2="92" />
-      <line className="wire" x1="790" y1="92" x2="875" y2="92" />
-      <PinLabel x="802" y="82">+12 V supply</PinLabel>
-      <line className="wire" x1="525" y1="246" x2="525" y2="366" />
-      <polyline className="ground-symbol" points="505,312 545,312 537,322 513,322 521,332 529,332" />
+      <line className="wire" x1="470" y1="194" x2="580" y2="194" />
+      <g className="schem-symbol" transform="translate(580 162) scale(1.15)"><Symbol type="mosfet" /></g>
+      <RefLabel x="620" y="146">Q1</RefLabel>
+      <ValueLabel x="638" y="250">IRLZ44N / logic MOSFET</ValueLabel>
+      <line className="wire" x1="662" y1="220" x2="662" y2="278" />
+      <Ground x={662} y={278} />
+
+      <line className="wire" x1="662" y1="178" x2="662" y2="132" />
+      <line className="wire" x1="662" y1="132" x2="742" y2="132" />
+      <g className="schem-symbol" transform="translate(742 100)"><Symbol type="led" /></g>
+      <line className="wire" x1="814" y1="132" x2="900" y2="132" />
+      <line className="wire" x1="900" y1="132" x2="900" y2="76" />
+      <Supply x={900} y={58} label="+12V" />
+      <RefLabel x="778" y="88">LED1</RefLabel>
+      <ValueLabel x="778" y="176">12 V DC LED bulb</ValueLabel>
     </g>
   );
 }
@@ -575,137 +642,183 @@ function DrawTxCircuit({ variant }) {
 function DrawRxCircuit({ variant }) {
   if (variant === "teptDirect") {
     return (
-      <g>
-        <text className="sheet-title" x="26" y="34">RX Front-End A: TEPT4400 -&gt; ESP32 GPIO/ADC</text>
-        <line className="ground-bus" x1="45" y1="360" x2="930" y2="360" />
-        <PinLabel x="50" y="388">common ground</PinLabel>
-        <PinLabel x="68" y="82">+3.3 V</PinLabel>
-        <line className="wire" x1="100" y1="92" x2="100" y2="138" />
-        <g className="schem-symbol" transform="translate(60 138) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <PinLabel x="122" y="172">10k-47k load resistor</PinLabel>
-        <line className="wire" x1="100" y1="212" x2="100" y2="230" />
-        <circle className="junction" cx="100" cy="230" r="4" />
-        <line className="wire" x1="100" y1="230" x2="235" y2="230" />
-        <PinLabel x="122" y="222">sensor node</PinLabel>
-        <g className="schem-symbol" transform="translate(60 235)"><Symbol type="phototransistor" /></g>
-        <PinLabel x="142" y="270">TEPT4400</PinLabel>
-        <line className="wire" x1="100" y1="300" x2="100" y2="360" />
-        <g className="schem-block" transform="translate(235 132)">
-          <rect width="210" height="170" rx="8" />
-          <text x="20" y="32">ESP32 RX</text>
-          <g className="schem-symbol" transform="translate(64 52) scale(.9)"><Symbol type="esp32" /></g>
-          <PinLabel x="20" y="142">GPIO5 digital or GPIO34 ADC</PinLabel>
+      <g className="ece-schematic">
+        <text className="sheet-title" x="26" y="34">RX A - TEPT4400 Sensor Node Direct To ESP32</text>
+        <Supply x={150} y={70} label="+3.3V" />
+        <line className="wire" x1="150" y1="88" x2="150" y2="112" />
+        <g className="schem-symbol" transform="translate(110 112) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="150" y1="184" x2="150" y2="220" />
+        <circle className="junction" cx="150" cy="220" r="4" />
+        <RefLabel x="196" y="146" anchor="start">R1</RefLabel>
+        <ValueLabel x="196" y="166" anchor="start">10k-47k load</ValueLabel>
+
+        <g className="schem-symbol" transform="translate(110 220)"><Symbol type="phototransistor" /></g>
+        <line className="wire" x1="150" y1="282" x2="150" y2="328" />
+        <Ground x={150} y={328} />
+        <RefLabel x="226" y="252" anchor="start">Q1</RefLabel>
+        <ValueLabel x="226" y="272" anchor="start">TEPT4400</ValueLabel>
+
+        <line className="wire" x1="150" y1="220" x2="430" y2="220" />
+        <NetLabel x="286" y="208">SENSOR_OUT</NetLabel>
+        <g className="ic-symbol" transform="translate(430 148)">
+          <rect width="162" height="132" rx="3" />
+          <text x="81" y="32" textAnchor="middle">U1</text>
+          <text x="81" y="54" textAnchor="middle">ESP32 RX</text>
+          <line x1="0" y1="72" x2="-34" y2="72" />
+          <text x="18" y="78">GPIO5 / GPIO34</text>
+          <line x1="81" y1="132" x2="81" y2="170" />
         </g>
-        <PinLabel x="510" y="205">Measured: light near 0 V, no light around 2.3 V</PinLabel>
-        <PinLabel x="510" y="232">Works only if threshold and edge speed are clean.</PinLabel>
+        <Ground x={511} y={318} />
+
+        <g className="schem-note" transform="translate(630 178)">
+          <rect width="270" height="76" rx="4" />
+          <text x="14" y="22">Measured behavior:</text>
+          <text x="14" y="42">light near 0 V, no light about 2.3 V.</text>
+          <text x="14" y="62">Needs clean ESP32 logic threshold.</text>
+        </g>
       </g>
     );
   }
 
   if (variant === "teptLm393") {
     return (
-      <g>
-        <text className="sheet-title" x="26" y="34">RX Front-End B: TEPT4400 -&gt; LM393 Comparator -&gt; ESP32</text>
-        <line className="ground-bus" x1="45" y1="360" x2="930" y2="360" />
-        <PinLabel x="50" y="388">common ground</PinLabel>
+      <g className="ece-schematic">
+        <text className="sheet-title" x="26" y="34">RX B - TEPT4400 Into LM393 Comparator</text>
+        <Supply x={120} y={70} label="+3.3V" />
+        <line className="wire" x1="120" y1="88" x2="120" y2="112" />
+        <g className="schem-symbol" transform="translate(80 112) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="120" y1="184" x2="120" y2="220" />
+        <circle className="junction" cx="120" cy="220" r="4" />
+        <RefLabel x="166" y="146" anchor="start">R1</RefLabel>
+        <ValueLabel x="166" y="166" anchor="start">10k-47k</ValueLabel>
 
-        <PinLabel x="58" y="82">+3.3 V</PinLabel>
-        <line className="wire" x1="90" y1="92" x2="90" y2="140" />
-        <g className="schem-symbol" transform="translate(50 140) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <PinLabel x="114" y="176">10k-47k load</PinLabel>
-        <line className="wire" x1="90" y1="214" x2="90" y2="232" />
-        <circle className="junction" cx="90" cy="232" r="4" />
-        <g className="schem-symbol" transform="translate(50 238)"><Symbol type="phototransistor" /></g>
-        <PinLabel x="132" y="273">TEPT4400</PinLabel>
-        <line className="wire" x1="90" y1="304" x2="90" y2="360" />
+        <g className="schem-symbol" transform="translate(80 220)"><Symbol type="phototransistor" /></g>
+        <line className="wire" x1="120" y1="282" x2="120" y2="328" />
+        <Ground x={120} y={328} />
+        <RefLabel x="186" y="252" anchor="start">Q1</RefLabel>
+        <ValueLabel x="186" y="272" anchor="start">TEPT4400</ValueLabel>
 
-        <line className="wire" x1="90" y1="232" x2="268" y2="232" />
-        <g className="schem-symbol comparator-symbol" transform="translate(270 170) scale(1.6)"><Symbol type="comparator" /></g>
-        <PinLabel x="286" y="156">LM393</PinLabel>
-        <PinLabel x="244" y="210">+IN sensor</PinLabel>
+        <line className="wire" x1="120" y1="220" x2="356" y2="220" />
+        <NetLabel x="232" y="208">SENSOR_OUT</NetLabel>
+        <g className="schem-symbol comparator-symbol" transform="translate(356 162) scale(1.65)"><Symbol type="comparator" /></g>
+        <RefLabel x="410" y="142">U2A</RefLabel>
+        <ValueLabel x="410" y="278">LM393</ValueLabel>
+        <NetLabel x="330" y="214">+IN</NetLabel>
 
-        <g className="schem-symbol" transform="translate(190 72) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <PinLabel x="235" y="70">10k pot</PinLabel>
-        <PinLabel x="230" y="92">top +3.3 V</PinLabel>
-        <line className="wire" x1="230" y1="144" x2="230" y2="360" />
-        <line className="wire" x1="230" y1="160" x2="270" y2="238" />
-        <PinLabel x="236" y="250">-IN threshold</PinLabel>
+        <Supply x={280} y={70} label="+3.3V" />
+        <g className="schem-symbol" transform="translate(240 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="280" y1="176" x2="280" y2="328" />
+        <Ground x={280} y={328} />
+        <circle className="junction" cx="280" cy="236" r="4" />
+        <line className="wire" x1="280" y1="236" x2="356" y2="236" />
+        <RefLabel x="304" y="132" anchor="start">RV1</RefLabel>
+        <ValueLabel x="304" y="152" anchor="start">10k threshold pot</ValueLabel>
+        <NetLabel x="330" y="252">-IN</NetLabel>
 
-        <line className="wire" x1="392" y1="222" x2="548" y2="222" />
-        <circle className="junction" cx="468" cy="222" r="4" />
-        <g className="schem-symbol" transform="translate(428 86) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="468" y1="86" x2="468" y2="222" />
-        <PinLabel x="482" y="112">10k output pull-up to 3.3 V</PinLabel>
+        <line className="wire" x1="484" y1="215" x2="620" y2="215" />
+        <circle className="junction" cx="570" cy="215" r="4" />
+        <Supply x={570} y={70} label="+3.3V" />
+        <g className="schem-symbol" transform="translate(530 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <line className="wire" x1="570" y1="176" x2="570" y2="215" />
+        <RefLabel x="594" y="132" anchor="start">R2</RefLabel>
+        <ValueLabel x="594" y="152" anchor="start">10k pull-up</ValueLabel>
+        <NetLabel x="536" y="204">RX_LOGIC</NetLabel>
 
-        <g className="schem-block" transform="translate(548 142)">
-          <rect width="210" height="156" rx="8" />
-          <text x="20" y="32">ESP32 RX</text>
-          <g className="schem-symbol" transform="translate(64 48) scale(.9)"><Symbol type="esp32" /></g>
-          <PinLabel x="20" y="130">GPIO5 digital input</PinLabel>
+        <g className="ic-symbol" transform="translate(620 150)">
+          <rect width="168" height="126" rx="3" />
+          <text x="84" y="30" textAnchor="middle">U1</text>
+          <text x="84" y="52" textAnchor="middle">ESP32 RX</text>
+          <line x1="0" y1="65" x2="-34" y2="65" />
+          <text x="22" y="72">GPIO5</text>
+          <line x1="84" y1="126" x2="84" y2="164" />
         </g>
-        <PinLabel x="780" y="205">Output polarity: light LOW, dark HIGH</PinLabel>
-        <PinLabel x="780" y="232">Try RX INV=1 for current active-high TX.</PinLabel>
+        <Ground x={704} y={314} />
+
+        <g className="schem-note" transform="translate(800 164)">
+          <rect width="140" height="88" rx="4" />
+          <text x="12" y="22">Expected polarity:</text>
+          <text x="12" y="42">light = LOW</text>
+          <text x="12" y="62">dark = HIGH</text>
+          <text x="12" y="82">try RX INV=1</text>
+        </g>
       </g>
     );
   }
 
   return (
-    <g>
-      <text className="sheet-title" x="26" y="34">RX Front-End C: BPW34 -&gt; OPA2604 TIA -&gt; LM393 -&gt; ESP32</text>
-      <line className="ground-bus" x1="45" y1="360" x2="930" y2="360" />
-      <PinLabel x="50" y="388">common ground</PinLabel>
+    <g className="ece-schematic">
+      <text className="sheet-title" x="26" y="34">RX C - BPW34 + OPA2604 Transimpedance Amplifier + LM393</text>
 
-      <PinLabel x="48" y="76">Vref approx 1.65 V</PinLabel>
-      <g className="schem-symbol" transform="translate(55 90) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <g className="schem-symbol" transform="translate(55 245) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <PinLabel x="105" y="116">10k</PinLabel>
-      <PinLabel x="105" y="274">10k</PinLabel>
-      <line className="wire" x1="95" y1="76" x2="95" y2="92" />
-      <line className="wire" x1="95" y1="164" x2="95" y2="246" />
-      <line className="wire" x1="95" y1="318" x2="95" y2="360" />
-      <circle className="junction" cx="95" cy="204" r="4" />
-      <line className="wire" x1="95" y1="204" x2="245" y2="204" />
-      <PinLabel x="102" y="198">OPA2604 +IN bias</PinLabel>
+      <Supply x={88} y={70} label="+3.3V" />
+      <g className="schem-symbol" transform="translate(48 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="88" y1="176" x2="88" y2="214" />
+      <circle className="junction" cx="88" cy="214" r="4" />
+      <g className="schem-symbol" transform="translate(48 214) rotate(90 40 32)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="88" y1="286" x2="88" y2="326" />
+      <Ground x={88} y={326} />
+      <NetLabel x="122" y="208" anchor="start">VREF</NetLabel>
+      <ValueLabel x="122" y="228" anchor="start">approx 1.65 V</ValueLabel>
 
-      <g className="schem-symbol" transform="translate(145 122) scale(1.1)"><Symbol type="photodiode" /></g>
-      <PinLabel x="138" y="112">BPW34 photodiode</PinLabel>
-      <line className="wire" x1="185" y1="122" x2="185" y2="76" />
-      <PinLabel x="190" y="78">reverse bias / sensor node</PinLabel>
-      <line className="wire" x1="228" y1="160" x2="245" y2="160" />
+      <g className="schem-symbol" transform="translate(160 128) scale(1.15)"><Symbol type="photodiode" /></g>
+      <RefLabel x="200" y="114">D1</RefLabel>
+      <ValueLabel x="200" y="200">BPW34</ValueLabel>
+      <line className="wire" x1="236" y1="164" x2="292" y2="164" />
+      <NetLabel x="264" y="154">PD_IN</NetLabel>
+      <line className="wire" x1="200" y1="128" x2="200" y2="76" />
+      <Supply x={200} y={58} label="+3.3V" />
 
-      <g className="schem-symbol" transform="translate(245 110) scale(1.7)"><Symbol type="opamp" /></g>
-      <PinLabel x="258" y="96">OPA2604 TIA</PinLabel>
-      <PinLabel x="232" y="152">-IN</PinLabel>
-      <PinLabel x="232" y="206">+IN</PinLabel>
-      <path className="wire" d="M270 136 C270 74 392 74 392 160" />
-      <g className="schem-symbol" transform="translate(300 52)"><Symbol type="resistor" /></g>
-      <PinLabel x="318" y="42">Rf 100k-1M</PinLabel>
-      <PinLabel x="356" y="92">Cf parallel optional</PinLabel>
-      <line className="wire" x1="378" y1="160" x2="500" y2="160" />
+      <g className="schem-symbol" transform="translate(292 112) scale(1.7)"><Symbol type="opamp" /></g>
+      <RefLabel x="348" y="94">U1A</RefLabel>
+      <ValueLabel x="348" y="246">OPA2604 TIA</ValueLabel>
+      <line className="wire" x1="88" y1="214" x2="292" y2="214" />
+      <line className="wire" x1="292" y1="214" x2="292" y2="183" />
+      <NetLabel x="274" y="206">+IN</NetLabel>
+      <NetLabel x="274" y="158">-IN</NetLabel>
 
-      <g className="schem-symbol comparator-symbol" transform="translate(500 108) scale(1.55)"><Symbol type="comparator" /></g>
-      <PinLabel x="510" y="94">LM393 comparator</PinLabel>
-      <PinLabel x="480" y="148">+IN TIA output</PinLabel>
-      <g className="schem-symbol" transform="translate(430 236) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <PinLabel x="466" y="230">10k pot threshold</PinLabel>
-      <line className="wire" x1="470" y1="276" x2="500" y2="178" />
-      <line className="wire" x1="470" y1="304" x2="470" y2="360" />
-      <PinLabel x="492" y="214">-IN threshold</PinLabel>
+      <path className="wire" d="M333 153 L333 78 L454 78 L454 166" />
+      <g className="schem-symbol" transform="translate(356 46)"><Symbol type="resistor" /></g>
+      <g className="schem-symbol" transform="translate(356 84)"><Symbol type="capacitor" /></g>
+      <RefLabel x="392" y="36">RF</RefLabel>
+      <ValueLabel x="392" y="132">100k-1M with Cf</ValueLabel>
+      <line className="wire" x1="422" y1="166" x2="520" y2="166" />
+      <NetLabel x="474" y="154">TIA_OUT</NetLabel>
 
-      <line className="wire" x1="620" y1="160" x2="720" y2="160" />
-      <circle className="junction" cx="675" cy="160" r="4" />
-      <g className="schem-symbol" transform="translate(635 52) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="675" y1="54" x2="675" y2="160" />
-      <PinLabel x="690" y="80">10k pull-up to 3.3 V</PinLabel>
+      <g className="schem-symbol comparator-symbol" transform="translate(520 114) scale(1.6)"><Symbol type="comparator" /></g>
+      <RefLabel x="572" y="96">U2A</RefLabel>
+      <ValueLabel x="572" y="250">LM393</ValueLabel>
+      <Supply x={500} y={246} label="+3.3V" />
+      <g className="schem-symbol" transform="translate(460 280) rotate(90 40 32)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="500" y1="352" x2="500" y2="370" />
+      <Ground x={500} y={370} />
+      <circle className="junction" cx="500" cy="310" r="4" />
+      <line className="wire" x1="500" y1="310" x2="520" y2="183" />
+      <NetLabel x="530" y="206">-IN threshold</NetLabel>
+      <ValueLabel x="542" y="330" anchor="start">RV1 10k</ValueLabel>
 
-      <g className="schem-block" transform="translate(720 90)">
-        <rect width="205" height="156" rx="8" />
-        <text x="20" y="32">ESP32 RX</text>
-        <g className="schem-symbol" transform="translate(62 48) scale(.9)"><Symbol type="esp32" /></g>
-        <PinLabel x="20" y="130">GPIO5 clean logic</PinLabel>
+      <line className="wire" x1="648" y1="166" x2="742" y2="166" />
+      <circle className="junction" cx="706" cy="166" r="4" />
+      <Supply x={706} y={70} label="+3.3V" />
+      <g className="schem-symbol" transform="translate(666 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
+      <line className="wire" x1="706" y1="176" x2="706" y2="166" />
+      <RefLabel x="728" y="132" anchor="start">R3</RefLabel>
+      <ValueLabel x="728" y="152" anchor="start">10k pull-up</ValueLabel>
+      <NetLabel x="686" y="196">RX_LOGIC</NetLabel>
+
+      <g className="ic-symbol" transform="translate(742 104)">
+        <rect width="168" height="126" rx="3" />
+        <text x="84" y="30" textAnchor="middle">U3</text>
+        <text x="84" y="52" textAnchor="middle">ESP32 RX</text>
+        <line x1="0" y1="62" x2="-34" y2="62" />
+        <text x="22" y="70">GPIO5</text>
+        <line x1="84" y1="126" x2="84" y2="164" />
       </g>
-      <PinLabel x="692" y="274">OPA2604 may need supply headroom;</PinLabel>
-      <PinLabel x="692" y="296">verify output swing before ESP32 logic tests.</PinLabel>
+      <Ground x={826} y={268} />
+
+      <g className="schem-note" transform="translate(642 286)">
+        <rect width="260" height="58" rx="4" />
+        <text x="14" y="22">Check OPA2604 supply headroom and output swing.</text>
+        <text x="14" y="42">ESP32 GPIO must stay within 0-3.3 V.</text>
+      </g>
     </g>
   );
 }
