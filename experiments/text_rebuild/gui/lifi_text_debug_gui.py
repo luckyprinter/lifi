@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 import os
 import re
+import shutil
+import subprocess
 import sys
 import threading
 import time
 import tkinter as tk
-from tkinter import messagebox, scrolledtext, ttk
+from tkinter import filedialog, messagebox, scrolledtext, ttk
 
 try:
     import serial
@@ -19,6 +21,12 @@ DEFAULT_RX_PORT = "/dev/ttyUSB0"
 DEFAULT_TX_PORT = "/dev/ttyUSB1"
 ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 LOG_DIR = os.path.join(ROOT_DIR, "logs")
+TOOLS_BIN_DIR = os.path.join(ROOT_DIR, "tools", "bin")
+LOCAL_ARDUINO_CLI = os.path.join(TOOLS_BIN_DIR, "arduino-cli.exe" if os.name == "nt" else "arduino-cli")
+CLI_INSTALLER = os.path.join(ROOT_DIR, "tools", "install_arduino_cli.py")
+DEFAULT_FQBN = "esp32:esp32:esp32doit-devkit-v1"
+DEFAULT_RX_SKETCH = os.path.join(ROOT_DIR, "firmware", "rx_text_debug")
+DEFAULT_TX_SKETCH = os.path.join(ROOT_DIR, "firmware", "tx_text_debug")
 
 
 def bind_select_all(widget):
@@ -118,6 +126,11 @@ class LifiTextDebugGui(tk.Tk):
         self.tx_inv = tk.BooleanVar(value=False)
         self.debug_bits = tk.BooleanVar(value=True)
         self.debug_bytes = tk.BooleanVar(value=True)
+        self.fqbn = tk.StringVar(value=DEFAULT_FQBN)
+        self.rx_sketch = tk.StringVar(value=DEFAULT_RX_SKETCH)
+        self.tx_sketch = tk.StringVar(value=DEFAULT_TX_SKETCH)
+        self.cli_path = tk.StringVar(value="")
+        self.cli_status = tk.StringVar(value="Arduino CLI: checking...")
 
         self.rx_bit_stream = ""
         self.rx_byte_stream = []
@@ -166,7 +179,7 @@ class LifiTextDebugGui(tk.Tk):
         root = ttk.Frame(self, padding=12)
         root.pack(fill="both", expand=True)
         root.columnconfigure(0, weight=1)
-        root.rowconfigure(3, weight=1)
+        root.rowconfigure(4, weight=1)
 
         header = ttk.Frame(root)
         header.grid(row=0, column=0, sticky="ew", pady=(0, 10))
@@ -181,8 +194,12 @@ class LifiTextDebugGui(tk.Tk):
         self.build_rx_controls(controls)
         self.build_tx_controls(controls)
 
+        upload = ttk.Frame(root, style="Panel.TFrame", padding=10)
+        upload.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        self.build_upload_controls(upload)
+
         dashboard = ttk.Frame(root, style="Panel.TFrame", padding=10)
-        dashboard.grid(row=2, column=0, sticky="ew", pady=(0, 10))
+        dashboard.grid(row=3, column=0, sticky="ew", pady=(0, 10))
         for col in range(4):
             dashboard.columnconfigure(col, weight=1)
         self.status_card(dashboard, 0, "Packet Status", self.packet_status)
@@ -191,7 +208,7 @@ class LifiTextDebugGui(tk.Tk):
         self.status_card(dashboard, 3, "RX Counters", self.rx_counts)
 
         body = ttk.PanedWindow(root, orient=tk.VERTICAL)
-        body.grid(row=3, column=0, sticky="nsew")
+        body.grid(row=4, column=0, sticky="nsew")
 
         bit_frame = ttk.PanedWindow(body, orient=tk.HORIZONTAL)
         body.add(bit_frame, weight=2)
@@ -226,6 +243,7 @@ class LifiTextDebugGui(tk.Tk):
         widget.grid(row=1, column=0, sticky="nsew", pady=(6, 0))
         widget.tag_configure("RX", foreground="#0f766e")
         widget.tag_configure("TX", foreground="#1d4ed8")
+        widget.tag_configure("CLI", foreground="#7c3aed")
         widget.tag_configure("OK", foreground=self.colors["good"])
         widget.tag_configure("FAIL", foreground=self.colors["bad"])
         widget.tag_configure("WARN", foreground=self.colors["warn"])
@@ -280,6 +298,35 @@ class LifiTextDebugGui(tk.Tk):
         ttk.Entry(frame, textvariable=self.message).grid(row=2, column=1, columnspan=4, sticky="ew", padx=6, pady=4)
         ttk.Button(frame, text="Send Text", style="Accent.TButton", command=self.send_text).grid(row=2, column=5, padx=6, pady=4)
 
+    def build_upload_controls(self, parent):
+        parent.columnconfigure(1, weight=1)
+        parent.columnconfigure(3, weight=1)
+        ttk.Label(parent, text="Firmware Upload", style="CardTitle.TLabel").grid(row=0, column=0, sticky="w", padx=(0, 12))
+        ttk.Label(parent, textvariable=self.cli_status, style="Panel.TLabel").grid(row=0, column=1, columnspan=3, sticky="w")
+        ttk.Button(parent, text="Refresh CLI", command=self.refresh_cli_status).grid(row=0, column=4, padx=6)
+        ttk.Button(parent, text="Install CLI", command=self.install_arduino_cli).grid(row=0, column=5, padx=6)
+
+        ttk.Label(parent, text="CLI path", style="Panel.TLabel").grid(row=1, column=0, sticky="w", pady=(8, 0))
+        ttk.Entry(parent, textvariable=self.cli_path).grid(row=1, column=1, columnspan=3, sticky="ew", padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Browse", command=self.choose_cli).grid(row=1, column=4, padx=6, pady=(8, 0))
+
+        ttk.Label(parent, text="FQBN", style="Panel.TLabel").grid(row=2, column=0, sticky="w", pady=(8, 0))
+        ttk.Entry(parent, textvariable=self.fqbn).grid(row=2, column=1, sticky="ew", padx=6, pady=(8, 0))
+        ttk.Label(parent, text="Use esp32:esp32:esp32doit-devkit-v1 unless your board differs.", style="Muted.TLabel").grid(row=2, column=2, columnspan=4, sticky="w", pady=(8, 0))
+
+        ttk.Label(parent, text="RX sketch", style="Panel.TLabel").grid(row=3, column=0, sticky="w", pady=(8, 0))
+        ttk.Entry(parent, textvariable=self.rx_sketch).grid(row=3, column=1, columnspan=3, sticky="ew", padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Browse", command=lambda: self.choose_sketch(self.rx_sketch)).grid(row=3, column=4, padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Compile RX", command=lambda: self.compile_sketch("RX")).grid(row=3, column=5, padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Upload RX", command=lambda: self.upload_sketch("RX")).grid(row=3, column=6, padx=6, pady=(8, 0))
+
+        ttk.Label(parent, text="TX sketch", style="Panel.TLabel").grid(row=4, column=0, sticky="w", pady=(8, 0))
+        ttk.Entry(parent, textvariable=self.tx_sketch).grid(row=4, column=1, columnspan=3, sticky="ew", padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Browse", command=lambda: self.choose_sketch(self.tx_sketch)).grid(row=4, column=4, padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Compile TX", command=lambda: self.compile_sketch("TX")).grid(row=4, column=5, padx=6, pady=(8, 0))
+        ttk.Button(parent, text="Upload TX", command=lambda: self.upload_sketch("TX")).grid(row=4, column=6, padx=6, pady=(8, 0))
+        self.refresh_cli_status()
+
     def refresh_ports(self):
         ports = [p.device for p in serial.tools.list_ports.comports()]
         self.rx_ports["values"] = ports
@@ -292,6 +339,116 @@ class LifiTextDebugGui(tk.Tk):
             self.tx_port.set(DEFAULT_TX_PORT)
         elif len(ports) > 1 and not self.tx_port.get():
             self.tx_port.set(ports[1])
+
+    def find_arduino_cli(self):
+        manual = self.cli_path.get().strip()
+        if manual and os.path.exists(manual):
+            return manual
+        if os.path.exists(LOCAL_ARDUINO_CLI):
+            return LOCAL_ARDUINO_CLI
+        return shutil.which("arduino-cli")
+
+    def refresh_cli_status(self):
+        cli = self.find_arduino_cli()
+        if cli:
+            if not self.cli_path.get().strip() or not os.path.exists(self.cli_path.get().strip()):
+                self.cli_path.set(cli)
+            self.cli_status.set(f"Arduino CLI: {cli}")
+        else:
+            self.cli_status.set("Arduino CLI: not found. Click Install CLI or use Arduino IDE.")
+
+    def choose_cli(self):
+        selected = filedialog.askopenfilename(
+            title="Choose arduino-cli executable",
+            filetypes=[("Arduino CLI", "arduino-cli*"), ("All files", "*.*")],
+            initialdir=TOOLS_BIN_DIR if os.path.isdir(TOOLS_BIN_DIR) else ROOT_DIR,
+        )
+        if selected:
+            self.cli_path.set(selected)
+            self.refresh_cli_status()
+
+    def choose_sketch(self, target_var):
+        selected = filedialog.askopenfilename(
+            title="Choose Arduino .ino sketch",
+            filetypes=[("Arduino sketch", "*.ino"), ("All files", "*.*")],
+            initialdir=ROOT_DIR,
+        )
+        if not selected:
+            return
+        folder = os.path.dirname(selected)
+        sketch_name = os.path.splitext(os.path.basename(selected))[0]
+        folder_name = os.path.basename(folder)
+        if sketch_name != folder_name:
+            messagebox.showinfo(
+                "Arduino sketch folder",
+                "Arduino CLI expects the sketch folder and main .ino to have the same name.\n\n"
+                f"Selected file: {os.path.basename(selected)}\n"
+                f"Using folder: {folder}\n\n"
+                "If compile fails, put the .ino inside a folder with the same name.",
+            )
+        target_var.set(folder)
+
+    def compile_sketch(self, side):
+        sketch = self.rx_sketch.get() if side == "RX" else self.tx_sketch.get()
+        cli = self.find_arduino_cli()
+        if not cli:
+            self.cli_missing_message()
+            return
+        cmd = [cli, "compile", "--fqbn", self.fqbn.get().strip(), sketch]
+        self.run_cli_command(side, cmd)
+
+    def upload_sketch(self, side):
+        sketch = self.rx_sketch.get() if side == "RX" else self.tx_sketch.get()
+        port = self.rx_port.get().strip() if side == "RX" else self.tx_port.get().strip()
+        endpoint = self.rx if side == "RX" else self.tx
+        cli = self.find_arduino_cli()
+        if not cli:
+            self.cli_missing_message()
+            return
+        if endpoint.connected():
+            endpoint.disconnect()
+            self.log("CLI", f"{side} serial disconnected before upload so the port is free.")
+        cmd = [cli, "upload", "-p", port, "--fqbn", self.fqbn.get().strip(), sketch]
+        self.run_cli_command(side, cmd)
+
+    def install_arduino_cli(self):
+        if not os.path.exists(CLI_INSTALLER):
+            messagebox.showerror("Installer missing", f"Installer not found:\n{CLI_INSTALLER}")
+            return
+        cmd = [sys.executable, CLI_INSTALLER]
+        self.run_cli_command("CLI", cmd, after=self.refresh_cli_status)
+
+    def cli_missing_message(self):
+        messagebox.showwarning(
+            "Arduino CLI not found",
+            "Arduino CLI was not found in this experiment folder or system PATH.\n\n"
+            "Click Install CLI in the GUI, or install Arduino CLI manually, or upload using Arduino IDE.",
+        )
+
+    def run_cli_command(self, side, cmd, after=None):
+        def worker():
+            self.after(0, lambda: self.log("CLI", "$ " + " ".join(f'"{x}"' if " " in x else x for x in cmd)))
+            try:
+                process = subprocess.Popen(
+                    cmd,
+                    cwd=ROOT_DIR,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.STDOUT,
+                    text=True,
+                    errors="replace",
+                )
+                assert process.stdout is not None
+                for line in process.stdout:
+                    self.after(0, lambda text=line.rstrip("\n"): self.log("CLI", text))
+                code = process.wait()
+            except Exception as exc:
+                self.after(0, lambda: self.log("CLI", f"CLI_ERROR:{exc}"))
+                return
+            self.after(0, lambda: self.log("CLI", f"{side} command exited with code {code}"))
+            if after:
+                self.after(0, after)
+
+        threading.Thread(target=worker, daemon=True).start()
 
     def toggle_rx(self):
         try:

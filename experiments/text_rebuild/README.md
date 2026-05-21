@@ -127,3 +127,55 @@ Or directly:
 ```bash
 python3 experiments/text_rebuild/gui/lifi_text_debug_gui.py
 ```
+
+## Arduino CLI Inside This Folder
+
+The GUI can use Arduino CLI in two ways:
+
+1. Repo-local Arduino CLI:
+
+```text
+experiments/text_rebuild/tools/bin/arduino-cli
+experiments/text_rebuild/tools/bin/arduino-cli.exe
+```
+
+2. System Arduino CLI from `PATH`.
+
+The GUI checks the selected `CLI path` first. If that field is empty, it tries the repo-local copy, then system `PATH`. This means you can keep a repo-local CLI for easy setup, or browse to an already working system install such as `/usr/bin/arduino-cli`.
+
+To install Arduino CLI into this experiment folder:
+
+```bash
+python3 experiments/text_rebuild/tools/install_arduino_cli.py
+```
+
+On Windows:
+
+```powershell
+py experiments\text_rebuild\tools\install_arduino_cli.py
+```
+
+You can also click `Install CLI` in the GUI.
+
+The actual downloaded Arduino CLI binary is ignored by git under:
+
+```text
+experiments/text_rebuild/tools/bin/
+```
+
+This keeps the repo lightweight while still making setup simple on each device.
+
+## GUI Compile And Upload
+
+The GUI has a `Firmware Upload` section.
+
+Use it to:
+
+- check whether Arduino CLI is available
+- install Arduino CLI if missing
+- choose a specific Arduino CLI executable
+- choose RX/TX sketch folders
+- compile RX or TX
+- upload RX or TX to the selected serial port
+
+Before uploading, close Arduino IDE Serial Monitor and disconnect the same port from the GUI if needed. The GUI automatically disconnects its own RX/TX serial connection before upload so the port is free.

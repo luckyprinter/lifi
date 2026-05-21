@@ -218,6 +218,95 @@ CRC_LSB
 STOP     0x03
 ```
 
+## Firmware Upload Section
+
+The GUI can use Arduino CLI to compile and upload firmware.
+
+Arduino CLI lookup order:
+
+1. The selected `CLI path` in the GUI.
+
+2. Local copy inside this experiment folder:
+
+```text
+experiments/text_rebuild/tools/bin/arduino-cli
+experiments/text_rebuild/tools/bin/arduino-cli.exe
+```
+
+3. System `arduino-cli` from PATH.
+
+`Install CLI`
+
+Downloads Arduino CLI into:
+
+```text
+experiments/text_rebuild/tools/bin/
+```
+
+This folder is ignored by git, so every device can install its own matching binary.
+
+`Refresh CLI`
+
+Checks again whether Arduino CLI is available.
+
+`CLI path`
+
+The exact Arduino CLI executable the GUI should use.
+
+Use `Browse` here if the local copy has a problem or if you already have a working Arduino CLI installed somewhere else.
+
+`FQBN`
+
+Board identifier used by Arduino CLI.
+
+Default:
+
+```text
+esp32:esp32:esp32doit-devkit-v1
+```
+
+Change this if your ESP32 board is different.
+
+`RX sketch` / `TX sketch`
+
+Firmware sketch folder to compile or upload.
+
+The GUI lets you browse for an `.ino` file, then uses its containing folder as the Arduino sketch folder.
+
+`Compile RX` / `Compile TX`
+
+Runs:
+
+```text
+arduino-cli compile --fqbn <FQBN> <sketch-folder>
+```
+
+`Upload RX` / `Upload TX`
+
+Runs:
+
+```text
+arduino-cli upload -p <port> --fqbn <FQBN> <sketch-folder>
+```
+
+The GUI disconnects its own serial connection before uploading so the port is not busy.
+
+On Windows, this uses ports like:
+
+```text
+COM3
+COM4
+```
+
+On Linux, this uses ports like:
+
+```text
+/dev/ttyUSB0
+/dev/ttyUSB1
+```
+
+Windows usually does not need Administrator privileges for upload. If upload fails, close Arduino Serial Monitor or any app using the COM port first.
+
 ## Debug Displays
 
 `Live RX Bits`
