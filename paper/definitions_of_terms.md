@@ -1,0 +1,24 @@
+# Definition Of Terms
+
+- **Visible Light Communication (VLC)** - A communication method that uses visible light as the transmission medium.
+- **LiFi** - A networked optical wireless communication concept that uses light, commonly LED-based transmitters, for data communication.
+- **Transmitter (TX)** - The subsystem that converts digital information into modulated light.
+- **Receiver (RX)** - The subsystem that detects modulated light and reconstructs digital information.
+- **Manchester Encoding** - A self-clocking line code where each bit is represented by a transition between two half-bit intervals.
+- **Half-Bit Time (`halfBitUs`)** - The duration of one Manchester half-bit, computed from the selected frequency.
+- **On-Off Keying (OOK)** - A modulation method where optical intensity is switched between on and off states.
+- **Photodiode** - A semiconductor light sensor that produces current in response to incident light.
+- **BPW34** - The photodiode used in the current receiver prototype.
+- **Transimpedance Amplifier (TIA)** - An amplifier circuit that converts photodiode current into voltage.
+- **OPA2604** - The operational amplifier used in the receiver TIA stage.
+- **Comparator** - A circuit that converts an analog voltage into a digital high/low output by comparing it with a threshold.
+- **LM393** - The comparator used in the current receiver prototype.
+- **Threshold Voltage** - The comparator reference voltage used to decide whether the receiver signal is logic high or low.
+- **2N3904** - The BJT used as part of the transmitter driver chain.
+- **IRF540N** - The MOSFET used to switch the 12 V LED load.
+- **Bit Error Rate (BER)** - The ratio of incorrectly received bits to total received bits.
+- **CRC** - Cyclic redundancy check, an error-detection method used to determine whether a received frame is corrupted.
+- **Preamble** - A known bit/byte pattern sent before data to help the receiver synchronize.
+- **Optical Path** - The free-space path between the LED transmitter and photodiode receiver.
+- **Payload** - The user data being transmitted, such as text, image bytes, audio bytes, or video-frame bytes.
+- **Frame** - A structured unit of transmission containing metadata, payload, and error-checking information.

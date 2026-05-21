@@ -184,13 +184,13 @@ function DetailPanel({ selectedId, notes, onNoteChange, onSubmit }) {
 }
 
 function EvolutionView() {
-  const [selected, setSelected] = useState("4d78a01");
+  const [selected, setSelected] = useState("baseline");
 
   return (
     <div className="timeline">
       <div className="timeline-title">
         <GitBranch size={20} />
-        Repo Evolution
+        Baseline Evolution
       </div>
       <div className="timeline-grid">
         <div>
@@ -250,6 +250,18 @@ function Symbol({ type }) {
         <line x1="48" y1="14" x2="70" y2="14" />
         <line x1="48" y1="50" x2="70" y2="50" />
         <polyline points="54,32 46,28 46,36 54,32" />
+      </>
+    );
+  }
+  if (type === "transistor") {
+    return (
+      <>
+        <circle cx="40" cy="32" r="22" />
+        <line x1="28" y1="18" x2="28" y2="46" />
+        <line x1="8" y1="32" x2="28" y2="32" />
+        <line x1="28" y1="22" x2="58" y2="10" />
+        <line x1="28" y1="42" x2="58" y2="54" />
+        <polyline points="48,50 58,54 52,44" />
       </>
     );
   }
@@ -345,13 +357,13 @@ function ComponentCard({ type, title, note }) {
 
 const defaultComponents = [
   { id: "esp32_tx", type: "esp32", name: "TX ESP32", value: "GPIO5 Manchester", note: "Serial controlled transmitter" },
-  { id: "gate_res", type: "resistor", name: "Gate resistor", value: "220 ohm", note: "ESP32 GPIO5 to MOSFET gate" },
-  { id: "pulldown", type: "resistor", name: "Gate pulldown", value: "10k ohm", note: "Gate to ground" },
-  { id: "mosfet", type: "mosfet", name: "IRLZ44N", value: "active-high low-side", note: "LED switch" },
+  { id: "bjt", type: "transistor", name: "2N3904", value: "BJT pre-driver", note: "ESP32 GPIO5 interface stage" },
+  { id: "mosfet", type: "mosfet", name: "IRF540N", value: "LED switch", note: "12 V LED load switch" },
   { id: "led", type: "led", name: "LED bulb", value: "12 V", note: "Visible light source" },
-  { id: "rx_load", type: "resistor", name: "RX load resistor", value: "10k ohm", note: "Try 22k/47k for sensitivity" },
-  { id: "sensor", type: "phototransistor", name: "TEPT4400", value: "phototransistor", note: "Current receiver sensor" },
-  { id: "rx_esp32", type: "esp32", name: "RX ESP32", value: "GPIO34 ADC", note: "Thresholded input" },
+  { id: "sensor", type: "photodiode", name: "BPW34", value: "photodiode", note: "Current receiver sensor" },
+  { id: "tia", type: "opamp", name: "OPA2604", value: "TIA", note: "Photodiode current-to-voltage" },
+  { id: "comparator", type: "comparator", name: "LM393", value: "threshold logic", note: "Digital waveform cleanup" },
+  { id: "rx_esp32", type: "esp32", name: "RX ESP32", value: "digital GPIO", note: "Manchester input" },
 ];
 
 function ComponentEditor({ components, setComponents, onSubmit }) {
@@ -382,6 +394,7 @@ function ComponentEditor({ components, setComponents, onSubmit }) {
           <select value={item.type} onChange={(event) => update(item.id, "type", event.target.value)}>
             <option value="esp32">ESP32</option>
             <option value="resistor">Resistor</option>
+            <option value="transistor">BJT/Transistor</option>
             <option value="mosfet">MOSFET</option>
             <option value="led">LED</option>
             <option value="phototransistor">Phototransistor</option>
@@ -415,10 +428,10 @@ function Waveform({ frequency, frontEnd }) {
         <polyline className="digital-wave" points="150,45 190,45 190,18 230,18 230,45 270,45 270,18 310,18 310,45 350,45 350,18 390,18 390,45 430,45 430,18 470,18 470,45 510,45 510,18 550,18 550,45 590,45" />
         <text x="18" y="98">Sensor voltage</text>
         <path className="analog-wave" d="M150 115 C175 115 178 82 195 82 C220 82 218 115 235 115 C260 115 258 82 275 82 C300 82 298 115 315 115 C340 115 338 82 355 82 C380 82 378 115 395 115 C420 115 418 82 435 82 C460 82 458 115 475 115 C500 115 498 82 515 82 C540 82 538 115 555 115 C575 115 575 115 590 115" />
-        <text x="18" y="168">Comparator / ADC logic</text>
+        <text x="18" y="168">Comparator logic</text>
         <polyline className="digital-wave rx" points="150,185 195,185 195,154 235,154 235,185 275,185 275,154 315,154 315,185 355,185 355,154 395,154 395,185 435,185 435,154 475,154 475,185 515,185 515,154 555,154 555,185 590,185" />
       </svg>
-      <p className="wave-note">Sensor output depends on light intensity, resistor value, capacitance, and front-end. Current issue: ADC threshold sits close to the measured sensor swing, so the logic waveform collapses.</p>
+      <p className="wave-note">Sensor output depends on light intensity, photodiode capacitance, TIA gain, comparator threshold, and optical alignment.</p>
       <p className="wave-note">Selected front-end: {analogDelay}.</p>
     </div>
   );
@@ -433,14 +446,13 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
     <div className="schematic-workbench">
       <section className="schematic-palette">
         <h2>Schematic Symbols</h2>
-        <ComponentCard type="esp32" title="ESP32" note="TX GPIO5 / RX ADC GPIO34" />
-        <ComponentCard type="resistor" title="Resistor" note="220 ohm gate, 10k load/pulldown" />
-        <ComponentCard type="mosfet" title="N-MOSFET" note="IRLZ44N low-side LED switch" />
+        <ComponentCard type="esp32" title="ESP32" note="TX GPIO5 / RX digital input" />
+        <ComponentCard type="transistor" title="2N3904" note="BJT driver/interface stage" />
+        <ComponentCard type="mosfet" title="N-MOSFET" note="IRF540N LED switch" />
         <ComponentCard type="led" title="LED Bulb" note="Visible light carrier source" />
-        <ComponentCard type="phototransistor" title="Phototransistor" note="TEPT4400 style receiver" />
-        <ComponentCard type="photodiode" title="Photodiode" note="Alternative faster sensor" />
-        <ComponentCard type="opamp" title="TIA Op-Amp" note="Photodiode current-to-voltage" />
-        <ComponentCard type="comparator" title="Comparator" note="Clean digital threshold output" />
+        <ComponentCard type="photodiode" title="BPW34" note="Photodiode receiver sensor" />
+        <ComponentCard type="opamp" title="OPA2604 TIA" note="Photodiode current-to-voltage" />
+        <ComponentCard type="comparator" title="LM393" note="Clean digital threshold output" />
       </section>
 
       <section className="schematic-main">
@@ -453,16 +465,16 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
           <label>
             Sensor
             <select value={sensor} onChange={(event) => setSensor(event.target.value)}>
-              <option value="phototransistor">Phototransistor</option>
-              <option value="photodiode">Photodiode</option>
+              <option value="photodiode">BPW34 photodiode</option>
+              <option value="phototransistor">Phototransistor variant</option>
             </select>
           </label>
           <label>
             RX Front-End
             <select value={frontEnd} onChange={(event) => setFrontEnd(event.target.value)}>
-              <option value="divider">Simple divider</option>
-              <option value="tia">TIA amplifier</option>
-              <option value="comparator">Comparator output</option>
+              <option value="comparator">BPW34 + OPA2604 + LM393</option>
+              <option value="tia">BPW34 + OPA2604 only</option>
+              <option value="divider">Simple sensor divider variant</option>
             </select>
           </label>
         </div>
@@ -474,7 +486,7 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
                 <path d="M0,0 L8,4 L0,8 z" />
               </marker>
             </defs>
-            <text className="sheet-title" x="26" y="34">Low-Cost LiFi Communication Circuit</text>
+            <text className="sheet-title" x="26" y="34">Current Working LiFi Circuit Baseline</text>
             <line className="ground-bus" x1="40" y1="365" x2="930" y2="365" />
             <text className="ground-label" x="44" y="392">common ground reference</text>
 
@@ -488,17 +500,17 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
               <text x="18" y="196">1-15 kHz test range</text>
             </g>
 
-            <line className="wire" x1="220" y1="205" x2="285" y2="205" />
-            <g className="schem-symbol" transform="translate(282 173)">
-              <Symbol type="resistor" />
+            <line className="wire" x1="220" y1="205" x2="275" y2="205" />
+            <g className="schem-symbol" transform="translate(270 173)">
+              <Symbol type="transistor" />
             </g>
-            <text x="302" y="168">220 ohm</text>
-            <line className="wire" x1="355" y1="205" x2="420" y2="205" />
+            <text x="286" y="168">2N3904</text>
+            <line className="wire" x1="342" y1="205" x2="420" y2="205" />
 
             <g className="schem-symbol" transform="translate(410 145) scale(1.2)">
               <Symbol type="mosfet" />
             </g>
-            <text x="416" y="132">IRLZ44N</text>
+            <text x="416" y="132">IRF540N</text>
             <line className="wire" x1="486" y1="162" x2="548" y2="162" />
             <g className="schem-symbol" transform="translate(548 130)">
               <Symbol type="led" />
@@ -518,12 +530,12 @@ function SchematicWorkbench({ components, setComponents, onSubmit }) {
               <g className="schem-symbol" transform="translate(24 52)">
                 <Symbol type={sensor} />
               </g>
-              <text x="112" y="86">{sensor === "phototransistor" ? "TEPT4400" : "Photodiode"}</text>
+              <text x="112" y="86">{sensor === "phototransistor" ? "Phototransistor" : "BPW34"}</text>
               <g className="schem-symbol" transform="translate(22 135)">
                 <Symbol type={frontEnd === "divider" ? "resistor" : frontEnd === "tia" ? "opamp" : "comparator"} />
               </g>
-              <text x="112" y="164">{frontEnd === "divider" ? "load resistor" : frontEnd === "tia" ? "transimpedance" : "threshold logic"}</text>
-              <text x="18" y="222">Output to ESP32 GPIO34</text>
+              <text x="112" y="164">{frontEnd === "divider" ? "load resistor" : frontEnd === "tia" ? "OPA2604 TIA" : "OPA2604 + LM393"}</text>
+              <text x="18" y="222">Output to ESP32 digital input</text>
               <line className="wire" x1="108" y1="250" x2="108" y2="285" />
             </g>
             <line className="wire" x1="843" y1="330" x2="843" y2="365" />
@@ -688,7 +700,7 @@ export default function App() {
           </span>
           <div>
             <h1>LiFi Workflow Planner</h1>
-            <p>System flow, physical circuit, theory, and live bottleneck map</p>
+            <p>Working setup, thesis flowcharts, circuit theory, and experiment notes</p>
           </div>
         </div>
         <div className="health">
