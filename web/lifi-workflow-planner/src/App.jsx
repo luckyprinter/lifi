@@ -327,8 +327,10 @@ function Symbol({ type }) {
     return (
       <>
         <circle cx="40" cy="32" r="22" />
+        <line x1="8" y1="32" x2="26" y2="32" />
         <polygon points="26,18 26,46 50,32" />
         <line x1="50" y1="18" x2="50" y2="46" />
+        <line x1="50" y1="32" x2="72" y2="32" />
         <polyline points="18,8 31,18 27,21" />
         <polyline points="10,18 24,27 20,30" />
       </>
@@ -527,6 +529,37 @@ function Supply({ x, y, label }) {
   );
 }
 
+function ResistorH({ x, y }) {
+  return (
+    <g className="schem-symbol">
+      <line x1={x} y1={y} x2={x + 12} y2={y} />
+      <polyline points={`${x + 12},${y} ${x + 18},${y - 12} ${x + 30},${y + 12} ${x + 42},${y - 12} ${x + 54},${y + 12} ${x + 66},${y - 12} ${x + 72},${y}`} />
+      <line x1={x + 72} y1={y} x2={x + 84} y2={y} />
+    </g>
+  );
+}
+
+function ResistorV({ x, y }) {
+  return (
+    <g className="schem-symbol">
+      <line x1={x} y1={y} x2={x} y2={y + 12} />
+      <polyline points={`${x},${y + 12} ${x - 12},${y + 18} ${x + 12},${y + 30} ${x - 12},${y + 42} ${x + 12},${y + 54} ${x - 12},${y + 66} ${x},${y + 72}`} />
+      <line x1={x} y1={y + 72} x2={x} y2={y + 84} />
+    </g>
+  );
+}
+
+function CapacitorH({ x, y }) {
+  return (
+    <g className="schem-symbol">
+      <line x1={x} y1={y} x2={x + 32} y2={y} />
+      <line x1={x + 32} y1={y - 16} x2={x + 32} y2={y + 16} />
+      <line x1={x + 48} y1={y - 16} x2={x + 48} y2={y + 16} />
+      <line x1={x + 48} y1={y} x2={x + 80} y2={y} />
+    </g>
+  );
+}
+
 function DrawTxCircuit({ variant }) {
   if (variant === "bjtIrf540n") {
     return (
@@ -544,10 +577,10 @@ function DrawTxCircuit({ variant }) {
         <Ground x={124} y={278} />
 
         <line className="wire" x1="224" y1="194" x2="256" y2="194" />
-        <g className="schem-symbol" transform="translate(256 162)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="328" y1="194" x2="374" y2="194" />
-        <RefLabel x="292" y="148">R1</RefLabel>
-        <ValueLabel x="292" y="232">1k-4.7k</ValueLabel>
+        <ResistorH x={256} y={194} />
+        <line className="wire" x1="340" y1="194" x2="374" y2="194" />
+        <RefLabel x="298" y="148">R1</RefLabel>
+        <ValueLabel x="298" y="232">1k-4.7k</ValueLabel>
 
         <g className="schem-symbol" transform="translate(374 162)"><Symbol type="npn" /></g>
         <RefLabel x="416" y="144">Q1</RefLabel>
@@ -561,7 +594,7 @@ function DrawTxCircuit({ variant }) {
         <NetLabel x="512" y="96">GATE_DRV</NetLabel>
 
         <Supply x={582} y={58} label="+12V" />
-        <g className="schem-symbol" transform="translate(542 82) rotate(90 40 32)"><Symbol type="resistor" /></g>
+        <ResistorV x={582} y={70} />
         <line className="wire" x1="582" y1="154" x2="582" y2="106" />
         <RefLabel x="632" y="118" anchor="start">R2</RefLabel>
         <ValueLabel x="632" y="138" anchor="start">10k-47k pull-up</ValueLabel>
@@ -607,15 +640,15 @@ function DrawTxCircuit({ variant }) {
       <Ground x={130} y={278} />
 
       <line className="wire" x1="230" y1="194" x2="278" y2="194" />
-      <g className="schem-symbol" transform="translate(278 162)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="350" y1="194" x2="470" y2="194" />
+      <ResistorH x={278} y={194} />
+      <line className="wire" x1="362" y1="194" x2="470" y2="194" />
       <circle className="junction" cx="470" cy="194" r="4" />
       <RefLabel x="314" y="148">R1</RefLabel>
       <ValueLabel x="314" y="232">100-220 ohm</ValueLabel>
 
       <line className="wire" x1="470" y1="194" x2="470" y2="260" />
-      <g className="schem-symbol" transform="translate(430 230) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="470" y1="332" x2="470" y2="350" />
+      <ResistorV x={470} y={242} />
+      <line className="wire" x1="470" y1="326" x2="470" y2="350" />
       <Ground x={470} y={350} />
       <RefLabel x="514" y="280" anchor="start">R2</RefLabel>
       <ValueLabel x="514" y="300" anchor="start">10k pulldown</ValueLabel>
@@ -646,8 +679,8 @@ function DrawRxCircuit({ variant }) {
         <text className="sheet-title" x="26" y="34">RX A - TEPT4400 Sensor Node Direct To ESP32</text>
         <Supply x={150} y={70} label="+3.3V" />
         <line className="wire" x1="150" y1="88" x2="150" y2="112" />
-        <g className="schem-symbol" transform="translate(110 112) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="150" y1="184" x2="150" y2="220" />
+        <ResistorV x={150} y={104} />
+        <line className="wire" x1="150" y1="188" x2="150" y2="220" />
         <circle className="junction" cx="150" cy="220" r="4" />
         <RefLabel x="196" y="146" anchor="start">R1</RefLabel>
         <ValueLabel x="196" y="166" anchor="start">10k-47k load</ValueLabel>
@@ -686,8 +719,8 @@ function DrawRxCircuit({ variant }) {
         <text className="sheet-title" x="26" y="34">RX B - TEPT4400 Into LM393 Comparator</text>
         <Supply x={120} y={70} label="+3.3V" />
         <line className="wire" x1="120" y1="88" x2="120" y2="112" />
-        <g className="schem-symbol" transform="translate(80 112) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="120" y1="184" x2="120" y2="220" />
+        <ResistorV x={120} y={104} />
+        <line className="wire" x1="120" y1="188" x2="120" y2="220" />
         <circle className="junction" cx="120" cy="220" r="4" />
         <RefLabel x="166" y="146" anchor="start">R1</RefLabel>
         <ValueLabel x="166" y="166" anchor="start">10k-47k</ValueLabel>
@@ -706,8 +739,8 @@ function DrawRxCircuit({ variant }) {
         <NetLabel x="330" y="214">+IN</NetLabel>
 
         <Supply x={280} y={70} label="+3.3V" />
-        <g className="schem-symbol" transform="translate(240 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="280" y1="176" x2="280" y2="328" />
+        <ResistorV x={280} y={96} />
+        <line className="wire" x1="280" y1="180" x2="280" y2="328" />
         <Ground x={280} y={328} />
         <circle className="junction" cx="280" cy="236" r="4" />
         <line className="wire" x1="280" y1="236" x2="356" y2="236" />
@@ -718,8 +751,8 @@ function DrawRxCircuit({ variant }) {
         <line className="wire" x1="484" y1="215" x2="620" y2="215" />
         <circle className="junction" cx="570" cy="215" r="4" />
         <Supply x={570} y={70} label="+3.3V" />
-        <g className="schem-symbol" transform="translate(530 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
-        <line className="wire" x1="570" y1="176" x2="570" y2="215" />
+        <ResistorV x={570} y={96} />
+        <line className="wire" x1="570" y1="180" x2="570" y2="215" />
         <RefLabel x="594" y="132" anchor="start">R2</RefLabel>
         <ValueLabel x="594" y="152" anchor="start">10k pull-up</ValueLabel>
         <NetLabel x="536" y="204">RX_LOGIC</NetLabel>
@@ -749,62 +782,75 @@ function DrawRxCircuit({ variant }) {
     <g className="ece-schematic">
       <text className="sheet-title" x="26" y="34">RX C - BPW34 + OPA2604 Transimpedance Amplifier + LM393</text>
 
-      <Supply x={88} y={70} label="+3.3V" />
-      <g className="schem-symbol" transform="translate(48 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="88" y1="176" x2="88" y2="214" />
-      <circle className="junction" cx="88" cy="214" r="4" />
-      <g className="schem-symbol" transform="translate(48 214) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="88" y1="286" x2="88" y2="326" />
-      <Ground x={88} y={326} />
-      <NetLabel x="122" y="208" anchor="start">VREF</NetLabel>
-      <ValueLabel x="122" y="228" anchor="start">approx 1.65 V</ValueLabel>
+      <Supply x={92} y={72} label="+3.3V" />
+      <line className="wire" x1="92" y1="90" x2="92" y2="106" />
+      <ResistorV x={92} y={106} />
+      <line className="wire" x1="92" y1="190" x2="92" y2="220" />
+      <circle className="junction" cx="92" cy="220" r="4" />
+      <ResistorV x={92} y={220} />
+      <line className="wire" x1="92" y1="304" x2="92" y2="334" />
+      <Ground x={92} y={334} />
+      <NetLabel x="122" y="214" anchor="start">VREF</NetLabel>
+      <ValueLabel x="122" y="234" anchor="start">approx 1.65 V</ValueLabel>
+      <RefLabel x="124" y="144" anchor="start">R1</RefLabel>
+      <RefLabel x="124" y="260" anchor="start">R2</RefLabel>
 
-      <g className="schem-symbol" transform="translate(160 128) scale(1.15)"><Symbol type="photodiode" /></g>
-      <RefLabel x="200" y="114">D1</RefLabel>
-      <ValueLabel x="200" y="200">BPW34</ValueLabel>
-      <line className="wire" x1="236" y1="164" x2="292" y2="164" />
-      <NetLabel x="264" y="154">PD_IN</NetLabel>
-      <line className="wire" x1="200" y1="128" x2="200" y2="76" />
-      <Supply x={200} y={58} label="+3.3V" />
+      <g className="schem-symbol" transform="translate(172 122)"><Symbol type="photodiode" /></g>
+      <RefLabel x="212" y="110">D1</RefLabel>
+      <ValueLabel x="212" y="184">BPW34</ValueLabel>
+      <line className="wire" x1="244" y1="154" x2="326" y2="154" />
+      <NetLabel x="282" y="144">PD_IN</NetLabel>
+      <line className="wire" x1="180" y1="154" x2="180" y2="92" />
+      <Supply x={180} y={74} label="+3.3V" />
 
-      <g className="schem-symbol" transform="translate(292 112) scale(1.7)"><Symbol type="opamp" /></g>
-      <RefLabel x="348" y="94">U1A</RefLabel>
-      <ValueLabel x="348" y="246">OPA2604 TIA</ValueLabel>
-      <line className="wire" x1="88" y1="214" x2="292" y2="214" />
-      <line className="wire" x1="292" y1="214" x2="292" y2="183" />
-      <NetLabel x="274" y="206">+IN</NetLabel>
-      <NetLabel x="274" y="158">-IN</NetLabel>
+      <g className="schem-symbol" transform="translate(320 130)"><Symbol type="opamp" /></g>
+      <RefLabel x="358" y="112">U1A</RefLabel>
+      <ValueLabel x="358" y="220">OPA2604 TIA</ValueLabel>
+      <line className="wire" x1="92" y1="220" x2="300" y2="220" />
+      <line className="wire" x1="300" y1="220" x2="300" y2="172" />
+      <line className="wire" x1="300" y1="172" x2="326" y2="172" />
+      <NetLabel x="306" y="164">+IN</NetLabel>
+      <NetLabel x="306" y="146">-IN</NetLabel>
 
-      <path className="wire" d="M333 153 L333 78 L454 78 L454 166" />
-      <g className="schem-symbol" transform="translate(356 46)"><Symbol type="resistor" /></g>
-      <g className="schem-symbol" transform="translate(356 84)"><Symbol type="capacitor" /></g>
-      <RefLabel x="392" y="36">RF</RefLabel>
+      <path className="wire" d="M326 154 L326 86 L350 86" />
+      <ResistorH x={350} y={86} />
+      <line className="wire" x1="434" y1="86" x2="434" y2="162" />
+      <line className="wire" x1="396" y1="162" x2="470" y2="162" />
+      <CapacitorH x={350} y={122} />
+      <line className="wire" x1="350" y1="122" x2="326" y2="122" />
+      <line className="wire" x1="326" y1="122" x2="326" y2="154" />
+      <line className="wire" x1="430" y1="122" x2="434" y2="122" />
+      <RefLabel x="392" y="68">RF</RefLabel>
       <ValueLabel x="392" y="132">100k-1M with Cf</ValueLabel>
-      <line className="wire" x1="422" y1="166" x2="520" y2="166" />
-      <NetLabel x="474" y="154">TIA_OUT</NetLabel>
+      <NetLabel x="464" y="152">TIA_OUT</NetLabel>
 
-      <g className="schem-symbol comparator-symbol" transform="translate(520 114) scale(1.6)"><Symbol type="comparator" /></g>
-      <RefLabel x="572" y="96">U2A</RefLabel>
-      <ValueLabel x="572" y="250">LM393</ValueLabel>
-      <Supply x={500} y={246} label="+3.3V" />
-      <g className="schem-symbol" transform="translate(460 280) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="500" y1="352" x2="500" y2="370" />
-      <Ground x={500} y={370} />
-      <circle className="junction" cx="500" cy="310" r="4" />
-      <line className="wire" x1="500" y1="310" x2="520" y2="183" />
-      <NetLabel x="530" y="206">-IN threshold</NetLabel>
-      <ValueLabel x="542" y="330" anchor="start">RV1 10k</ValueLabel>
+      <path className="wire" d="M470 162 L512 162 L512 154 L546 154" />
+      <g className="schem-symbol comparator-symbol" transform="translate(540 130)"><Symbol type="comparator" /></g>
+      <RefLabel x="578" y="112">U2A</RefLabel>
+      <ValueLabel x="578" y="220">LM393</ValueLabel>
 
-      <line className="wire" x1="648" y1="166" x2="742" y2="166" />
-      <circle className="junction" cx="706" cy="166" r="4" />
-      <Supply x={706} y={70} label="+3.3V" />
-      <g className="schem-symbol" transform="translate(666 104) rotate(90 40 32)"><Symbol type="resistor" /></g>
-      <line className="wire" x1="706" y1="176" x2="706" y2="166" />
-      <RefLabel x="728" y="132" anchor="start">R3</RefLabel>
-      <ValueLabel x="728" y="152" anchor="start">10k pull-up</ValueLabel>
-      <NetLabel x="686" y="196">RX_LOGIC</NetLabel>
+      <Supply x={500} y={226} label="+3.3V" />
+      <line className="wire" x1="500" y1="244" x2="500" y2="260" />
+      <ResistorV x={500} y={260} />
+      <line className="wire" x1="500" y1="344" x2="500" y2="362" />
+      <Ground x={500} y={362} />
+      <circle className="junction" cx="500" cy="302" r="4" />
+      <line className="wire" x1="500" y1="302" x2="500" y2="172" />
+      <line className="wire" x1="500" y1="172" x2="546" y2="172" />
+      <NetLabel x="516" y="196" anchor="start">-IN threshold</NetLabel>
+      <ValueLabel x="532" y="320" anchor="start">RV1 10k</ValueLabel>
 
-      <g className="ic-symbol" transform="translate(742 104)">
+      <line className="wire" x1="616" y1="162" x2="742" y2="162" />
+      <circle className="junction" cx="700" cy="162" r="4" />
+      <Supply x={700} y={72} label="+3.3V" />
+      <line className="wire" x1="700" y1="90" x2="700" y2="104" />
+      <ResistorV x={700} y={104} />
+      <line className="wire" x1="700" y1="188" x2="700" y2="162" />
+      <RefLabel x="724" y="140" anchor="start">R3</RefLabel>
+      <ValueLabel x="724" y="160" anchor="start">10k pull-up</ValueLabel>
+      <NetLabel x="676" y="192">RX_LOGIC</NetLabel>
+
+      <g className="ic-symbol" transform="translate(742 100)">
         <rect width="168" height="126" rx="3" />
         <text x="84" y="30" textAnchor="middle">U3</text>
         <text x="84" y="52" textAnchor="middle">ESP32 RX</text>
@@ -812,9 +858,9 @@ function DrawRxCircuit({ variant }) {
         <text x="22" y="70">GPIO5</text>
         <line x1="84" y1="126" x2="84" y2="164" />
       </g>
-      <Ground x={826} y={268} />
+      <Ground x={826} y={264} />
 
-      <g className="schem-note" transform="translate(642 286)">
+      <g className="schem-note" transform="translate(642 292)">
         <rect width="260" height="58" rx="4" />
         <text x="14" y="22">Check OPA2604 supply headroom and output swing.</text>
         <text x="14" y="42">ESP32 GPIO must stay within 0-3.3 V.</text>
