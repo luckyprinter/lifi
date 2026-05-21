@@ -23,6 +23,12 @@
   box-sizing: border-box;
 }
 
+html,
+body,
+#root {
+  height: 100%;
+}
+
 body {
   margin: 0;
   min-width: 320px;
@@ -119,6 +125,20 @@ p {
   padding: 8px 10px;
   color: #38505e;
   font-size: 13px;
+}
+
+.access-pill.owner {
+  border-color: rgba(15, 127, 140, 0.35);
+  background: #ecfbfd;
+  color: var(--ready);
+  font-weight: 800;
+}
+
+.access-pill.guest {
+  border-color: rgba(183, 121, 31, 0.35);
+  background: #fff8e8;
+  color: #8a5d17;
+  font-weight: 800;
 }
 
 .mode-label {
@@ -407,6 +427,7 @@ body.is-resizing .resize-handle::after {
     #e1ecf1;
   background-size: 22px 22px;
   touch-action: pan-x pan-y;
+  min-height: 0;
 }
 
 .lifi-node {
@@ -585,6 +606,22 @@ body.is-resizing .resize-handle::after {
   background: #ffffff;
   color: #1c3441;
   padding: 10px;
+  line-height: 1.45;
+}
+
+.node-note[readonly] {
+  background: #f3f7f9;
+  color: #526979;
+}
+
+.read-only-note {
+  margin-top: 10px;
+  border: 1px solid #d8c283;
+  border-radius: 8px;
+  background: #fff8e8;
+  padding: 10px;
+  color: #67531b;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -872,6 +909,36 @@ body.is-resizing .resize-handle::after {
   padding: 0 10px;
 }
 
+.circuit-note-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.circuit-note-grid article {
+  border: 1px solid #d4e2e8;
+  border-radius: 8px;
+  background: #ffffff;
+  padding: 12px;
+}
+
+.circuit-note-grid strong,
+.circuit-note-grid span {
+  display: block;
+}
+
+.circuit-note-grid strong {
+  color: #173945;
+  font-size: 14px;
+}
+
+.circuit-note-grid span {
+  margin-top: 5px;
+  color: #526979;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
 .schematic-sheet {
   overflow: auto;
   padding: 8px;
@@ -901,6 +968,31 @@ body.is-resizing .resize-handle::after {
   fill: #1d3947;
   font-weight: 700;
   font-size: 14px;
+}
+
+.transistor-block circle,
+.transistor-block line,
+.transistor-block polyline {
+  stroke: var(--ink);
+  stroke-width: 2.3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pin-label {
+  fill: #405766;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.junction {
+  fill: #263f4d;
+  stroke: none;
+}
+
+.comparator-symbol {
+  stroke: var(--blocked);
 }
 
 .wire {
@@ -1173,6 +1265,10 @@ body.is-resizing .resize-handle::after {
     grid-template-columns: 1fr;
   }
 
+  .circuit-note-grid {
+    grid-template-columns: 1fr;
+  }
+
   .timeline-grid {
     grid-template-columns: 1fr;
   }
@@ -1187,8 +1283,14 @@ body.is-resizing .resize-handle::after {
 }
 
 @media (max-width: 900px) {
+  body {
+    overflow: hidden;
+  }
+
   .app {
-    min-height: 100dvh;
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
   }
 
   .topbar {
@@ -1213,15 +1315,18 @@ body.is-resizing .resize-handle::after {
   .health span {
     min-height: 34px;
     padding: 6px 8px;
+    flex: 1 1 130px;
+    justify-content: center;
   }
 
   .workspace,
   .workspace.panel-closed,
   .workspace.nav-closed,
   .workspace.panel-closed.nav-closed {
-    min-height: calc(100dvh - 116px);
+    min-height: 0;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
   }
 
   .sidebar {
@@ -1247,8 +1352,14 @@ body.is-resizing .resize-handle::after {
   }
 
   .canvas-wrap {
-    min-height: 62dvh;
-    flex: 1 1 auto;
+    min-height: 0;
+    flex: 1 1 0;
+    overflow: hidden;
+  }
+
+  .canvas-wrap > .react-flow {
+    min-height: 0;
+    height: 100%;
   }
 
   .toolbar {
@@ -1275,8 +1386,18 @@ body.is-resizing .resize-handle::after {
   }
 
   .details {
-    max-height: 46dvh;
+    flex: 0 0 min(36dvh, 320px);
+    max-height: min(36dvh, 320px);
     padding: 14px;
+  }
+
+  .desktop-only-minimap {
+    display: none;
+  }
+
+  .react-flow__controls {
+    bottom: 12px;
+    left: 12px;
   }
 
   .details h2 {
@@ -1387,6 +1508,7 @@ body.is-resizing .resize-handle::after {
   .toolbar {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    flex: 0 0 auto;
   }
 
   .search {

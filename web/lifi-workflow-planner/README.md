@@ -77,6 +77,22 @@ Offline limitations:
 - `Submit status` only writes to repo files when using `npm run app` on the host computer.
 - Cross-device sync still needs a running host, GitHub, or another remote storage method.
 
+## Public Access Mode
+
+The GitHub Pages deployment is guest read-only:
+
+- Public visitors can view diagrams, schematic symbols, recommendations, and history.
+- Public visitors cannot submit notes or edit schematic values in the deployed site.
+- Owner/write mode is available from the local app:
+
+```bash
+npm run app
+```
+
+Open `http://localhost:5174/` on the owner machine. This mode can write `handoffs/latest.json` and `handoffs/latest.md`.
+
+True Google/GitHub account-based editing requires adding an authenticated backend such as Firebase, Supabase, or a GitHub OAuth service. The current setup intentionally avoids exposing repo-write capability from the public static site.
+
 ## Views
 
 - `System`: end-to-end LiFi communication path.
@@ -89,6 +105,14 @@ Offline limitations:
 - `Evolution`: repo and commit-history timeline.
 
 Use the version selector in the toolbar to switch the diagrams between the current working tree and important older repo versions, including the known-good `4d78a01` RX baseline. Older versions show historical flow and schematic values as read-only references; the current version remains editable.
+
+The schematic workbench includes selectable circuit variants:
+
+- TX `2N3904 + IRF540N`: inverting driver where the 2N3904 collector pulls the MOSFET gate node low and a pull-up turns the IRF540N on.
+- TX `IRLZ44N Direct`: direct ESP32 GPIO5 to logic-level MOSFET gate through a small resistor, with a gate pulldown.
+- RX `TEPT4400 -> ESP32`: simple direct sensor node into ESP32 digital/ADC input.
+- RX `TEPT4400 -> LM393 -> ESP32`: comparator cleanup with TEPT4400 on `+IN`, pot threshold on `-IN`, and output pull-up to `3.3 V`.
+- RX `BPW34 -> OPA2604 TIA -> LM393 -> ESP32`: photodiode current-to-voltage front-end followed by comparator logic output.
 
 ## Handoff Notes
 
