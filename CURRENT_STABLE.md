@@ -2,6 +2,18 @@
 
 This is the working baseline to use first.
 
+## Physical Layer Preservation Note
+
+Before changing firmware protocol, GUI behavior, FEC, carousel transfer, image,
+audio, or video logic, read:
+
+- `docs/current_working_physical_layer_baseline.md`
+
+That note records the currently tested working physical setup:
+`2N3904 + IRF540N` TX and `BPW34 + OPA2604 + LM393` RX. Preserve the
+Manchester `halfBitUs` timing, RX sample point, comparator polarity, and optical
+contrast before adding larger features.
+
 ## Desktop App
 
 - TX path: `apps/stable/Tx_gui.py`
