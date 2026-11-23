@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   Activity, ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, AudioWaveform,
   BookOpen, Cable, Check, ChevronDown, CircleDot, CircuitBoard, Code2,
-  Cpu, ExternalLink, FileCode2, Github, Lightbulb, Menu, Pause, Play,
+  Cpu, ExternalLink, FileCode2, Github, Lightbulb, Layers, Menu, Pause, Play,
   Radio, RadioTower, RotateCcw, ShieldCheck, Signal, Sparkles, Waves, X, Zap
 } from 'lucide-react';
 import './styles.css';
