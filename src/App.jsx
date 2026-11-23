@@ -54,7 +54,7 @@ function SignalDiagram({ active }) {
       <path d="M540 164 L690 164" stroke="url(#beam)" strokeWidth="28" filter="url(#soft)"/>
       <path d="M540 164 L690 164" stroke="#d9a34b" strokeWidth="2" strokeDasharray="7 6" opacity=".85"/>
       {Array.from({length:5},(_,i)=><motion.circle key={i} r="3.5" fill="#e6a94f" animate={{cx:[548,680],opacity:[0,1,0]}} transition={{duration:1.5,delay:i*.28,repeat:Infinity,ease:'linear'}} cy={164}/>)}
-      <g transform="translate(42 80)">
+      <g className={active===0?"diagram-node active":"diagram-node"} transform="translate(42 80)">
         <path d="M0 75 L40 52 L112 52 L72 75 Z" fill="#e5d7c6" stroke="#2c2a27"/>
         <path d="M0 75 L72 75 L72 142 L0 142 Z" fill="#d5c5b3" stroke="#2c2a27"/>
         <path d="M72 75 L112 52 L112 119 L72 142 Z" fill="#c1b09e" stroke="#2c2a27"/>
@@ -63,28 +63,28 @@ function SignalDiagram({ active }) {
         <path d="M38 52V24" stroke="#2c2a27" strokeWidth="2"/><circle cx="38" cy="19" r="7" fill="#e66e54"/>
         <text x="55" y="165" textAnchor="middle" className="svg-label">TX DESKTOP</text>
       </g>
-      <g transform="translate(176 104)">
+      <g className={active===1?"diagram-node active":"diagram-node"} transform="translate(176 104)">
         <path d="M0 44 L28 28 L91 28 L63 44 Z" fill="#cbd6d9" stroke="#2c2a27"/>
         <path d="M0 44 L63 44 L63 99 L0 99 Z" fill="#aebdc2" stroke="#2c2a27"/>
         <path d="M63 44 L91 28 L91 83 L63 99 Z" fill="#91a4aa" stroke="#2c2a27"/>
         <rect x="15" y="57" width="31" height="23" fill="#f5eee5" stroke="#2c2a27"/>
         <text x="45" y="122" textAnchor="middle" className="svg-label">USB SERIAL</text>
       </g>
-      <g transform="translate(300 94)">
+      <g className={active===2?"diagram-node active":"diagram-node"} transform="translate(300 94)">
         <path d="M0 52 L30 34 L112 34 L82 52 Z" fill="#d7d1b7" stroke="#2c2a27"/>
         <path d="M0 52 L82 52 L82 119 L0 119 Z" fill="#c3bb9e" stroke="#2c2a27"/>
         <path d="M82 52 L112 34 L112 101 L82 119 Z" fill="#a69e82" stroke="#2c2a27"/>
         {Array.from({length:5},(_,i)=><rect key={i} x={14+i*12} y="68" width="7" height="23" rx="1" fill={i<3?'#e66e54':'#f5eee5'} stroke="#625a4b" strokeWidth=".5"/>)}
         <text x="55" y="142" textAnchor="middle" className="svg-label">ESP32 · 4B5B</text>
       </g>
-      <g transform="translate(430 102)">
+      <g className={active===3?"diagram-node active":"diagram-node"} transform="translate(430 102)">
         <path d="M0 44 L28 27 L105 27 L77 44 Z" fill="#cbd6d9" stroke="#2c2a27"/>
         <path d="M0 44 L77 44 L77 99 L0 99 Z" fill="#aebdc2" stroke="#2c2a27"/>
         <path d="M77 44 L105 27 L105 82 L77 99 Z" fill="#91a4aa" stroke="#2c2a27"/>
         <path d="M14 61H61M14 70H61M14 79H49" stroke="#46565a" strokeWidth="2"/>
         <text x="52" y="122" textAnchor="middle" className="svg-label">FRAME + CRC</text>
       </g>
-      <g transform="translate(580 95)">
+      <g className={active===4?"diagram-node active":"diagram-node"} transform="translate(580 95)">
         <path d="M0 56 L28 39 L104 39 L76 56 Z" fill="#ead6a9" stroke="#2c2a27"/>
         <path d="M0 56 L76 56 L76 112 L0 112 Z" fill="#d7bd83" stroke="#2c2a27"/>
         <path d="M76 56 L104 39 L104 95 L76 112 Z" fill="#b89a5d" stroke="#2c2a27"/>
@@ -92,14 +92,14 @@ function SignalDiagram({ active }) {
         <circle cx="39" cy="7" r="19" fill="#f0c66e" opacity=".18"/>
         <text x="51" y="135" textAnchor="middle" className="svg-label">12 V LED</text>
       </g>
-      <g transform="translate(704 95)">
+      <g className={active===5?"diagram-node active":"diagram-node"} transform="translate(704 95)">
         <path d="M0 56 L28 39 L104 39 L76 56 Z" fill="#d5e0d9" stroke="#2c2a27"/>
         <path d="M0 56 L76 56 L76 112 L0 112 Z" fill="#b9c9bf" stroke="#2c2a27"/>
         <path d="M76 56 L104 39 L104 95 L76 112 Z" fill="#9daf9f" stroke="#2c2a27"/>
         <circle cx="39" cy="65" r="15" fill="#f7eee4" stroke="#2c2a27" strokeWidth="1.5"/><circle cx="39" cy="65" r="5" fill="#e66e54"/>
         <text x="51" y="135" textAnchor="middle" className="svg-label">BPW34 · TIA</text>
       </g>
-      <g transform="translate(830 102)">
+      <g className={active===6?"diagram-node active":"diagram-node"} transform="translate(830 102)">
         <path d="M0 44 L28 27 L105 27 L77 44 Z" fill="#d7d1b7" stroke="#2c2a27"/>
         <path d="M0 44 L77 44 L77 99 L0 99 Z" fill="#c3bb9e" stroke="#2c2a27"/>
         <path d="M77 44 L105 27 L105 82 L77 99 Z" fill="#a69e82" stroke="#2c2a27"/>
@@ -107,7 +107,7 @@ function SignalDiagram({ active }) {
         <path d="M24 72h8l5-7 6 14 5-7h7" fill="none" stroke="#e66e54" strokeWidth="1.5"/>
         <text x="52" y="122" textAnchor="middle" className="svg-label">ESP32 RX</text>
       </g>
-      <g transform="translate(950 88)">
+      <g className={active===7?"diagram-node active":"diagram-node"} transform="translate(950 88)">
         <path d="M0 75 L30 57 L80 57 L50 75 Z" fill="#e5d7c6" stroke="#2c2a27"/>
         <path d="M0 75 L50 75 L50 142 L0 142 Z" fill="#d5c5b3" stroke="#2c2a27"/>
         <path d="M50 75 L80 57 L80 124 L50 142 Z" fill="#c1b09e" stroke="#2c2a27"/>
