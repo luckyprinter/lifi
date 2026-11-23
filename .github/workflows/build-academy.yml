@@ -1,0 +1,26 @@
+name: Build OpenVLC Academy
+on:
+  push:
+    branches: [openvlc-academy]
+  pull_request:
+    branches: [main]
+    paths:
+      - 'package.json'
+      - 'index.html'
+      - 'src/**'
+      - '.github/workflows/build-academy.yml'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm install
+      - name: Build production site
+        run: npm run build
+      - name: Verify generated entry point
+        run: test -s dist/index.html
