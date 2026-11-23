@@ -39,6 +39,7 @@ function Packet({ step }) {
 }
 
 function SignalDiagram({ active }) {
+  const [zoom,setZoom] = useState(1);
   const names = ['TX GUI','USB','4B5B','FRAME','LED','BPW34','RX MCU','FILE'];
   const activeX = 86 + active * 124;
   return <div className="diagram-frame">
@@ -50,6 +51,7 @@ function SignalDiagram({ active }) {
         <filter id="soft"><feGaussianBlur stdDeviation="7"/></filter>
       </defs>
       <rect width="1020" height="330" fill="url(#grid)" opacity=".8"/>
+      <g transform={`translate(${510*(1-zoom)} ${165*(1-zoom)}) scale(${zoom})`}>
       <path d="M52 225 L965 225" stroke="#b8aa9a" strokeWidth="1.2" strokeDasharray="4 7"/>
       <path d="M540 164 L690 164" stroke="url(#beam)" strokeWidth="28" filter="url(#soft)"/>
       <path d="M540 164 L690 164" stroke="#d9a34b" strokeWidth="2" strokeDasharray="7 6" opacity=".85"/>
@@ -117,6 +119,7 @@ function SignalDiagram({ active }) {
       <path d={`M${activeX} 38 v22`} stroke="#e66e54" strokeWidth="1.5"/>
       <circle cx={activeX} cy="30" r="15" fill="#e66e54"/><text x={activeX} y="34" textAnchor="middle" className="svg-number">{String(active+1).padStart(2,'0')}</text>
       <Packet step={active}/>
+      </g>
     </svg>
     <div className="diagram-caption"><span>FIG. 01</span><span>One file, eight transformations, one optical channel.</span><span>NOT TO SCALE</span></div>
   </div>;
