@@ -1,14 +1,26 @@
-name: Build OpenVLC Academy
+name: Build and deploy OpenVLC Academy
+
 on:
   push:
-    branches: [openvlc-academy]
+    branches: [main]
   pull_request:
     branches: [main]
     paths:
       - 'package.json'
       - 'index.html'
       - 'src/**'
+      - 'vite.config.js'
       - '.github/workflows/build-academy.yml'
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -23,3 +35,22 @@ jobs:
         run: npm run build
       - name: Verify generated entry point
         run: test -s dist/index.html
+      - name: Upload GitHub Pages artifact
+        if: github.event_name == 'push'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name == 'push'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
