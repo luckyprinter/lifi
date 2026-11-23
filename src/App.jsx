@@ -42,7 +42,7 @@ function SignalDiagram({ active }) {
   const names = ['TX GUI','USB','4B5B','FRAME','LED','BPW34','RX MCU','FILE'];
   const activeX = 86 + active * 124;
   return <div className="diagram-frame">
-    <div className="diagram-topline"><span><i/> LIVE SYSTEM MODEL</span><span>INTERACTIVE · 08 STAGES</span></div>
+    <div className="diagram-topline"><span><i/> LIVE SYSTEM MODEL</span><div className="diagram-toolbar"><span>INTERACTIVE · 08 STAGES</span><button onClick={()=>setZoom(v=>Math.max(.85,v-.15))} aria-label="Zoom out">−</button><button onClick={()=>setZoom(v=>Math.min(1.6,v+.15))} aria-label="Zoom in">+</button><button onClick={()=>setZoom(1)} aria-label="Fit diagram">FIT</button></div></div>
     <svg className="signal-svg" viewBox="0 0 1020 330" role="img" aria-label="Isometric diagram of the visible light communication signal path">
       <defs>
         <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#d7cbbd" strokeWidth=".7"/></pattern>
