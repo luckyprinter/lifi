@@ -106,7 +106,7 @@ function StageTraceDetails({stage,onOpenCode}) {
 }
 
 const codeLessons = [
- {id:'tx-state',level:'APPLICATION',name:'TX application state',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,range:'29-41',lang:'python',summary:'The state object holds the transmitter workspace values. Notice that the mode is initialized to physical: this is an application setting, not a live connection.',lines:[
+ {id:'tx-state',level:'APPLICATION',name:'TX application state',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,range:'29-41',lang:'python',summary:'This dataclass defines the values used by the transmitter workspace: selected-file metadata, chunk configuration, encoding, modulation, and display state. These fields describe the job; they do not transmit the file by themselves.',lines:[
   ['    settings: AppSettings = field(default_factory=load_settings)','Create settings from the persisted configuration when a state object is made.'],
     ['    filename: str = "No file"','Keep a clear empty state before the user chooses a file.'],
   ['    filetype: str = ""','Store the selected file type separately from its filename.'],
