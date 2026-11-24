@@ -207,7 +207,7 @@ function Hardware() {
   const [threshold,setThreshold]=useState(0.5);
   const demoSignal=[.28,.36,.62,.76,.55,.31,.24,.42,.68,.82,.59,.33,.22,.39,.65,.74,.48,.27];
   const analogPath=demoSignal.map((v,i)=>`${i===0?'M':'L'} ${i*34} ${92-v*78}`).join(' ');
-  const digitalPath=demoSignal.map((v,i)=>`${i===0?'M':'L'} ${i*34} ${v>=threshold?22:72}`).join(' ');
+  const digitalPath=demoSignal.map((v,i)=>{const y=v>=threshold?22:72;const x=i*34;if(i===0)return `M ${x} ${y}`;const previousY=demoSignal[i-1]>=threshold?22:72;return `${previousY!==y?`H ${x} V ${y}`:''}${i<demoSignal.length-1?` H ${x+34}`:''}`;}).join(' ');
   const parts=[
     ['TX GPIO5','Optical drive','Digital symbol output from the transmitter ESP32.'],
     ['2N3904 + IRF540N','Switching stage','Translates the logic-level control into switching for the 12 V LED load.'],
