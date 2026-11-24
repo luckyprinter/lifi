@@ -39,7 +39,9 @@ try {
     if (await page.locator('.stage-rail button').count() !== 8) failures.push(width + 'px signal journey does not expose all eight stages');
     if (await page.locator('.trace-tabs button').count() !== 5) failures.push(width + 'px end-to-end trace does not expose all five implementation layers');
     await page.locator('.stage-rail button').nth(7).click();
+    await page.waitForFunction(() => document.querySelector('.trace-copy h5')?.textContent === 'After reception, the user inspects the result');
     await page.locator('.trace-tabs button').nth(2).click();
+    await page.waitForFunction(() => document.querySelector('.trace-copy h5')?.textContent === 'The completed file crosses RX USB serial');
     if (!(await page.locator('.trace-detail').innerText()).includes('RX_FILE_HEX')) failures.push(width + 'px USB serial layer does not explain the completed RX_FILE_HEX handoff');
     await page.locator('.trace-tabs button').nth(0).click();
     await page.waitForTimeout(380);
