@@ -3072,22 +3072,30 @@
       {
         "name": "PlaceholderPage",
         "kind": "class",
-        "line": 11
+        "line": 11,
+        "endLine": 27,
+        "signature": "class PlaceholderPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 14
+        "line": 14,
+        "endLine": 27,
+        "signature": "def __init__(self, title: str, subtitle: str = \"\", parent: QWidget | None = None) -> None:"
       },
       {
         "name": "AboutPage",
         "kind": "class",
-        "line": 28
+        "line": 28,
+        "endLine": 76,
+        "signature": "class AboutPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 29
+        "line": 29,
+        "endLine": 76,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       }
     ],
     "headings": []
@@ -3105,32 +3113,48 @@
       {
         "name": "ReceivePage",
         "kind": "class",
-        "line": 14
+        "line": 14,
+        "endLine": 207,
+        "signature": "class ReceivePage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 17
+        "line": 17,
+        "endLine": 120,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 121
+        "line": 121,
+        "doc": "Refresh receive status and payload terminal from current state.",
+        "endLine": 182,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_on_lock_vref",
         "kind": "function",
-        "line": 183
+        "line": 183,
+        "doc": "Toggle between Lock Vref and Auto Vref.",
+        "endLine": 196,
+        "signature": "def _on_lock_vref(self) -> None:"
       },
       {
         "name": "_on_clear_terminal",
         "kind": "function",
-        "line": 197
+        "line": 197,
+        "doc": "Clear received text buffer.",
+        "endLine": 201,
+        "signature": "def _on_clear_terminal(self) -> None:"
       },
       {
         "name": "_on_reset_transfer",
         "kind": "function",
-        "line": 202
+        "line": 202,
+        "doc": "Reset transfer state.",
+        "endLine": 207,
+        "signature": "def _on_reset_transfer(self) -> None:"
       }
     ],
     "headings": []
@@ -3148,102 +3172,144 @@
       {
         "name": "GeneralDisplayPage",
         "kind": "class",
-        "line": 42
+        "line": 42,
+        "endLine": 184,
+        "signature": "class GeneralDisplayPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 43
+        "line": 43,
+        "endLine": 126,
+        "signature": "def __init__(self, mgr: SettingsManager, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_get_window",
         "kind": "function",
-        "line": 127
+        "line": 127,
+        "doc": "Lazy lookup of the _BaseWindow (may not be in widget tree at init time).",
+        "endLine": 137,
+        "signature": "def _get_window(self):"
       },
       {
         "name": "_on_reset_clicked",
         "kind": "function",
-        "line": 138
+        "line": 138,
+        "endLine": 142,
+        "signature": "def _on_reset_clicked(self) -> None:"
       },
       {
         "name": "_on_switch_mode_clicked",
         "kind": "function",
-        "line": 143
+        "line": 143,
+        "endLine": 147,
+        "signature": "def _on_switch_mode_clicked(self) -> None:"
       },
       {
         "name": "showEvent",
         "kind": "function",
-        "line": 148
+        "line": 148,
+        "endLine": 187,
+        "signature": "def showEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "_on_fullscreen_toggled",
         "kind": "function",
-        "line": 166
+        "line": 166,
+        "endLine": 167,
+        "signature": "def _on_fullscreen_toggled(checked: bool) -> None:"
       },
       {
         "name": "_on_fullscreen_changed",
         "kind": "function",
-        "line": 170
+        "line": 170,
+        "endLine": 173,
+        "signature": "def _on_fullscreen_changed(is_fs: bool) -> None:"
       },
       {
         "name": "_on_borderless_toggled",
         "kind": "function",
-        "line": 177
+        "line": 177,
+        "endLine": 181,
+        "signature": "def _on_borderless_toggled(checked: bool) -> None:"
       },
       {
         "name": "ConnectionChannelPage",
         "kind": "class",
-        "line": 188
+        "line": 188,
+        "endLine": 432,
+        "signature": "class ConnectionChannelPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 189
+        "line": 189,
+        "endLine": 365,
+        "signature": "def __init__(self, mgr: SettingsManager, state: RXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_refresh_ports",
         "kind": "function",
-        "line": 209
+        "line": 209,
+        "endLine": 225,
+        "signature": "def _refresh_ports():"
       },
       {
         "name": "_on_force_connect",
         "kind": "function",
-        "line": 246
+        "line": 246,
+        "endLine": 256,
+        "signature": "def _on_force_connect():"
       },
       {
         "name": "_on_apply_settings",
         "kind": "function",
-        "line": 366
+        "line": 366,
+        "endLine": 400,
+        "signature": "def _on_apply_settings(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 401
+        "line": 401,
+        "endLine": 414,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_show_toast",
         "kind": "function",
-        "line": 415
+        "line": 415,
+        "endLine": 435,
+        "signature": "def _show_toast(self, msg: str) -> None:"
       },
       {
         "name": "DiagnosticsLogsPage",
         "kind": "class",
-        "line": 436
+        "line": 436,
+        "endLine": 550,
+        "signature": "class DiagnosticsLogsPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 437
+        "line": 437,
+        "endLine": 444,
+        "signature": "def __init__(self, mgr: SettingsManager, state: RXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_show_toast",
         "kind": "function",
-        "line": 445
+        "line": 445,
+        "endLine": 553,
+        "signature": "def _show_toast(self, msg: str) -> None:"
       },
       {
         "name": "build_rx_settings",
         "kind": "function",
-        "line": 554
+        "line": 554,
+        "doc": "Build the full RX settings with 4 sections and persistence.",
+        "endLine": 566,
+        "signature": "def build_rx_settings(state: RXAppState | None = None) -> SettingsContainer:"
       }
     ],
     "headings": []
@@ -3261,87 +3327,129 @@
       {
         "name": "PulsingDot",
         "kind": "class",
-        "line": 26
+        "line": 26,
+        "endLine": 82,
+        "signature": "class PulsingDot(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 35
+        "line": 35,
+        "endLine": 47,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_state",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "doc": "Set dot state: 'connected', 'disconnected', or 'simulated'.",
+        "endLine": 53,
+        "signature": "def set_state(self, state: str) -> None:"
       },
       {
         "name": "_tick",
         "kind": "function",
-        "line": 54
+        "line": 54,
+        "endLine": 61,
+        "signature": "def _tick(self) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 62
+        "line": 62,
+        "endLine": 78,
+        "signature": "def paintEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 79
+        "line": 79,
+        "endLine": 82,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "RXShell",
         "kind": "class",
-        "line": 83
+        "line": 83,
+        "endLine": 390,
+        "signature": "class RXShell(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 86
+        "line": 86,
+        "endLine": 198,
+        "signature": "def __init__(self, state: RXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_build_footer",
         "kind": "function",
-        "line": 199
+        "line": 199,
+        "doc": "Build bottom footer status bar.",
+        "endLine": 246,
+        "signature": "def _build_footer(self) -> QWidget:"
       },
       {
         "name": "_update_footer_time",
         "kind": "function",
-        "line": 247
+        "line": 247,
+        "doc": "Update the footer clock display.",
+        "endLine": 251,
+        "signature": "def _update_footer_time(self) -> None:"
       },
       {
         "name": "_update_status_indicators",
         "kind": "function",
-        "line": 252
+        "line": 252,
+        "doc": "Update connection and mode indicators from current state.",
+        "endLine": 291,
+        "signature": "def _update_status_indicators(self) -> None:"
       },
       {
         "name": "_on_mode_changed",
         "kind": "function",
-        "line": 292
+        "line": 292,
+        "doc": "Handle mode toggle from the sidebar — switch mode and refresh current page.",
+        "endLine": 299,
+        "signature": "def _on_mode_changed(self, mode: str) -> None:"
       },
       {
         "name": "_refresh_current_page",
         "kind": "function",
-        "line": 300
+        "line": 300,
+        "doc": "Call refresh() on the current page if it supports it.",
+        "endLine": 313,
+        "signature": "def _refresh_current_page(self) -> None:"
       },
       {
         "name": "_on_poll_timer",
         "kind": "function",
-        "line": 314
+        "line": 314,
+        "doc": "Poll state and refresh the active page.",
+        "endLine": 319,
+        "signature": "def _on_poll_timer(self) -> None:"
       },
       {
         "name": "_build_pages",
         "kind": "function",
-        "line": 320
+        "line": 320,
+        "endLine": 357,
+        "signature": "def _build_pages(self) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 358
+        "line": 358,
+        "doc": "Stop poll timer and cleanup app state / backends.",
+        "endLine": 376,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "_on_nav_changed",
         "kind": "function",
-        "line": 377
+        "line": 377,
+        "endLine": 390,
+        "signature": "def _on_nav_changed(self, index: int) -> None:"
       }
     ],
     "headings": []
@@ -3359,142 +3467,215 @@
       {
         "name": "_make_item",
         "kind": "function",
-        "line": 66
+        "line": 66,
+        "doc": "Create a non-editable table item.",
+        "endLine": 72,
+        "signature": "def _make_item(text: str) -> QTableWidgetItem:"
       },
       {
         "name": "_make_table",
         "kind": "function",
-        "line": 73
+        "line": 73,
+        "doc": "Build a 2-column QTableWidget from (label, value) pairs.",
+        "endLine": 97,
+        "signature": "def _make_table(rows: list[tuple[str, str]], col_labels: tuple[str, str] = (\"Label\", \"Value\")) -> QTableWidget:"
       },
       {
         "name": "_update_table_dynamic",
         "kind": "function",
-        "line": 98
+        "line": 98,
+        "endLine": 122,
+        "signature": "def _update_table_dynamic(table: QTableWidget, rows: list[tuple[str, str]]) -> None:"
       },
       {
         "name": "TransferStatsDialog",
         "kind": "class",
-        "line": 123
+        "line": 123,
+        "endLine": 145,
+        "signature": "class TransferStatsDialog(QDialog):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 124
+        "line": 124,
+        "endLine": 145,
+        "signature": "def __init__(self, rows: list[tuple[str, str]], parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_quality_from_signal",
         "kind": "function",
-        "line": 146
+        "line": 146,
+        "doc": "Derive percentage quality metrics from signal state.",
+        "endLine": 177,
+        "signature": "def _quality_from_signal(sig: SignalState) -> dict[str, int]:"
       },
       {
         "name": "_is_empty",
         "kind": "function",
-        "line": 178
+        "line": 178,
+        "doc": "Check if signal is in empty/offline state.",
+        "endLine": 182,
+        "signature": "def _is_empty(sig: SignalState) -> bool:"
       },
       {
         "name": "_separator",
         "kind": "function",
-        "line": 183
+        "line": 183,
+        "doc": "Thin horizontal line separator for diagnostics sections.",
+        "endLine": 191,
+        "signature": "def _separator() -> QFrame:"
       },
       {
         "name": "_section_header",
         "kind": "function",
-        "line": 192
+        "line": 192,
+        "doc": "Uppercase blue section header for diagnostics panels.",
+        "endLine": 201,
+        "signature": "def _section_header(text: str) -> QLabel:"
       },
       {
         "name": "_diag_row",
         "kind": "function",
-        "line": 202
+        "line": 202,
+        "doc": "Build a horizontal row with muted label and value label for diagnostics.",
+        "endLine": 216,
+        "signature": "def _diag_row(label_text: str, value_label: QLabel) -> QWidget:"
       },
       {
         "name": "_set_status_label",
         "kind": "function",
-        "line": 217
+        "line": 217,
+        "doc": "Helper to update a label text and its stylesheet color.",
+        "endLine": 234,
+        "signature": "def _set_status_label(label: QLabel, text: str, status_type: str) -> None:"
       },
       {
         "name": "SignalMonitorPage",
         "kind": "class",
-        "line": 235
+        "line": 235,
+        "endLine": 807,
+        "signature": "class SignalMonitorPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 238
+        "line": 238,
+        "endLine": 256,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "showEvent",
         "kind": "function",
-        "line": 257
+        "line": 257,
+        "endLine": 263,
+        "signature": "def showEvent(self, event) -> None:"
       },
       {
         "name": "hideEvent",
         "kind": "function",
-        "line": 264
+        "line": 264,
+        "endLine": 268,
+        "signature": "def hideEvent(self, event) -> None:"
       },
       {
         "name": "shutdown",
         "kind": "function",
-        "line": 269
+        "line": 269,
+        "endLine": 280,
+        "signature": "def shutdown(self) -> None:"
       },
       {
         "name": "_build_ui",
         "kind": "function",
-        "line": 281
+        "line": 281,
+        "doc": "Build the complete signal monitoring dashboard layout.",
+        "endLine": 299,
+        "signature": "def _build_ui(self) -> None:"
       },
       {
         "name": "_build_top_metrics",
         "kind": "function",
-        "line": 300
+        "line": 300,
+        "doc": "Build top row with 4 MetricCards and 2 CircularGauges in a compact 1×6 grid.",
+        "endLine": 343,
+        "signature": "def _build_top_metrics(self) -> QVBoxLayout:"
       },
       {
         "name": "_build_middle_row",
         "kind": "function",
-        "line": 344
+        "line": 344,
+        "endLine": 377,
+        "signature": "def _build_middle_row(self) -> QSplitter:"
       },
       {
         "name": "_build_diagnostics_panel",
         "kind": "function",
-        "line": 378
+        "line": 378,
+        "doc": "Build receiver diagnostics panel as a flat list matching the screenshot.",
+        "endLine": 412,
+        "signature": "def _build_diagnostics_panel(self) -> QWidget:"
       },
       {
         "name": "_build_margin_analysis",
         "kind": "function",
-        "line": 413
+        "line": 413,
+        "doc": "Build margin analysis panel with flat metrics and scale bar.",
+        "endLine": 439,
+        "signature": "def _build_margin_analysis(self) -> QWidget:"
       },
       {
         "name": "_build_bottom_row",
         "kind": "function",
-        "line": 440
+        "line": 440,
+        "endLine": 460,
+        "signature": "def _build_bottom_row(self) -> QSplitter:"
       },
       {
         "name": "_build_transfer_stats",
         "kind": "function",
-        "line": 461
+        "line": 461,
+        "doc": "Build transfer statistics panel with 10-row table and progress bar at the bottom.",
+        "endLine": 512,
+        "signature": "def _build_transfer_stats(self) -> QWidget:"
       },
       {
         "name": "_on_view_more_stats",
         "kind": "function",
-        "line": 513
+        "line": 513,
+        "endLine": 517,
+        "signature": "def _on_view_more_stats(self) -> None:"
       },
       {
         "name": "_build_quality_metrics",
         "kind": "function",
-        "line": 518
+        "line": 518,
+        "doc": "Build 6 QualityBars for detailed signal quality metrics matching screenshot.",
+        "endLine": 545,
+        "signature": "def _build_quality_metrics(self) -> QWidget:"
       },
       {
         "name": "_sample_waveform",
         "kind": "function",
-        "line": 546
+        "line": 546,
+        "doc": "Append current signal samples to waveform buffer (100 ms interval).",
+        "endLine": 581,
+        "signature": "def _sample_waveform(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 582
+        "line": 582,
+        "doc": "Update all widgets from the latest state. Called every 1 second.",
+        "endLine": 812,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_row_widget",
         "kind": "function",
-        "line": 813
+        "line": 813,
+        "doc": "Build a horizontal row with a muted label and a value widget.",
+        "endLine": 828,
+        "signature": "def _row_widget(label: str, value_widget: QWidget) -> QWidget:"
       }
     ],
     "headings": []
@@ -3512,392 +3693,583 @@
       {
         "name": "_trace_color",
         "kind": "function",
-        "line": 59
+        "line": 59,
+        "doc": "Return the QColor for a trace name.",
+        "endLine": 67,
+        "signature": "def _trace_color(name: str) -> QColor:"
       },
       {
         "name": "_trace_label",
         "kind": "function",
-        "line": 68
+        "line": 68,
+        "doc": "Return the display label for a trace name.",
+        "endLine": 76,
+        "signature": "def _trace_label(name: str) -> str:"
       },
       {
         "name": "_font",
         "kind": "function",
-        "line": 77
+        "line": 77,
+        "doc": "Create a QFont with the project's font stack.",
+        "endLine": 84,
+        "signature": "def _font(size: int, weight: int = QFont.Normal) -> QFont:"
       },
       {
         "name": "_elide_text",
         "kind": "function",
-        "line": 85
+        "line": 85,
+        "doc": "Elide text to fit within max_width pixels.",
+        "endLine": 94,
+        "signature": "def _elide_text(text: str, font: QFont, max_width: int) -> str:"
       },
       {
         "name": "MetricCard",
         "kind": "class",
-        "line": 95
+        "line": 95,
+        "endLine": 191,
+        "signature": "class MetricCard(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 101
+        "line": 101,
+        "endLine": 118,
+        "signature": "def __init__(self, label: str, value: str = \"—\", color: str | None = None, value_color: str | None = None) -> None:"
       },
       {
         "name": "set_value",
         "kind": "function",
-        "line": 119
+        "line": 119,
+        "doc": "Update displayed value and optional sparkline / min / max.",
+        "endLine": 135,
+        "signature": "def set_value(self, value: float | str, sparkline_data: list[float] | None = None, min_val: float | str | None = None, max_val: float | str | None = None) -> None:"
       },
       {
         "name": "set_value_color",
         "kind": "function",
-        "line": 136
+        "line": 136,
+        "doc": "Set custom color for the value text (useful for state colors).",
+        "endLine": 140,
+        "signature": "def set_value_color(self, color: str | QColor | None) -> None:"
       },
       {
         "name": "set_center_footer",
         "kind": "function",
-        "line": 141
+        "line": 141,
+        "doc": "Set a centered footer text instead of Min/Max.",
+        "endLine": 147,
+        "signature": "def set_center_footer(self, text: str) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 148
+        "line": 148,
+        "endLine": 191,
+        "signature": "def paintEvent(self, event) -> None:  # noqa: N802"
       },
       {
         "name": "CircularGauge",
         "kind": "class",
-        "line": 192
+        "line": 192,
+        "endLine": 308,
+        "signature": "class CircularGauge(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 199
+        "line": 199,
+        "endLine": 209,
+        "signature": "def __init__(self, label: str, value: float = 0.0, inverted: bool = False, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_percent",
         "kind": "function",
-        "line": 210
+        "line": 210,
+        "doc": "Update the percentage (0-100) and redraw.",
+        "endLine": 214,
+        "signature": "def set_percent(self, value: float) -> None:"
       },
       {
         "name": "_color",
         "kind": "function",
-        "line": 215
+        "line": 215,
+        "endLine": 231,
+        "signature": "def _color(self) -> QColor:"
       },
       {
         "name": "_subtext",
         "kind": "function",
-        "line": 232
+        "line": 232,
+        "endLine": 246,
+        "signature": "def _subtext(self) -> str:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 247
+        "line": 247,
+        "endLine": 308,
+        "signature": "def paintEvent(self, event) -> None:"
       },
       {
         "name": "SignalWaveform",
         "kind": "class",
-        "line": 309
+        "line": 309,
+        "endLine": 709,
+        "signature": "class SignalWaveform(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 320
+        "line": 320,
+        "endLine": 335,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_init_ui",
         "kind": "function",
-        "line": 336
+        "line": 336,
+        "endLine": 479,
+        "signature": "def _init_ui(self) -> None:"
       },
       {
         "name": "_init_plot",
         "kind": "function",
-        "line": 480
+        "line": 480,
+        "endLine": 566,
+        "signature": "def _init_plot(self) -> None:"
       },
       {
         "name": "add_sample",
         "kind": "function",
-        "line": 567
+        "line": 567,
+        "doc": "Append a (pvo, vref, margin) sample to the buffer.",
+        "endLine": 582,
+        "signature": "def add_sample(self, pvo: float, vref: float, margin: float, elapsed_time: float | None = None) -> None:"
       },
       {
         "name": "set_paused",
         "kind": "function",
-        "line": 583
+        "line": 583,
+        "doc": "Pause or resume live updates.",
+        "endLine": 589,
+        "signature": "def set_paused(self, paused: bool) -> None:"
       },
       {
         "name": "clear_data",
         "kind": "function",
-        "line": 590
+        "line": 590,
+        "doc": "Clear all buffered samples and reset the plot.",
+        "endLine": 598,
+        "signature": "def clear_data(self) -> None:"
       },
       {
         "name": "set_time_window",
         "kind": "function",
-        "line": 599
+        "line": 599,
+        "doc": "Change the visible time window in seconds.",
+        "endLine": 613,
+        "signature": "def set_time_window(self, seconds: float) -> None:"
       },
       {
         "name": "set_playback_mode",
         "kind": "function",
-        "line": 614
+        "line": 614,
+        "doc": "Configure widget for playback review or live tracking.",
+        "endLine": 635,
+        "signature": "def set_playback_mode(self, enabled: bool, capture: SessionCapture | None = None) -> None:"
       },
       {
         "name": "jump_to_latest",
         "kind": "function",
-        "line": 636
+        "line": 636,
+        "doc": "Snaps the viewport to the latest data and resumes Follow Live.",
+        "endLine": 646,
+        "signature": "def jump_to_latest(self) -> None:"
       },
       {
         "name": "_on_follow_toggled",
         "kind": "function",
-        "line": 647
+        "line": 647,
+        "endLine": 650,
+        "signature": "def _on_follow_toggled(self, checked: bool) -> None:"
       },
       {
         "name": "_on_range_changed",
         "kind": "function",
-        "line": 651
+        "line": 651,
+        "endLine": 659,
+        "signature": "def _on_range_changed(self, viewBox, range_val) -> None:"
       },
       {
         "name": "_toggle_pause",
         "kind": "function",
-        "line": 660
+        "line": 660,
+        "endLine": 662,
+        "signature": "def _toggle_pause(self) -> None:"
       },
       {
         "name": "_on_window_changed",
         "kind": "function",
-        "line": 663
+        "line": 663,
+        "endLine": 666,
+        "signature": "def _on_window_changed(self, text: str) -> None:"
       },
       {
         "name": "_on_refresh_combo_changed",
         "kind": "function",
-        "line": 667
+        "line": 667,
+        "endLine": 671,
+        "signature": "def _on_refresh_combo_changed(self, text: str) -> None:"
       },
       {
         "name": "_on_trace_toggle",
         "kind": "function",
-        "line": 672
+        "line": 672,
+        "endLine": 676,
+        "signature": "def _on_trace_toggle(self) -> None:"
       },
       {
         "name": "_redraw",
         "kind": "function",
-        "line": 677
+        "line": 677,
+        "endLine": 701,
+        "signature": "def _redraw(self) -> None:"
       },
       {
         "name": "_update_empty_state",
         "kind": "function",
-        "line": 702
+        "line": 702,
+        "endLine": 713,
+        "signature": "def _update_empty_state(self) -> None:"
       },
       {
         "name": "TrendChart",
         "kind": "class",
-        "line": 714
+        "line": 714,
+        "endLine": 910,
+        "signature": "class TrendChart(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 722
+        "line": 722,
+        "endLine": 738,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_init_ui",
         "kind": "function",
-        "line": 739
+        "line": 739,
+        "endLine": 781,
+        "signature": "def _init_ui(self) -> None:"
       },
       {
         "name": "_init_plot",
         "kind": "function",
-        "line": 782
+        "line": 782,
+        "endLine": 820,
+        "signature": "def _init_plot(self) -> None:"
       },
       {
         "name": "add_point",
         "kind": "function",
-        "line": 821
+        "line": 821,
+        "doc": "Append samples to all trace buffers and update the plot.",
+        "endLine": 827,
+        "signature": "def add_point(self, pvo: float, vref: float, margin: float) -> None:"
       },
       {
         "name": "set_active_trace",
         "kind": "function",
-        "line": 828
+        "line": 828,
+        "doc": "Switch the displayed trace.",
+        "endLine": 835,
+        "signature": "def set_active_trace(self, name: str) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 836
+        "line": 836,
+        "doc": "Force a plot redraw.",
+        "endLine": 841,
+        "signature": "def refresh(self) -> None:"
       },
       {
         "name": "_update_tab_styling",
         "kind": "function",
-        "line": 842
+        "line": 842,
+        "endLine": 859,
+        "signature": "def _update_tab_styling(self) -> None:"
       },
       {
         "name": "_on_auto_scale_toggled",
         "kind": "function",
-        "line": 860
+        "line": 860,
+        "endLine": 863,
+        "signature": "def _on_auto_scale_toggled(self, checked: bool) -> None:"
       },
       {
         "name": "_update_y_range",
         "kind": "function",
-        "line": 864
+        "line": 864,
+        "endLine": 877,
+        "signature": "def _update_y_range(self) -> None:"
       },
       {
         "name": "_update_plot",
         "kind": "function",
-        "line": 878
+        "line": 878,
+        "endLine": 914,
+        "signature": "def _update_plot(self) -> None:"
       },
       {
         "name": "QualityBar",
         "kind": "class",
-        "line": 915
+        "line": 915,
+        "endLine": 1057,
+        "signature": "class QualityBar(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 927
+        "line": 927,
+        "endLine": 940,
+        "signature": "def __init__(self, label: str = \"\", value_text: str = \"\", show_bar: bool = True, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_build_ui",
         "kind": "function",
-        "line": 941
+        "line": 941,
+        "endLine": 974,
+        "signature": "def _build_ui(self) -> None:"
       },
       {
         "name": "set_percent",
         "kind": "function",
-        "line": 975
+        "line": 975,
+        "doc": "Update fill percentage (0-100).",
+        "endLine": 979,
+        "signature": "def set_percent(self, value: float) -> None:"
       },
       {
         "name": "set_value_text",
         "kind": "function",
-        "line": 980
+        "line": 980,
+        "doc": "Update the value string shown after the bar.",
+        "endLine": 984,
+        "signature": "def set_value_text(self, text: str) -> None:"
       },
       {
         "name": "set_label",
         "kind": "function",
-        "line": 985
+        "line": 985,
+        "doc": "Change the label text.",
+        "endLine": 989,
+        "signature": "def set_label(self, text: str) -> None:"
       },
       {
         "name": "set_inverted",
         "kind": "function",
-        "line": 990
+        "line": 990,
+        "doc": "Invert color logic (green when low, red when high).",
+        "endLine": 996,
+        "signature": "def set_inverted(self, inverted: bool) -> None:"
       },
       {
         "name": "_bar_color",
         "kind": "function",
-        "line": 997
+        "line": 997,
+        "endLine": 1012,
+        "signature": "def _bar_color(self) -> QColor:"
       },
       {
         "name": "_quality_text",
         "kind": "function",
-        "line": 1013
+        "line": 1013,
+        "endLine": 1027,
+        "signature": "def _quality_text(self) -> str:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 1028
+        "line": 1028,
+        "endLine": 1061,
+        "signature": "def paintEvent(self, event) -> None:  # noqa: N802"
       },
       {
         "name": "MarginScaleBar",
         "kind": "class",
-        "line": 1062
+        "line": 1062,
+        "endLine": 1216,
+        "signature": "class MarginScaleBar(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 1073
+        "line": 1073,
+        "endLine": 1081,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_margin",
         "kind": "function",
-        "line": 1082
+        "line": 1082,
+        "doc": "Set the current margin voltage (0.0 - 0.72).  None = no data.",
+        "endLine": 1088,
+        "signature": "def set_margin(self, value: float | None) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 1089
+        "line": 1089,
+        "endLine": 1221,
+        "signature": "def paintEvent(self, event) -> None:  # noqa: N802"
       },
       {
         "name": "_encode_4b5b",
         "kind": "function",
-        "line": 1242
+        "line": 1242,
+        "doc": "Encode up to max_bits bits from data bytes using 4B5B.  Returns a flat list of 0/1 bits (NRZ/OOK — 1=LED ON, 0=LED OFF). Includes a synthetic preamble of alternating 10101010 before the payload.",
+        "endLine": 1265,
+        "signature": "def _encode_4b5b(data: bytes | None, max_bits: int = 600) -> list[int]:"
       },
       {
         "name": "OOKWaveformWidget",
         "kind": "class",
-        "line": 1266
+        "line": 1266,
+        "endLine": 1710,
+        "signature": "class OOKWaveformWidget(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 1294
+        "line": 1294,
+        "endLine": 1312,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_build_ui",
         "kind": "function",
-        "line": 1313
+        "line": 1313,
+        "endLine": 1370,
+        "signature": "def _build_ui(self) -> None:"
       },
       {
         "name": "push_bit",
         "kind": "function",
-        "line": 1371
+        "line": 1371,
+        "doc": "Push a single bit (0 or 1) and redraw.",
+        "endLine": 1380,
+        "signature": "def push_bit(self, bit: int) -> None:"
       },
       {
         "name": "push_bits",
         "kind": "function",
-        "line": 1381
+        "line": 1381,
+        "doc": "Push a list of bits (bulk update from 4B5B encoder).",
+        "endLine": 1392,
+        "signature": "def push_bits(self, bits: list[int]) -> None:"
       },
       {
         "name": "set_from_pvo_vref",
         "kind": "function",
-        "line": 1393
+        "line": 1393,
+        "doc": "Push a single bit derived from comparator decision PVo vs Vref.",
+        "endLine": 1399,
+        "signature": "def set_from_pvo_vref(self, pvo: float, vref: float) -> None:"
       },
       {
         "name": "set_from_4b5b",
         "kind": "function",
-        "line": 1400
+        "line": 1400,
+        "doc": "Replace buffer with 4B5B-encoded bits from data.  seed_offset shifts which part of the encoded stream is displayed, allowing the waveform to scroll as chunk index advances.",
+        "endLine": 1422,
+        "signature": "def set_from_4b5b(self, data: bytes | None, seed_offset: int = 0) -> None:"
       },
       {
         "name": "clear",
         "kind": "function",
-        "line": 1423
+        "line": 1423,
+        "doc": "Clear all buffered bits.",
+        "endLine": 1429,
+        "signature": "def clear(self) -> None:"
       },
       {
         "name": "set_playback_mode",
         "kind": "function",
-        "line": 1430
+        "line": 1430,
+        "endLine": 1452,
+        "signature": "def set_playback_mode(self, enabled: bool, bits: list[int] | None = None) -> None:"
       },
       {
         "name": "wheelEvent",
         "kind": "function",
-        "line": 1453
+        "line": 1453,
+        "doc": "Handle mouse wheel for X-axis zooming.",
+        "endLine": 1469,
+        "signature": "def wheelEvent(self, event) -> None:"
       },
       {
         "name": "mousePressEvent",
         "kind": "function",
-        "line": 1470
+        "line": 1470,
+        "doc": "Start dragging.",
+        "endLine": 1477,
+        "signature": "def mousePressEvent(self, event) -> None:"
       },
       {
         "name": "mouseMoveEvent",
         "kind": "function",
-        "line": 1478
+        "line": 1478,
+        "doc": "Handle dragging to pan.",
+        "endLine": 1509,
+        "signature": "def mouseMoveEvent(self, event) -> None:"
       },
       {
         "name": "mouseReleaseEvent",
         "kind": "function",
-        "line": 1510
+        "line": 1510,
+        "doc": "End dragging.",
+        "endLine": 1516,
+        "signature": "def mouseReleaseEvent(self, event) -> None:"
       },
       {
         "name": "keyPressEvent",
         "kind": "function",
-        "line": 1517
+        "line": 1517,
+        "doc": "Handle keyboard shortcuts.",
+        "endLine": 1524,
+        "signature": "def keyPressEvent(self, event) -> None:"
       },
       {
         "name": "_on_zoom_fit",
         "kind": "function",
-        "line": 1525
+        "line": 1525,
+        "doc": "Adjust zoom to fit all data.",
+        "endLine": 1534,
+        "signature": "def _on_zoom_fit(self) -> None:"
       },
       {
         "name": "_on_auto_scroll_toggled",
         "kind": "function",
-        "line": 1535
+        "line": 1535,
+        "endLine": 1545,
+        "signature": "def _on_auto_scroll_toggled(self, checked: bool) -> None:"
       },
       {
         "name": "_toggle_pause",
         "kind": "function",
-        "line": 1546
+        "line": 1546,
+        "endLine": 1555,
+        "signature": "def _toggle_pause(self) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 1556
+        "line": 1556,
+        "doc": "Render the OOK square wave onto the canvas area.",
+        "endLine": 1710,
+        "signature": "def paintEvent(self, event) -> None:  # noqa: N802"
       }
     ],
     "headings": []
@@ -3915,17 +4287,23 @@
       {
         "name": "StudyDataPage",
         "kind": "class",
-        "line": 8
+        "line": 8,
+        "endLine": 36,
+        "signature": "class StudyDataPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 11
+        "line": 11,
+        "endLine": 28,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 29
+        "line": 29,
+        "endLine": 36,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       }
     ],
     "headings": []
@@ -3943,142 +4321,208 @@
       {
         "name": "VLC_PAPER_TEMPLATES",
         "kind": "constant",
-        "line": 40
+        "line": 40,
+        "endLine": 94,
+        "signature": "VLC_PAPER_TEMPLATES = {"
       },
       {
         "name": "TableBuilderPage",
         "kind": "class",
-        "line": 98
+        "line": 98,
+        "endLine": 945,
+        "signature": "class TableBuilderPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 101
+        "line": 101,
+        "endLine": 121,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_build_builder_view",
         "kind": "function",
-        "line": 122
+        "line": 122,
+        "endLine": 283,
+        "signature": "def _build_builder_view(self) -> QWidget:"
       },
       {
         "name": "_build_available_list",
         "kind": "function",
-        "line": 284
+        "line": 284,
+        "endLine": 302,
+        "signature": "def _build_available_list(self) -> None:"
       },
       {
         "name": "_filter_available",
         "kind": "function",
-        "line": 303
+        "line": 303,
+        "endLine": 315,
+        "signature": "def _filter_available(self, text: str) -> None:"
       },
       {
         "name": "_add_selected",
         "kind": "function",
-        "line": 316
+        "line": 316,
+        "endLine": 325,
+        "signature": "def _add_selected(self) -> None:"
       },
       {
         "name": "_remove_selected",
         "kind": "function",
-        "line": 326
+        "line": 326,
+        "endLine": 333,
+        "signature": "def _remove_selected(self) -> None:"
       },
       {
         "name": "_rebuild_selected",
         "kind": "function",
-        "line": 334
+        "line": 334,
+        "endLine": 340,
+        "signature": "def _rebuild_selected(self) -> None:"
       },
       {
         "name": "_on_manual_toggle",
         "kind": "function",
-        "line": 341
+        "line": 341,
+        "doc": "Called when any manual column checkbox changes or items are reordered.",
+        "endLine": 344,
+        "signature": "def _on_manual_toggle(self, item: QListWidgetItem | None = None) -> None:"
       },
       {
         "name": "_on_selected_list_changed",
         "kind": "function",
-        "line": 345
+        "line": 345,
+        "endLine": 360,
+        "signature": "def _on_selected_list_changed(self, *args: Any) -> None:"
       },
       {
         "name": "_on_manual_list_changed",
         "kind": "function",
-        "line": 361
+        "line": 361,
+        "endLine": 367,
+        "signature": "def _on_manual_list_changed(self, *args: Any) -> None:"
       },
       {
         "name": "_on_template_selected",
         "kind": "function",
-        "line": 368
+        "line": 368,
+        "endLine": 421,
+        "signature": "def _on_template_selected(self, template_name: str) -> None:"
       },
       {
         "name": "_build_preview_view",
         "kind": "function",
-        "line": 422
+        "line": 422,
+        "endLine": 490,
+        "signature": "def _build_preview_view(self) -> QWidget:"
       },
       {
         "name": "_show_builder",
         "kind": "function",
-        "line": 491
+        "line": 491,
+        "endLine": 494,
+        "signature": "def _show_builder(self) -> None:"
       },
       {
         "name": "_show_preview",
         "kind": "function",
-        "line": 495
+        "line": 495,
+        "endLine": 498,
+        "signature": "def _show_preview(self) -> None:"
       },
       {
         "name": "_on_preview",
         "kind": "function",
-        "line": 499
+        "line": 499,
+        "doc": "Preview with mock data — relies on selected columns.",
+        "endLine": 504,
+        "signature": "def _on_preview(self) -> None:"
       },
       {
         "name": "_on_generate",
         "kind": "function",
-        "line": 505
+        "line": 505,
+        "endLine": 509,
+        "signature": "def _on_generate(self) -> None:"
       },
       {
         "name": "_get_column_keys",
         "kind": "function",
-        "line": 510
+        "line": 510,
+        "doc": "Return the full ordered list of column keys for the table.",
+        "endLine": 533,
+        "signature": "def _get_column_keys(self) -> list[str]:"
       },
       {
         "name": "_get_column_labels",
         "kind": "function",
-        "line": 534
+        "line": 534,
+        "doc": "Return display labels for the table header.",
+        "endLine": 549,
+        "signature": "def _get_column_labels(self) -> list[str]:"
       },
       {
         "name": "_generate_table_data",
         "kind": "function",
-        "line": 550
+        "line": 550,
+        "doc": "Generate mock data matching the experiment pattern from Image 3.",
+        "endLine": 595,
+        "signature": "def _generate_table_data(self, preview: bool = True) -> None:"
       },
       {
         "name": "_compute_mock_value",
         "kind": "function",
-        "line": 596
+        "line": 596,
+        "doc": "Generate realistic VLC test data for a given column key.",
+        "endLine": 864,
+        "signature": "def _compute_mock_value(self, key: str, dist: float, row: int, total: int) -> str:"
       },
       {
         "name": "_export_csv",
         "kind": "function",
-        "line": 865
+        "line": 865,
+        "doc": "Copy CSV to clipboard (simplified export).",
+        "endLine": 872,
+        "signature": "def _export_csv(self) -> None:"
       },
       {
         "name": "_export_excel",
         "kind": "function",
-        "line": 873
+        "line": 873,
+        "doc": "Copy TSV (Excel-compatible) to clipboard.",
+        "endLine": 891,
+        "signature": "def _export_excel(self) -> None:"
       },
       {
         "name": "_copy_table",
         "kind": "function",
-        "line": 892
+        "line": 892,
+        "doc": "Copy markdown-formatted table to clipboard.",
+        "endLine": 912,
+        "signature": "def _copy_table(self) -> None:"
       },
       {
         "name": "_save_template",
         "kind": "function",
-        "line": 913
+        "line": 913,
+        "endLine": 915,
+        "signature": "def _save_template(self) -> None:"
       },
       {
         "name": "_table_to_csv",
         "kind": "function",
-        "line": 916
+        "line": 916,
+        "endLine": 929,
+        "signature": "def _table_to_csv(self) -> str:"
       },
       {
         "name": "_show_toast",
         "kind": "function",
-        "line": 930
+        "line": 930,
+        "doc": "Show a temporary toast notification.",
+        "endLine": 945,
+        "signature": "def _show_toast(self, msg: str) -> None:"
       }
     ],
     "headings": []
