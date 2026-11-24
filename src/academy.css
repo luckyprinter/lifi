@@ -23,3 +23,5 @@
 
 .hero-secondary{background:transparent;appearance:none;padding:10px 0;color:#c6d5d9}
 @media(max-width:720px){.hero-primary,.hero-secondary{font-size:9px}}
+
+.stage-actions .open-code-stage{border-color:#3c716b;color:var(--mint)}.stage-actions .open-code-stage:hover{background:#1a3536}
