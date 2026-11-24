@@ -29,7 +29,7 @@ const lessons = [
 
 
 const codeExamples = {
-  prepare: { title: 'The transmitter state starts in physical mode', path: 'application-source/gui_dev_v3/tx_app_state.py', ref: APP_PIN, start: 23, end: 36, language: 'python', code: String.raw\`    settings: AppSettings = field(default_factory=load_settings)
+  prepare: { title: 'The transmitter state starts in physical mode', path: 'application-source/gui_dev_v3/tx_app_state.py', ref: APP_PIN, start: 23, end: 36, language: 'python', code: String.raw`    settings: AppSettings = field(default_factory=load_settings)
     mode: str = "physical"
     filename: str = "No file"
     filetype: str = ""
@@ -42,8 +42,8 @@ const codeExamples = {
     led_pin: int = 5
     tx_power: str = "100 %"
     pre_emphasis: str = "Disabled"
-    status_text: str = "Offline — no hardware"\` },
-  stream: { title: 'The serial controller starts a STREAM transfer', path: 'application-source/gui_dev_v3/serial/controllers.py', ref: APP_PIN, start: 460, end: 478, language: 'python', code: String.raw\`        begin = (
+    status_text: str = "Offline — no hardware"` },
+  stream: { title: 'The serial controller starts a STREAM transfer', path: 'application-source/gui_dev_v3/serial/controllers.py', ref: APP_PIN, start: 460, end: 478, language: 'python', code: String.raw`        begin = (
             f"STREAM_BEGIN:{tid}:1:{len(data)}:{chunk_size}"
             f":{file_crc:04X}:1:{name_bytes.hex().upper()}"
         )
@@ -61,12 +61,12 @@ const codeExamples = {
             return False
         if not self.wait_for_line_containing("TX_STREAM_BEGIN_OK", 5.0, si):
             self.status("Send failed", "TX did not acknowledge STREAM_BEGIN", state="error")
-            return False\` },
-  encode: { title: 'One byte becomes two 5-bit codewords', path: 'firmware/tx/tx.ino', ref: PIN, start: 160, end: 163, language: 'cpp', code: String.raw\`void send4b5bEncodedByte(uint8_t value) {
+            return False` },
+  encode: { title: 'One byte becomes two 5-bit codewords', path: 'firmware/tx/tx.ino', ref: PIN, start: 160, end: 163, language: 'cpp', code: String.raw`void send4b5bEncodedByte(uint8_t value) {
   send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);
   send4b5bCode(CODE_4B5B[value & 0x0F]);
-}\` },
-  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 198, language: 'cpp', code: String.raw\`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
+}` },
+  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 198, language: 'cpp', code: String.raw`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
   uint16_t chunkCrc = crc16_ccitt(payload, payloadLen);
   size_t pos = 0;
   frameBuf[pos++] = SOF_BYTE;
@@ -82,12 +82,12 @@ const codeExamples = {
   frameBuf[pos++] = streamNameLen;
   for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];
   for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];
-  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);\` },
-  light: { title: 'A logical bit selects the GPIO output level', path: 'firmware/tx/tx.ino', ref: PIN, start: 147, end: 150, language: 'cpp', code: String.raw\`void send4b5bBit(bool bitValue) {
+  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);` },
+  light: { title: 'A logical bit selects the GPIO output level', path: 'firmware/tx/tx.ino', ref: PIN, start: 147, end: 150, language: 'cpp', code: String.raw`void send4b5bBit(bool bitValue) {
   digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());
   waitSymbolBoundary();
-}\` },
-  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', code: String.raw\`bool sampleRawAt(uint32_t sampleTimeUs) {
+}` },
+  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', code: String.raw`bool sampleRawAt(uint32_t sampleTimeUs) {
   if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }
   uint32_t delta = symbolUs / 6;
   waitUntil(sampleTimeUs - delta);
@@ -97,8 +97,8 @@ const codeExamples = {
   waitUntil(sampleTimeUs + delta);
   bool c = digitalRead(RX_PIN);
   return (a + b + c) >= 2;
-}\` },
-  decode: { title: 'Two valid 5-bit codewords reconstruct one byte', path: 'firmware/rx/rx.ino', ref: PIN, start: 840, end: 854, language: 'cpp', code: String.raw\`bool read4b5bByte(uint8_t &value) {
+}` },
+  decode: { title: 'Two valid 5-bit codewords reconstruct one byte', path: 'firmware/rx/rx.ino', ref: PIN, start: 840, end: 854, language: 'cpp', code: String.raw`bool read4b5bByte(uint8_t &value) {
   if (!lineSynced && !acquire4b5bSync()) return false;
   if (!frameAligned) return alignToEncodedSof(value);
   uint8_t highCode = 0, lowCode = 0;
@@ -112,8 +112,8 @@ const codeExamples = {
   }
   value = (uint8_t)((highNibble << 4) | lowNibble);
   return true;
-}\` },
-  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', code: String.raw\`void processCompleteFrame() {
+}` },
+  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', code: String.raw`void processCompleteFrame() {
   if (framePos < 1 + 19 + 2) { resetLineDecoder(); return; }
   uint16_t rxFrameCrc = getU16(frameBuf, framePos - 2);
   uint16_t calcFrameCrc = crc16_ccitt(frameBuf, framePos - 2);
@@ -148,14 +148,14 @@ const codeExamples = {
   }
   bufferVerifiedChunk(tid, frameType, totalSize, totalChunks, chunkIndex, chunkLen, fileCrc, nameLen, frameBuf + nameStart, frameBuf + payloadStart);
   resetLineDecoder();
-}\` }
+}` }
 };
 
 function SourceCodePanel({ lessonId }) {
   const [open, setOpen] = useState(false);
   const example = codeExamples[lessonId];
   if (!example) return null;
-  const url = SOURCE(example.path, example.ref) + \`#L\${example.start}-L\${example.end}\`;
+  const url = SOURCE(example.path, example.ref) + `#L\${example.start}-L\${example.end}`;
   return <div className="source-code-panel">
     <div className="source-code-heading">
       <div><span className="eyebrow">IMPLEMENTATION · EXACT SOURCE LINES</span><b>{example.title}</b></div>
