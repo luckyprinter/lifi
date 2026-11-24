@@ -9,14 +9,16 @@ import {
 import './styles.css';
 
 const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
-const PIN = '411f183a8592d8285118f613bb4909c5bbd9d3cc';
+const PIN = '411f183a8592d8285118f613bb4909c5bbd9d3cc'; // thesis firmware baseline
+const APP_PIN = '80ef4afa63a3fe571ffd5026560bf7d7d90fbecc'; // draft development PR #18 snapshot
+const SOURCE = (path, ref = PIN) => `https://github.com/luckyprinter/OpenVLC-Public/blob/${ref}/${path}`;
+const APP_SOURCE = (path) => SOURCE(path, APP_PIN);
+const sourceFor = (path) => path.startsWith('application-source/') ? APP_SOURCE(path) : SOURCE(path);
 const CODE_4B5B = [0b11110,0b01001,0b10100,0b10101,0b01010,0b01011,0b01110,0b01111,0b10010,0b10011,0b10110,0b10111,0b11010,0b11011,0b11100,0b11101];
 const toBits = (value, width) => value.toString(2).padStart(width, '0');
-const SOURCE = (path) => `${REPO}/blob/${PIN}/${path}`;
-
 const lessons = [
-  { id:'prepare', n:'01', title:'Prepare the transfer', group:'TRANSMITTER', tag:'DESKTOP APPLICATION', body:'A file enters the transmitter application. The GUI holds the selected file and transfer settings, then hands the job to its physical or simulated backend.', detail:'Physical mode communicates with the ESP32 over USB serial. Simulation mode exercises a virtual backend instead of the optical hardware.', code:'tx_state.start_transmission(filepath)', file:'application-source/gui_dev_v3/tx_app_state.py', color:'coral' },
-  { id:'stream', n:'02', title:'Move bytes to the ESP32', group:'TRANSMITTER', tag:'USB SERIAL', body:'The desktop application sends stream metadata and file data to the transmitter microcontroller over its USB serial connection.', detail:'The firmware receives stream-begin and stream-data records, validates the transfer parameters, and stages the payload for framing.', code:'STREAM_BEGIN  →  STREAM_DATA', file:'firmware/tx/tx.ino', color:'blue' },
+  { id:'prepare', n:'01', title:'Prepare the transfer', group:'TRANSMITTER', tag:'DESKTOP APPLICATION', body:'A file enters the transmitter application. The GUI holds the selected file and transfer settings, then hands the job to its selected backend.', detail:'The development application state defaults to physical mode. Its optional simulation backend can exercise software flows without an ESP32 or optical transmission.', code:'tx_state.start_transmission(filepath)', file:'application-source/gui_dev_v3/tx_app_state.py', color:'coral' },
+  { id:'stream', n:'02', title:'Move bytes to the ESP32', group:'TRANSMITTER', tag:'USB SERIAL', body:'The TX serial controller sends transfer metadata and file data to the transmitter ESP32 over USB serial.', detail:'The STREAM path sends STREAM_BEGIN, waits for a firmware acknowledgement, then sends STREAM_DATA blocks and waits for acknowledgements before starting the optical round.', code:'STREAM_BEGIN  →  STREAM_DATA', file:'firmware/tx/tx.ino', color:'blue' },
   { id:'encode', n:'03', title:'Encode with 4B5B', group:'LINE CODING', tag:'4B5B · TWO NIBBLES', body:'Every source byte is split into two 4-bit nibbles. Each nibble is translated into a 5-bit codeword using the transmitter lookup table.', detail:'Two 5-bit codewords carry one original byte. The added bit provides transition-friendly coding; it is not encryption or error correction.', code:'high = value >> 4   ·   low = value & 0x0F', file:'firmware/tx/tx.ino', color:'lime' },
   { id:'frame', n:'04', title:'Build a framed message', group:'TRANSMISSION', tag:'FRAME + INTEGRITY', body:'Encoded payload bytes are carried in protocol frames with synchronization and metadata so the receiver can find, interpret, and validate them.', detail:'The protocol specification defines the frame structure and CRC coverage. Consult it for exact field widths, byte ordering, and validation rules.', code:'SYNC  →  HEADER  →  PAYLOAD  →  CRC', file:'firmware/specs/protocol_spec.md', color:'blue' },
   { id:'light', n:'05', title:'Turn bits into light', group:'OPTICAL LINK', tag:'NRZ / OOK · GPIO5', body:'The TX ESP32 drives the LED switching stage. The LED output changes with the encoded symbol stream, carrying information through visible light.', detail:'The documented baseline uses 15 ksymbols/s, approximately 66 μs per symbol, with a 1 ms frame gap. The LED remains on during idle.', code:'ESP32 GPIO5  →  2N3904 + IRF540N  →  12 V LED', file:'firmware/tx/tx.ino', color:'coral' },
@@ -25,7 +27,151 @@ const lessons = [
   { id:'verify', n:'08', title:'Validate and reconstruct', group:'INTEGRITY', tag:'CRC · CHUNKS · FILE', body:'The receiver checks integrity, accepts valid payload chunks, and reconstructs the original file. The desktop RX application presents the result and reception data.', detail:'Chunk, frame, and whole-file CRC checks serve different scopes. BER is evaluated by comparing reconstructed data with the corresponding original reference file.', code:'CRC checks  +  reference-file BER comparison', file:'firmware/specs/protocol_spec.md', color:'coral' }
 ];
 
-const pageRoutes = [
+
+const codeExamples = {
+  prepare: { title: 'The transmitter state starts in physical mode', path: 'application-source/gui_dev_v3/tx_app_state.py', ref: APP_PIN, start: 23, end: 36, language: 'python', code: String.raw\`    settings: AppSettings = field(default_factory=load_settings)
+    mode: str = "physical"
+    filename: str = "No file"
+    filetype: str = ""
+    file_size_bytes: int = 0
+    total_chunks: int = 0
+    chunk_size: int = 256
+    encoding: str = "4B5B"
+    modulation: str = "NRZ / OOK"
+    symbol_rate: str = "15,000 sym/s"
+    led_pin: int = 5
+    tx_power: str = "100 %"
+    pre_emphasis: str = "Disabled"
+    status_text: str = "Offline — no hardware"\` },
+  stream: { title: 'The serial controller starts a STREAM transfer', path: 'application-source/gui_dev_v3/serial/controllers.py', ref: APP_PIN, start: 460, end: 478, language: 'python', code: String.raw\`        begin = (
+            f"STREAM_BEGIN:{tid}:1:{len(data)}:{chunk_size}"
+            f":{file_crc:04X}:1:{name_bytes.hex().upper()}"
+        )
+        tot_c = max(1, (len(data) + chunk_size - 1) // chunk_size)
+        self.status(
+            "Preparing", path.name,
+            percent=0, state="active",
+            file_name=path.name, size=len(data), tid=tid,
+            chunk=0, total_chunks=tot_c,
+        )
+        self.send_line("STREAM_CLEAR")
+
+        si = self.line_counter
+        if not self.send_line(begin):
+            return False
+        if not self.wait_for_line_containing("TX_STREAM_BEGIN_OK", 5.0, si):
+            self.status("Send failed", "TX did not acknowledge STREAM_BEGIN", state="error")
+            return False\` },
+  encode: { title: 'One byte becomes two 5-bit codewords', path: 'firmware/tx/tx.ino', ref: PIN, start: 160, end: 163, language: 'cpp', code: String.raw\`void send4b5bEncodedByte(uint8_t value) {
+  send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);
+  send4b5bCode(CODE_4B5B[value & 0x0F]);
+}\` },
+  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 198, language: 'cpp', code: String.raw\`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
+  uint16_t chunkCrc = crc16_ccitt(payload, payloadLen);
+  size_t pos = 0;
+  frameBuf[pos++] = SOF_BYTE;
+  frameBuf[pos++] = VERSION_BYTE;
+  frameBuf[pos++] = frameType;
+  putU16(frameBuf, pos, streamTid);
+  putU32(frameBuf, pos, streamTotalSize);
+  putU16(frameBuf, pos, streamTotalChunks);
+  putU16(frameBuf, pos, chunkIndex);
+  putU16(frameBuf, pos, payloadLen);
+  putU16(frameBuf, pos, streamFileCrc);
+  putU16(frameBuf, pos, chunkCrc);
+  frameBuf[pos++] = streamNameLen;
+  for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];
+  for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];
+  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);\` },
+  light: { title: 'A logical bit selects the GPIO output level', path: 'firmware/tx/tx.ino', ref: PIN, start: 147, end: 150, language: 'cpp', code: String.raw\`void send4b5bBit(bool bitValue) {
+  digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());
+  waitSymbolBoundary();
+}\` },
+  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', code: String.raw\`bool sampleRawAt(uint32_t sampleTimeUs) {
+  if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }
+  uint32_t delta = symbolUs / 6;
+  waitUntil(sampleTimeUs - delta);
+  bool a = digitalRead(RX_PIN);
+  waitUntil(sampleTimeUs);
+  bool b = digitalRead(RX_PIN);
+  waitUntil(sampleTimeUs + delta);
+  bool c = digitalRead(RX_PIN);
+  return (a + b + c) >= 2;
+}\` },
+  decode: { title: 'Two valid 5-bit codewords reconstruct one byte', path: 'firmware/rx/rx.ino', ref: PIN, start: 840, end: 854, language: 'cpp', code: String.raw\`bool read4b5bByte(uint8_t &value) {
+  if (!lineSynced && !acquire4b5bSync()) return false;
+  if (!frameAligned) return alignToEncodedSof(value);
+  uint8_t highCode = 0, lowCode = 0;
+  if (!read5b(highCode) || !read5b(lowCode)) return false;
+  int8_t highNibble = DECODE_4B5B[highCode & 0x1F];
+  int8_t lowNibble = DECODE_4B5B[lowCode & 0x1F];
+  if (highNibble < 0 || lowNibble < 0) {
+    invalidCodeCount++;
+    resetLineDecoder();
+    return false;
+  }
+  value = (uint8_t)((highNibble << 4) | lowNibble);
+  return true;
+}\` },
+  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', code: String.raw\`void processCompleteFrame() {
+  if (framePos < 1 + 19 + 2) { resetLineDecoder(); return; }
+  uint16_t rxFrameCrc = getU16(frameBuf, framePos - 2);
+  uint16_t calcFrameCrc = crc16_ccitt(frameBuf, framePos - 2);
+  if (rxFrameCrc != calcFrameCrc) { crcFailCount++; resetLineDecoder(); return; }
+
+  uint8_t version = frameBuf[1];
+  uint8_t frameType = frameBuf[2];
+  uint16_t tid = getU16(frameBuf, 3);
+  uint32_t totalSize = getU32(frameBuf, 5);
+  uint16_t totalChunks = getU16(frameBuf, 9);
+  uint16_t chunkIndex = getU16(frameBuf, 11);
+  uint16_t chunkLen = getU16(frameBuf, 13);
+  uint16_t fileCrc = getU16(frameBuf, 15);
+  uint16_t rxChunkCrc = getU16(frameBuf, 17);
+  uint8_t nameLen = frameBuf[19];
+  if (version != VERSION_BYTE || nameLen > MAX_NAME_BYTES || chunkLen > MAX_PAYLOAD_BYTES || chunkIndex >= totalChunks) { resetLineDecoder(); return; }
+  size_t nameStart = 20;
+  size_t payloadStart = nameStart + nameLen;
+  if (payloadStart + chunkLen + 2 != framePos) { resetLineDecoder(); return; }
+  uint16_t calcChunkCrc = crc16_ccitt(frameBuf + payloadStart, chunkLen);
+  if (rxChunkCrc != calcChunkCrc) { crcFailCount++; resetLineDecoder(); return; }
+  crcOkCount++;
+  if (isRecentlyCompletedTransfer(tid, frameType, totalSize, totalChunks, fileCrc, nameLen, frameBuf + nameStart)) {
+    if (reportChunks) { Serial.print("RX_DUPLICATE_FRAME_SKIP:"); Serial.println(tid); }
+    resetLineDecoder();
+    return;
+  }
+  if (frameType == FRAME_TYPE_NOTICE) {
+    Serial.print("RX_TRANSFER_NOTICE:"); Serial.print(tid); Serial.print(":"); Serial.print(totalSize); Serial.print(":"); Serial.print(totalChunks); Serial.print(":"); Serial.print(fileCrc, HEX); Serial.print(":"); printHexBytes(frameBuf + nameStart, nameLen); Serial.println();
+    resetLineDecoder();
+    return;
+  }
+  bufferVerifiedChunk(tid, frameType, totalSize, totalChunks, chunkIndex, chunkLen, fileCrc, nameLen, frameBuf + nameStart, frameBuf + payloadStart);
+  resetLineDecoder();
+}\` }
+};
+
+function SourceCodePanel({ lessonId }) {
+  const [open, setOpen] = useState(false);
+  const example = codeExamples[lessonId];
+  if (!example) return null;
+  const url = SOURCE(example.path, example.ref) + \`#L\${example.start}-L\${example.end}\`;
+  return <div className="source-code-panel">
+    <div className="source-code-heading">
+      <div><span className="eyebrow">IMPLEMENTATION · EXACT SOURCE LINES</span><b>{example.title}</b></div>
+      <button type="button" onClick={() => setOpen(v => !v)} aria-expanded={open}>{open ? 'HIDE CODE' : 'SHOW CODE'} <Code2 size={14}/></button>
+    </div>
+    <AnimatePresence initial={false}>
+      {open && <motion.div className="source-code-body" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:.24}}>
+        <div className="source-code-meta"><span>{example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
+        <pre className="source-code"><code>{example.code.split('\\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
+        <p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
+      </motion.div>}
+    </AnimatePresence>
+  </div>;
+}
+
+const pageRoutes = 
   { id:'overview', label:'Overview', title:'Data, carried by light.', description:'A guided introduction to the short-range ESP32 visible-light communication prototype.' },
   { id:'journey', label:'Signal journey', title:'Follow the signal.', description:'Trace a file through desktop software, line coding, the optical channel, and reconstruction.' },
   { id:'architecture', label:'Architecture', title:'Two endpoints. One link.', description:'Understand how the transmitter, optical channel, receiver, and desktop applications fit together.' },
@@ -51,7 +197,7 @@ function SignalDiagram({ active, onSelect }) {
   const stageX = [98,221,355,482,619,743,881,988];
   const activeX = stageX[active];
   return <div className="diagram-frame">
-    <div className="diagram-topline"><span><i/> LIVE SYSTEM MODEL</span><div className="diagram-toolbar"><span>INTERACTIVE · 08 STAGES</span><button onClick={()=>setZoom(v=>Math.max(.85,v-.15))} aria-label="Zoom out">−</button><button onClick={()=>setZoom(v=>Math.min(1.6,v+.15))} aria-label="Zoom in">+</button><button onClick={()=>setZoom(1)} aria-label="Fit diagram">FIT</button></div></div>
+    <div className="diagram-topline"><span><i/> ANIMATED SYSTEM MODEL · NOT LIVE TELEMETRY</span><div className="diagram-toolbar"><span>INTERACTIVE · 08 STAGES</span><button onClick={()=>setZoom(v=>Math.max(.85,v-.15))} aria-label="Zoom out">−</button><button onClick={()=>setZoom(v=>Math.min(1.6,v+.15))} aria-label="Zoom in">+</button><button onClick={()=>setZoom(1)} aria-label="Fit diagram">FIT</button></div></div>
     <svg className="signal-svg" viewBox="0 0 1020 330" role="img" aria-label="Isometric diagram of the visible light communication signal path">
       <defs>
         <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#d7cbbd" strokeWidth=".7"/></pattern>
@@ -169,7 +315,7 @@ function LessonExplorer() {
         <div className="lesson-copy">
           <div className="lesson-copy-main">
             <div className="lesson-meta"><span className={`tag ${lesson.color}`}>{lesson.tag}</span><span>STAGE {lesson.n} / 08</span></div>
-            <AnimatePresence mode="wait"><motion.div key={lesson.id} aria-live="polite" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.2}}><h3>{lesson.title}</h3><p>{lesson.body}</p><p className="detail">{lesson.detail}</p><code className="inline-code">{lesson.code}</code><a className="lesson-source-link" href={SOURCE(lesson.file)} target="_blank" rel="noreferrer"><span>VIEW SOURCE FILE</span><code>{lesson.file}</code><ExternalLink size={14}/></a></motion.div></AnimatePresence>
+            <AnimatePresence mode="wait"><motion.div key={lesson.id} aria-live="polite" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.2}}><h3>{lesson.title}</h3><p>{lesson.body}</p><p className="detail">{lesson.detail}</p><code className="inline-code">{lesson.code}</code><a className="lesson-source-link" href={sourceFor(lesson.file)} target="_blank" rel="noreferrer"><span>VIEW SOURCE FILE</span><code>{lesson.file}</code><ExternalLink size={14}/></a><SourceCodePanel lessonId={lesson.id}/></motion.div></AnimatePresence>
           </div>
           <div className="lesson-controls">
             <span className="keyboard-hint">KEYS <kbd>←</kbd><kbd>→</kbd> STEP <kbd>SPACE</kbd> PLAY / PAUSE</span>
@@ -218,7 +364,14 @@ function SoftwareArchitecture() {
     ]
   };
   const rows=flows[view];
-  return <section className="content-section software-section" id="software"><div className="section-heading"><div><span className="eyebrow">03 · DESKTOP SOFTWARE ARCHITECTURE</span><h2>Two apps.<br/>One shared core.</h2></div><p>The PySide6 tools are not just serial terminals. They separate UI state, backend strategies, serial transport, and transfer-quality logic.</p></div><div className="software-toolbar"><div className="software-tabs"><button className={view==='tx'?'selected':''} aria-pressed={view==='tx'} onClick={()=>setView('tx')}>TRANSMITTER APP</button><button className={view==='rx'?'selected':''} aria-pressed={view==='rx'} onClick={()=>setView('rx')}>RECEIVER APP</button><button className={view==='shared'?'selected':''} aria-pressed={view==='shared'} onClick={()=>setView('shared')}>SHARED CORE</button></div>{view!=='shared'&&<div className="software-mode"><span>BACKEND STRATEGY</span><button className={mode==='physical'?'selected':''} aria-pressed={mode==='physical'} onClick={()=>setMode('physical')}>PHYSICAL</button><button className={mode==='simulated'?'selected':''} aria-pressed={mode==='simulated'} onClick={()=>setMode('simulated')}>SIMULATED</button></div>}</div><div className="software-flow">{rows.map(([n,title,desc,file],i)=><React.Fragment key={n}><article className="software-node"><span className="software-index">{n}</span><div><b>{title}</b><p>{desc}</p><a href={SOURCE(file)} target="_blank" rel="noreferrer">OPEN SOURCE MAP <ArrowUpRight size={12}/></a></div></article>{i<rows.length-1&&<div className="software-connector"><ArrowDown size={15}/></div>}</React.Fragment>)}</div><div className="software-foot"><span><i/> STATE REFRESHES ON A 1-SECOND POLL CYCLE</span><a href={SOURCE('application-source/gui_dev_v3/codemap.md')} target="_blank" rel="noreferrer">ROOT APPLICATION CODEMAP <ExternalLink size={12}/></a></div></section>;
+  return <section className="content-section software-section" id="software"><div className="section-heading"><div><span className="eyebrow">03 · DESKTOP SOFTWARE ARCHITECTURE</span><h2>Two apps.<br/>One shared core.</h2></div><p>The PySide6 tools are not just serial terminals. They separate UI state, backend strategies, serial transport, and transfer-quality logic.</p></div><div className="software-toolbar"><div className="software-tabs"><button className={view==='tx'?'selected':''} aria-pressed={view==='tx'} onClick={()=>setView('tx')}>TRANSMITTER APP</button><button className={view==='rx'?'selected':''} aria-pressed={view==='rx'} onClick={()=>setView('rx')}>RECEIVER APP</button><button className={view==='shared'?'selected':''} aria-pressed={view==='shared'} onClick={()=>setView('shared')}>SHARED CORE</button></div>{view!=='shared'&&<div className="software-mode"><span>BACKEND STRATEGY</span><button className={mode==='physical'?'selected':''} aria-pressed={mode==='physical'} onClick={()=>setMode('physical')}>PHYSICAL</button><button className={mode==='simulated'?'selected':''} aria-pressed={mode==='simulated'} onClick={()=>setMode('simulated')}>SIMULATED</button></div>}</div><div className="software-flow">{rows.map(([n,title,desc,file],i)=><React.Fragment key={n}><article className="software-node"><span className="software-index">{n}</span><div><b>{title}</b><p>{desc}</p><a href={sourceFor(file)} target="_blank" rel="noreferrer">OPEN SOURCE MAP <ArrowUpRight size={12}/></a></div></article>{i<rows.length-1&&<div className="software-connector"><ArrowDown size={15}/></div>}</React.Fragment>)}</div><div className="software-foot"><span><i/> SOURCE-BASED ARCHITECTURE · PHYSICAL IS THE DEFAULT</span><a href={APP_SOURCE('application-source/gui_dev_v3/codemap.md')} target="_blank" rel="noreferrer">ROOT APPLICATION CODEMAP <ExternalLink size={12}/></a></div>
+    <div className="software-provenance"><div><span className="eyebrow">HOW TO READ THIS SWITCH</span><b>It changes this teaching diagram — not a live connection.</b><p>The development application defaults to the physical ESP32 backend. Its optional simulation backend remains available for software testing, but it does not send data through the LED or photodiode.</p></div><a href="https://github.com/luckyprinter/OpenVLC-Public/pull/18" target="_blank" rel="noreferrer">APP DEVELOPMENT BRANCH · DRAFT PR #18 <ExternalLink size={13}/></a></div>
+    <div className="development-notes"><div className="development-notes-head"><span className="eyebrow">WHAT CHANGED IN THE NEWER APPLICATION WORK</span><h3>More honest measurements. Safer transfers.</h3><p>These are changes in the draft development branch, not claims about a completed physical test.</p></div><div className="development-note-grid">
+      <article><span>01 · HARDWARE-FIRST</span><b>Real serial discovery</b><p>TX and RX identify their own firmware, prioritize their own saved port, and keep the other board's port separate.</p><a href={APP_SOURCE('application-source/gui_dev_v3/tx/backends/physical.py')+'#L128-L190'} target="_blank" rel="noreferrer">TX discovery code <ArrowUpRight size={12}/></a></article>
+      <article><span>02 · TELEMETRY HONESTY</span><b>No invented OOK trace</b><p>The live RX view uses received PVo, Vref, and margin telemetry. Raw symbol-rate OOK samples remain unavailable until firmware streams them.</p><a href="https://github.com/luckyprinter/OpenVLC-Public/pull/18" target="_blank" rel="noreferrer">PR #18 implementation notes <ArrowUpRight size={12}/></a></article>
+      <article><span>03 · METHOD 2 BER</span><b>Compare the actual files</b><p>Reference-file BER is kept distinct from CRC checks and uses bounded-block file comparison rather than loading both complete files into memory.</p><a href={APP_SOURCE('application-source/gui_dev_v3/logic/ber_bridge.py')+'#L140-L205'} target="_blank" rel="noreferrer">File comparison code <ArrowUpRight size={12}/></a></article>
+      <article><span>04 · BATCH SAFETY</span><b>Bounded reconstruction</b><p>Large transfers are split into firmware-sized parts. The receiver bounds pending groups, expires stale batches, and rejects conflicting metadata.</p><a href={APP_SOURCE('application-source/gui_dev_v3/logic/batch_assembler.py')+'#L1-L110'} target="_blank" rel="noreferrer">Batch assembler code <ArrowUpRight size={12}/></a></article>
+    </div></div></section>;
 }
 
 function Protocol() {
@@ -299,7 +452,7 @@ function Validation() {
 }
 
 function SourceFooter() {
-  return <footer className="site-footer"><div className="footer-top"><div><span className="eyebrow">THE RESEARCH ARTIFACT</span><h2>Open implementation.<br/><i>Inspectable by design.</i></h2><p>This guide explains the system. The repository contains the implementation. The thesis remains the authority for methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div><div className="footer-meta"><span>OPENVLC FIELD GUIDE</span><span>REFERENCE COMMIT · {PIN.slice(0,12)}</span><a href={SOURCE('README.md')}>REPOSITORY README <ExternalLink size={12}/></a></div></footer>;
+  return <footer className="site-footer"><div className="footer-top"><div><span className="eyebrow">THE RESEARCH ARTIFACT</span><h2>Open implementation.<br/><i>Inspectable by design.</i></h2><p>This guide explains the system. The repository contains the implementation. The thesis remains the authority for methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div><div className="footer-meta"><span>OPENVLC FIELD GUIDE</span><span>FIRMWARE {PIN.slice(0,7)} · APP DRAFT {APP_PIN.slice(0,7)}</span><a href={SOURCE('README.md')}>REPOSITORY README <ExternalLink size={12}/></a></div></footer>;
 }
 
 export default function App() {
@@ -323,7 +476,7 @@ export default function App() {
       case 'hardware': return <Hardware/>;
       case 'receiver': return <ReceiverPipeline/>;
       case 'validation': return <Validation/>;
-      default: return <section className="overview-landing"><div className="overview-kicker">OPENVLC FIELD GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><div className="overview-grid">{pageRoutes.slice(1).map((page,index)=><a className="overview-card" key={page.id} href={`#/${page.id}`}><span>0{index+1} / FIELD NOTE</span><b>{page.label}</b><p>{page.description}</p><i>OPEN CHAPTER <ArrowUpRight size={14}/></i></a>)}</div><div className="overview-source"><div><span className="eyebrow">BUILT FROM THE IMPLEMENTATION</span><h2>Understand the system.<br/><em>Inspect the source.</em></h2><p>Each chapter connects the engineering explanation to the pinned public implementation. The thesis remains the authority for experimental methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div></section>;
+      default: return <section className="overview-landing"><div className="overview-kicker">OPENVLC FIELD GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><div className="overview-grid">{pageRoutes.slice(1).map((page,index)=><a className="overview-card" key={page.id} href={`#/${page.id}`}><span>0{index+1} / FIELD NOTE</span><b>{page.label}</b><p>{page.description}</p><i>OPEN CHAPTER <ArrowUpRight size={14}/></i></a>)}</div><div className="overview-source"><div><span className="eyebrow">BUILT FROM TWO EXPLICIT SOURCE SNAPSHOTS</span><h2>Understand the system.<br/><em>Inspect the source.</em></h2><p>Each chapter links to exact source lines. Firmware links use the thesis baseline; desktop-app links use the newer draft development branch. The thesis remains the authority for experimental methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div></section>;
     }
   };
   const previous=pageRoutes[currentIndex-1], next=pageRoutes[currentIndex+1];
