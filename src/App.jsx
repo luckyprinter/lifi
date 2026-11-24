@@ -66,7 +66,7 @@ const codeExamples = {
   send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);
   send4b5bCode(CODE_4B5B[value & 0x0F]);
 }` },
-  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 198, language: 'cpp', code: String.raw`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
+  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 200, language: 'cpp', code: String.raw`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
   uint16_t chunkCrc = crc16_ccitt(payload, payloadLen);
   size_t pos = 0;
   frameBuf[pos++] = SOF_BYTE;
@@ -83,11 +83,28 @@ const codeExamples = {
   for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];
   for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];
   uint16_t frameCrc = crc16_ccitt(frameBuf, pos);` },
-  light: { title: 'A logical bit selects the GPIO output level', path: 'firmware/tx/tx.ino', ref: PIN, start: 147, end: 150, language: 'cpp', code: String.raw`void send4b5bBit(bool bitValue) {
-  digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());
-  waitSymbolBoundary();
+  light: { title: 'The transmitter loops through chunks and sends optical frames', path: 'firmware/tx/tx.ino', ref: PIN, start: 259, end: 278, language: 'cpp', related: [{title:'Bit-level GPIO output and symbol timing',path:'firmware/tx/tx.ino',ref:PIN,start:147,end:179}], code: String.raw`void handleStreamStart() {
+  if (streamTotalSize == 0) { Serial.println("TX_STREAM_ERROR:no_begin"); return; }
+  if (streamLoadedBytes < streamTotalSize) { Serial.print("TX_STREAM_ERROR:not_loaded:"); Serial.print(streamLoadedBytes); Serial.print(":"); Serial.println(streamTotalSize); return; }
+  uint16_t calc = crc16_ccitt(streamFileBuf, streamTotalSize);
+  if (calc != streamFileCrc) { Serial.print("TX_STREAM_ERROR:file_crc:got="); Serial.print(calc, HEX); Serial.print(":expected="); Serial.println(streamFileCrc, HEX); return; }
+
+  Serial.print("TX_STREAM_START:"); Serial.print(streamTid); Serial.print(":mode="); Serial.print(modeName()); Serial.print(":chunks="); Serial.println(streamTotalChunks);
+  size_t noticeLen = buildFrame(FRAME_TYPE_NOTICE, 0, NULL, 0);
+  sendOpticalFrame(frameBuf, noticeLen, false);
+  Serial.print("TX_STREAM_NOTICE_SENT:"); Serial.print(streamTid); Serial.print(":chunks="); Serial.println(streamTotalChunks);
+  for (uint16_t chunkIndex = 0; chunkIndex < streamTotalChunks; chunkIndex++) {
+    uint32_t offset = (uint32_t)chunkIndex * streamChunkSize;
+    uint16_t payloadLen = streamChunkSize;
+    if (offset + payloadLen > streamTotalSize) payloadLen = streamTotalSize - offset;
+    memcpy(payloadBuf, streamFileBuf + offset, payloadLen);
+    if (streamPadFinal && payloadLen < streamChunkSize) { memset(payloadBuf + payloadLen, 0, streamChunkSize - payloadLen); payloadLen = streamChunkSize; }
+    size_t frameLen = buildFrame(streamType, chunkIndex, payloadBuf, payloadLen);
+    sendOpticalFrame(frameBuf, frameLen, chunkIndex == streamTotalChunks - 1);
+  }
+  Serial.print("TX_STREAM_DONE:"); Serial.print(streamTid); Serial.print(":"); Serial.println(streamTotalChunks);
 }` },
-  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', code: String.raw`bool sampleRawAt(uint32_t sampleTimeUs) {
+  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', related: [{title:'Idle detection and sync-word acquisition',path:'firmware/rx/rx.ino',ref:PIN,start:773,end:804}], code: String.raw`bool sampleRawAt(uint32_t sampleTimeUs) {
   if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }
   uint32_t delta = symbolUs / 6;
   waitUntil(sampleTimeUs - delta);
@@ -113,7 +130,7 @@ const codeExamples = {
   value = (uint8_t)((highNibble << 4) | lowNibble);
   return true;
 }` },
-  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', code: String.raw`void processCompleteFrame() {
+  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', related: [{title:'Whole-file CRC before RX_FILE_HEX output',path:'firmware/rx/rx.ino',ref:PIN,start:874,end:885},{title:'Desktop receiver parses and saves the completed file',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP_PIN,start:681,end:740}], code: String.raw`void processCompleteFrame() {
   if (framePos < 1 + 19 + 2) { resetLineDecoder(); return; }
   uint16_t rxFrameCrc = getU16(frameBuf, framePos - 2);
   uint16_t calcFrameCrc = crc16_ccitt(frameBuf, framePos - 2);
@@ -165,7 +182,7 @@ function SourceCodePanel({ lessonId }) {
       {open && <motion.div className="source-code-body" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:.24}}>
         <div className="source-code-meta"><span>{example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
         <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
-        <p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
+        <div className="source-related">{(example.related || []).map(item=><a key={item.title} href={SOURCE(item.path,item.ref)+`#L${item.start}-L${item.end}`} target="_blank" rel="noreferrer">RELATED: {item.title} · L{item.start}–L{item.end} <ExternalLink size={11}/></a>)}</div><p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
       </motion.div>}
     </AnimatePresence>
   </div>;
