@@ -313,11 +313,11 @@ codeLessons.push(
   ['        if expected_bytes:','Only enter the comparison when a reference file or supported generated reference exists.'],
   ['            res = compare_payload_bits(expected_bytes, received_bytes, mismatch_limit=50)','Compare expected and received payload bytes and request a limited mismatch preview.'],
   ['            # Update labels','The next values are presented in the BER Analyzer UI.'],
-  ['            self.lbl_compared.setText(f\"{res[\\'overlap_bytes\\']} / {res[\\'expected_bytes\\']} B\")','Show how many bytes overlap, relative to the expected file size.'],
+  [`            self.lbl_compared.setText(f\"{res['overlap_bytes']} / {res['expected_bytes']} B\")`,'Show how many bytes overlap, relative to the expected file size.'],
   ['            self.lbl_bit_errors.setText(str(res[\"strict_bit_errors\"]))','Show the strict bit-error count.'],
-  ['            self.lbl_ber.setText(f\"{res[\\'overlap_ber\\'] * 100:.6f} %\")','Show BER over the overlapping compared region.'],
-  ['            self.lbl_strict_ber.setText(f\"{res[\\'strict_ber\\'] * 100:.6f} %\")','Show strict BER, which also accounts for length differences.'],
-  ['            self.lbl_accuracy.setText(f\"{res[\\'bit_accuracy\\'] * 100:.4f} %\")','Show bit accuracy derived from the comparison.'],
+  [`            self.lbl_ber.setText(f\"{res['overlap_ber']} * 100:.6f} %\")`,'Show BER over the overlapping compared region.'],
+  [`            self.lbl_strict_ber.setText(f\"{res['strict_ber']} * 100:.6f} %\")`,'Show strict BER, which also accounts for length differences.'],
+  [`            self.lbl_accuracy.setText(f\"{res['bit_accuracy']} * 100:.4f} %\")`,'Show bit accuracy derived from the comparison.'],
   ['            delta = res[\"length_delta\"]','Read the difference in file length so missing or extra bytes can be reported.']
  ],concept:'CRC and BER answer different questions. CRC checks data against a transmitted checksum. Method 2 BER compares the reconstructed bytes with a separately loaded original reference file.'}
 );
