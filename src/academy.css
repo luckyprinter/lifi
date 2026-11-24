@@ -331,3 +331,17 @@
  .practice-result-list>div{grid-template-columns:24px 1fr}
  .practice-result-list>div>small{grid-column:2}
 }
+
+
+.deep-symbol-list>button{display:flex;align-items:center;gap:7px;min-width:0;padding:8px 9px;border:1px solid #2b414b;border-radius:5px;background:#12212a;color:#c8d5d4;text-align:left;cursor:pointer}
+.deep-symbol-list>button:hover,.deep-symbol-list>button.active{border-color:#679d96;background:#19323a}
+.deep-symbol-list>button>b{min-width:0;overflow:hidden;color:#dce8e6;font:9px var(--mono);text-overflow:ellipsis;white-space:nowrap}
+.deep-symbol-list>button>code{margin-left:auto;flex:0 0 auto;color:#7d9ca3;font:7px var(--mono)}
+.deep-symbol-list>button>svg{flex:0 0 auto;color:#7ebbb0}
+.deep-symbol-detail{margin-top:12px;padding:15px;border:1px solid #3b5c62;border-radius:7px;background:#142a31}
+.deep-symbol-detail h4{margin:0 0 7px;color:#edf5f2;font:600 17px var(--display)}
+.deep-symbol-range{display:block;color:#8ebdb5;font:8px var(--mono)}
+.deep-symbol-detail pre{max-width:100%;margin:12px 0;padding:12px;border:1px solid #304b53;border-radius:5px;background:#0d1b22;color:#d3e6e1;font:10px/1.7 var(--mono);white-space:pre-wrap;overflow-wrap:anywhere}
+.deep-symbol-detail p{margin:9px 0;color:#aebfc0;font-size:10px;line-height:1.7}
+.deep-symbol-detail>a{display:inline-flex;align-items:center;gap:6px;margin-top:4px;color:#a6e2d5;font:8px var(--mono)}
+.deep-symbol-detail>small{display:block;margin-top:10px;color:#77939a;font-size:9px;line-height:1.6}
