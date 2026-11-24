@@ -632,3 +632,17 @@ The ideal reader journey is:
 **What is this project?** → **What hardware is on the table?** → **What does a person do in TX?** → **What does the TX app do with the file?** → **What crosses USB?** → **How does the ESP32 turn bytes into light?** → **What happens in the receiver circuit?** → **How does RX decode and rebuild the file?** → **What does the RX app show?** → **How do I inspect and verify the result?** → **How is the code organized?** → **Can I read and explain the important code?** → **Can I explore the whole repository?** → **Can I solve a troubleshooting scenario?**
 
 This sequence should determine the navigation, content, animations, source links, and quizzes. The code is not an appendix disconnected from the project story; it is revealed exactly when the reader needs to understand how the visible behavior is implemented.
+
+
+---
+
+## 13. External design references and transferable ideas
+
+These are references for learning interaction patterns, not templates to copy or code to rehost.
+
+- **Agily — visual programming lessons:** synchronize animation, the highlighted code line, and a plain-language explanation; let the learner pause, step, alter inputs, predict outcomes, and check understanding. Apply this to the TX/RX execution trace and code lessons.
+- **CircuitVerse — interactive digital logic learning:** let learners inspect and manipulate a circuit rather than only reading a static schematic. Apply this to the LED driver, photodiode amplifier/comparator chain, and threshold/sampling lessons; keep our model tied to the actual prototype circuit.
+- **Wokwi documentation — embedded systems learning:** organize practical examples around real boards, pins, serial monitors, and hardware/software boundaries. Borrow the clarity of its hardware-first explanations, not its simulation-first product model.
+- **3Blue1Brown — visual explanation craft:** introduce one idea at a time, build a model progressively, and use motion to expose relationships that are difficult to see in a static diagram. Apply this to 4B5B, OOK timing, sampling, CRC, and chunk reconstruction.
+
+The Academy should combine these principles into its own identity: editorial engineering documentation, interactive hardware models, synchronized code explanations, and realistic user scenarios. Do not reproduce another site's layout, artwork, copy, or private implementation.
