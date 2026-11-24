@@ -14,14 +14,14 @@ const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
 const link = (path, ref = FW, lines = '') => REPO + '/blob/' + ref + '/' + path + (lines ? '#L' + lines.replace('-', '-L') : '');
 
 const stages = [
-  {id:'file',label:'Choose a file',kind:'file',eyebrow:'01 · APPLICATION',title:'A file becomes a transfer job',copy:'The transmitter application reads the selected file, records its size and name, and prepares the transfer settings. It does not send light itself: it coordinates the physical transmitter over USB serial.',signal:'FILE BYTES',detail:'Desktop TX application → serial controller',code:'tx_app_state.py'},
-  {id:'usb',label:'USB serial',kind:'usb',eyebrow:'02 · HOST ↔ ESP32',title:'The host and board agree on a transfer',copy:'The desktop sends a STREAM_BEGIN command and waits for the firmware acknowledgement. File data is delivered in acknowledged blocks before the optical transmission starts.',signal:'STREAM_BEGIN → ACK → STREAM_DATA',detail:'Application serial controller → TX firmware command handler',code:'serial/controllers.py'},
-  {id:'coding',label:'4B5B coding',kind:'coding',eyebrow:'03 · LINE CODING',title:'Eight bits become ten',copy:'Each byte is split into a high and low nibble. The firmware maps each 4-bit value to a 5-bit codeword, producing a transition-friendly stream for clock recovery.',signal:'BYTE → TWO 5-BIT CODEWORDS',detail:'TX firmware → send4b5bEncodedByte()',code:'firmware/tx/tx.ino'},
-  {id:'frame',label:'Frame building',kind:'frame',eyebrow:'04 · PROTOCOL',title:'Payload gets structure and checks',copy:'A frame carries identifiers, lengths, chunk information, filename metadata, payload bytes, and integrity fields. The receiver uses these fields to find boundaries and reject damaged data.',signal:'SYNC → SOF → HEADER → PAYLOAD → CRC',detail:'TX buildFrame() ↔ RX processCompleteFrame()',code:'firmware/specs/protocol_spec.md'},
-  {id:'light',label:'Light transmission',kind:'light',eyebrow:'05 · OPTICAL TX',title:'GPIO timing drives the LED',copy:'The ESP32 switches the LED driver according to the encoded symbol stream. The LED is the physical transmitter: the information travels across the room as changes in visible light.',signal:'GPIO5 → DRIVER → 12 V LED',detail:'TX sendOpticalFrame() → send4b5bBit()',code:'firmware/tx/tx.ino'},
-  {id:'detect',label:'Photodetection',kind:'detect',eyebrow:'06 · ANALOG RX',title:'Photons become an electrical signal',copy:'The BPW34 photodiode converts received light into photocurrent. The OPA2604 transimpedance amplifier produces a voltage, and the LM393 comparator converts the threshold crossing into a digital signal.',signal:'BPW34 → OPA2604 → LM393 → GPIO5',detail:'Physical receiver front end → RX ESP32',code:'firmware/rx/rx.ino'},
-  {id:'decode',label:'Sampling & decode',kind:'decode',eyebrow:'07 · RX FIRMWARE',title:'The receiver recovers symbols and bytes',copy:'The receiver samples around the expected symbol centre, uses majority voting when enabled, acquires synchronization, aligns to the encoded start marker, and decodes valid 5-bit codewords.',signal:'SAMPLES → SYNC → 5B → NIBBLES → BYTE',detail:'RX sampleRawAt() → read4b5bByte()',code:'firmware/rx/rx.ino'},
-  {id:'verify',label:'Verify & rebuild',kind:'verify',eyebrow:'08 · INTEGRITY',title:'Verified chunks become the original file',copy:'The receiver checks frame and chunk CRCs before accepting payload data. After all chunks arrive, whole-file CRC validation protects the reconstructed file. The desktop application can then save and compare it with the original reference.',signal:'FRAME CRC → CHUNK CRC → FILE CRC',detail:'RX firmware → RX desktop application',code:'firmware/rx/rx.ino'}
+  {id:'file',label:'Choose a file',kind:'file',eyebrow:'01 · APPLICATION',title:'A file becomes a transfer job',copy:'The transmitter application reads the selected file, records its size and name, and prepares the transfer settings. It does not send light itself: it coordinates the physical transmitter over USB serial.',signal:'FILE BYTES',detail:'Desktop TX application → serial controller',code:'tx_app_state.py',codeLesson:'tx-state'},
+  {id:'usb',label:'USB serial',kind:'usb',eyebrow:'02 · HOST ↔ ESP32',title:'The host and board agree on a transfer',copy:'The desktop sends a STREAM_BEGIN command and waits for the firmware acknowledgement. File data is delivered in acknowledged blocks before the optical transmission starts.',signal:'STREAM_BEGIN → ACK → STREAM_DATA',detail:'Application serial controller → TX firmware command handler',code:'serial/controllers.py',codeLesson:'serial-start'},
+  {id:'coding',label:'4B5B coding',kind:'coding',eyebrow:'03 · LINE CODING',title:'Eight bits become ten',copy:'Each byte is split into a high and low nibble. The firmware maps each 4-bit value to a 5-bit codeword, producing a transition-friendly stream for clock recovery.',signal:'BYTE → TWO 5-BIT CODEWORDS',detail:'TX firmware → send4b5bEncodedByte()',code:'firmware/tx/tx.ino',codeLesson:'tx-encode'},
+  {id:'frame',label:'Frame building',kind:'frame',eyebrow:'04 · PROTOCOL',title:'Payload gets structure and checks',copy:'A frame carries identifiers, lengths, chunk information, filename metadata, payload bytes, and integrity fields. The receiver uses these fields to find boundaries and reject damaged data.',signal:'SYNC → SOF → HEADER → PAYLOAD → CRC',detail:'TX buildFrame() ↔ RX processCompleteFrame()',code:'firmware/specs/protocol_spec.md',codeLesson:'tx-frame'},
+  {id:'light',label:'Light transmission',kind:'light',eyebrow:'05 · OPTICAL TX',title:'GPIO timing drives the LED',copy:'The ESP32 switches the LED driver according to the encoded symbol stream. The LED is the physical transmitter: the information travels across the room as changes in visible light.',signal:'GPIO5 → DRIVER → 12 V LED',detail:'TX sendOpticalFrame() → send4b5bBit()',code:'firmware/tx/tx.ino',codeLesson:'tx-bit'},
+  {id:'detect',label:'Photodetection',kind:'detect',eyebrow:'06 · ANALOG RX',title:'Photons become an electrical signal',copy:'The BPW34 photodiode converts received light into photocurrent. The OPA2604 transimpedance amplifier produces a voltage, and the LM393 comparator converts the threshold crossing into a digital signal.',signal:'BPW34 → OPA2604 → LM393 → GPIO5',detail:'Physical receiver front end → RX ESP32',code:'firmware/rx/rx.ino',codeLesson:'rx-majority'},
+  {id:'decode',label:'Sampling & decode',kind:'decode',eyebrow:'07 · RX FIRMWARE',title:'The receiver recovers symbols and bytes',copy:'The receiver samples around the expected symbol centre, uses majority voting when enabled, acquires synchronization, aligns to the encoded start marker, and decodes valid 5-bit codewords.',signal:'SAMPLES → SYNC → 5B → NIBBLES → BYTE',detail:'RX sampleRawAt() → read4b5bByte()',code:'firmware/rx/rx.ino',codeLesson:'rx-decode'},
+  {id:'verify',label:'Verify & rebuild',kind:'verify',eyebrow:'08 · INTEGRITY',title:'Verified chunks become the original file',copy:'The receiver checks frame and chunk CRCs before accepting payload data. After all chunks arrive, whole-file CRC validation protects the reconstructed file. The desktop application can then save and compare it with the original reference.',signal:'FRAME CRC → CHUNK CRC → FILE CRC',detail:'RX firmware → RX desktop application',code:'firmware/rx/rx.ino',codeLesson:'rx-crc'}
 ];
 
 const codeLessons = [
@@ -210,11 +210,11 @@ function StageVisual({stage}){
 }
 function LaptopGlyph(){return <Cable size={24}/>}
 
-function SignalJourney(){
+function SignalJourney({onOpenCode}){
  const [index,setIndex]=useState(0); const [playing,setPlaying]=useState(false); const stage=stages[index];
  React.useEffect(()=>{if(!playing)return;const id=setInterval(()=>setIndex(v=>(v+1)%stages.length),3800);return()=>clearInterval(id)},[playing]);
  return <section className="journey-section" id="journey"><div className="section-kicker">THE COMPLETE TRANSMISSION <span>08 STAGES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM A FILE TO LIGHT AND BACK</p><h2>Follow one transfer.<br/><i>All the way through.</i></h2></div><p className="section-intro">Move through the physical prototype one stage at a time. Each step changes the model, explains what is happening, and points to the responsible code.</p></div>
-  <div className="journey-layout"><aside className="stage-rail">{stages.map((s,i)=><button key={s.id+i} className={index===i?'active':''} onClick={()=>{setIndex(i);setPlaying(false)}}><span>{String(i+1).padStart(2,'0')}</span><b>{s.label}</b><i/></button>)}</aside><div className="journey-content"><StageVisual stage={stage}/><div className="journey-explain"><div className="eyebrow">{stage.eyebrow}</div><h3>{stage.title}</h3><p>{stage.copy}</p><div className="stage-connection"><Cable size={15}/><span>{stage.detail}</span></div><div className="stage-actions"><button onClick={()=>setIndex(v=>Math.max(0,v-1))} disabled={index===0}><ArrowLeft size={15}/> PREVIOUS</button><button className="journey-play" onClick={()=>setPlaying(v=>!v)}>{playing?'PAUSE':'AUTO PLAY'} <Activity size={14}/></button><button className="next-stage" onClick={()=>{setIndex(v=>(v+1)%stages.length);setPlaying(false)}}>NEXT STAGE <ArrowRight size={15}/></button></div></div></div></div>
+  <div className="journey-layout"><aside className="stage-rail">{stages.map((s,i)=><button key={s.id+i} className={index===i?'active':''} onClick={()=>{setIndex(i);setPlaying(false)}}><span>{String(i+1).padStart(2,'0')}</span><b>{s.label}</b><i/></button>)}</aside><div className="journey-content"><StageVisual stage={stage}/><div className="journey-explain"><div className="eyebrow">{stage.eyebrow}</div><h3>{stage.title}</h3><p>{stage.copy}</p><div className="stage-connection"><Cable size={15}/><span>{stage.detail}</span></div><div className="stage-actions"><button onClick={()=>setIndex(v=>Math.max(0,v-1))} disabled={index===0}><ArrowLeft size={15}/> PREVIOUS</button><button className="journey-play" onClick={()=>setPlaying(v=>!v)}>{playing?'PAUSE':'AUTO PLAY'} <Activity size={14}/></button><button className="open-code-stage" onClick={()=>onOpenCode(stage.codeLesson)}><Code2 size={14}/> OPEN RELATED CODE</button><button className="next-stage" onClick={()=>{setIndex(v=>(v+1)%stages.length);setPlaying(false)}}>NEXT STAGE <ArrowRight size={15}/></button></div></div></div></div>
  </section>
 }
 
@@ -273,8 +273,9 @@ function SourceMap(){
  </section>
 }
 
-function CodeStudio(){
- const [active,setActive]=useState('tx-encode'); const [query,setQuery]=useState(''); const selected=codeLessons.find(x=>x.id===active)||codeLessons[0];
+function CodeStudio({initialLesson}){
+ const [active,setActive]=useState(initialLesson||'tx-encode');
+ React.useEffect(()=>{if(initialLesson)setActive(initialLesson)},[initialLesson]); const [query,setQuery]=useState(''); const selected=codeLessons.find(x=>x.id===active)||codeLessons[0];
  const groups=['APPLICATION','FIRMWARE · TX','FIRMWARE · RX'];
  const filtered=useMemo(()=>codeLessons.filter(x=>(x.name+' '+x.path+' '+x.level).toLowerCase().includes(query.toLowerCase())),[query]);
  return <section className="code-studio" id="code"><div className="section-kicker">SOURCE CODE STUDIO <span>REAL FILES · PINNED LINES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM SURFACE KNOWLEDGE TO CODE CONFIDENCE</p><h2>Understand the code.<br/><i>One line at a time.</i></h2></div><p className="section-intro">Select a source lesson, tap any line, and read what it does. Each example is pinned to a commit so the code and line numbers stay traceable.</p></div>
@@ -356,9 +357,11 @@ export default function Academy(){
  const initialPath=initialHash.startsWith('path/')?initialHash.slice(5):'start';
  const [view,setView]=useState(()=>initialHash.startsWith('path/')?'path':['journey','paths','code','practice'].includes(initialHash)?initialHash:'home');
  const [path,setPath]=useState(initialPath);
+ const [codeSelection,setCodeSelection]=useState('tx-encode');
  const [menu,setMenu]=useState(false);
  const navigate=page=>{setView(page);setMenu(false);window.location.hash=page==='home'?'home':page};
  const openPath=id=>{setPath(id);setView('path');setMenu(false);window.location.hash='path/'+id};
+ const openCode=id=>{setCodeSelection(id||'tx-encode');navigate('code')};
  const backToPaths=()=>navigate('paths');
  React.useEffect(()=>{
   const onHash=()=>{const h=window.location.hash.replace(/^#/,'');if(h.startsWith('path/')){setPath(h.slice(5));setView('path')}else if(['journey','paths','code','practice'].includes(h)){setView(h)}else{setView('home')}};
@@ -368,9 +371,9 @@ export default function Academy(){
   <header className="academy-header"><Brand/><nav className={menu?'open':''}><button className={view==='paths'||view==='path'?'active':''} onClick={()=>navigate('paths')}>LEARNING PATHS</button><button className={view==='journey'?'active':''} onClick={()=>navigate('journey')}>SIGNAL JOURNEY</button><button className={view==='code'?'active':''} onClick={()=>navigate('code')}>CODE STUDIO</button><button className={view==='practice'?'active':''} onClick={()=>navigate('practice')}>PRACTICE</button><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
   <main>
    {view==='home'&&<HomePage navigate={navigate}/>}
-   {view==='journey'&&<SignalJourney/>}
+   {view==='journey'&&<SignalJourney onOpenCode={openCode}/>}
    {view==='paths'&&<PathCards onOpen={openPath}/>}
-   {view==='code'&&<CodeStudio/>}
+   {view==='code'&&<CodeStudio initialLesson={codeSelection}/>}
    {view==='practice'&&<PracticePage openPath={openPath}/>}
    {view==='path'&&<PathDetail key={path} id={path} onBack={backToPaths}/>}
   </main>
