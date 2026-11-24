@@ -28,7 +28,7 @@ const lessons = [
 const navItems = [
   ['journey','The signal journey'], ['architecture','System architecture'],
   ['software','Desktop software'], ['protocol','Protocol notes'],
-  ['hardware','Hardware map'], ['validation','Integrity checks']
+  ['hardware','Hardware map'], ['receiver-lab','Receiver pipeline'], ['validation','Integrity checks']
 ];
 
 function Packet({ step }) {
@@ -260,8 +260,38 @@ function Hardware() {
     </section>;
 }
 
+function ReceiverPipeline() {
+  const [step,setStep]=useState(0);
+  const [samples,setSamples]=useState([1,0,1]);
+  const [invert,setInvert]=useState(false);
+  const [codeword,setCodeword]=useState(0b11110);
+  const decoded=[-1,-1,-1,-1,-1,-1,-1,-1,-1,1,4,5,-1,-1,6,7,-1,-1,8,9,2,3,10,11,-1,-1,12,13,14,15,0,-1][codeword];
+  const vote=samples.filter(Boolean).length>=2?1:0;
+  const logical=invert?!vote:vote;
+  const stages=[
+    ['01','Wait for idle + start edge','The receiver waits for a stable idle level, then detects the transition that begins a frame.','At 15 ksymbols/s, one symbol is about 66 μs. The firmware requires at least max(2 × symbol period, 120 μs) of stable idle before looking for the edge.','RX_SYNC_WAIT_TIMEOUT_MS = 250'],
+    ['02','Sample the incoming symbol','The receiver samples GPIO5 at the configured phase within each symbol period.','With majority sampling enabled and symbolUs ≥ 30, it samples three times at −symbolUs/6, the target instant, and +symbolUs/6. Two matching samples decide the raw bit.','sampleRawAt() · three samples'],
+    ['03','Find preamble + synchronization','The decoder searches for alternating preamble transitions followed by the 16-bit synchronization word.','It accepts SYNC_WORD 0xD5B7 or its inverse. The firmware requires at least 20 alternating transitions and can search up to 220 bits.','SYNC_WORD = 0xD5B7'],
+    ['04','Align and decode 4B5B','The receiver aligns to the encoded SOF byte, then decodes each byte from two 5-bit codewords.','The encoded SOF marker is 0x02CB. Each 5-bit value is looked up in DECODE_4B5B; if either nibble is invalid, the decoder resets instead of inventing a byte.','ENCODED_SOF_4B5B = 0x02CB'],
+    ['05','Validate frame + chunk','The frame CRC is checked first. The receiver then validates the chunk CRC before accepting payload bytes.','The fixed header determines the variable name and payload lengths. A frame with inconsistent lengths or a failed CRC is rejected.','CRC-16/CCITT · frame then chunk'],
+    ['06','Store chunks + verify file','Verified chunks are placed at their indexed offsets. When every chunk is present, the receiver checks the whole-file CRC.','Only after the complete file passes the file CRC does firmware emit RX_FILE_HEX for the desktop receiver to reconstruct.','RX_RAM_STORE → RX_FILE_HEX']
+  ];
+  const current=stages[step];
+  return <section className="content-section receiver-pipeline" id="receiver-lab"><div className="section-heading"><div><span className="eyebrow">06 · INSIDE THE RECEIVER</span><h2>From a light pulse<br/>to a verified file.</h2></div><p>Step through the actual RX firmware path: synchronization, sampling, decoding, integrity checks, and file reconstruction.</p></div>
+    <div className="rx-pipeline-shell">
+      <div className="rx-pipeline-steps">{stages.map(([n,title],i)=><button key={n} className={step===i?'selected':''} onClick={()=>setStep(i)} aria-pressed={step===i}><span>{n}</span><b>{title}</b><i>{i<step?'DONE':i===step?'ACTIVE':'NEXT'}</i></button>)}</div>
+      <div className="rx-pipeline-detail"><div className="rx-pipeline-top"><span>RECEIVER DECODER · STEP {current[0]} / 06</span><span>FIRMWARE WALKTHROUGH</span></div><h3>{current[1]}</h3><p>{current[2]}</p><p className="rx-pipeline-explain">{current[3]}</p><code>{current[4]}</code>
+        {step===1&&<div className="majority-lab"><div><b>Try a 3-sample majority vote</b><p>Toggle each sample to simulate the raw comparator reads.</p></div><div className="sample-buttons">{samples.map((v,i)=><button key={i} className={v?'high':''} onClick={()=>setSamples(old=>old.map((x,j)=>i===j?1-x:x))}><small>SAMPLE {i+1}</small><b>{v}</b></button>)}</div><div className="vote-result"><span>RAW MAJORITY</span><b>{vote}</b><button onClick={()=>setInvert(v=>!v)} aria-pressed={invert}>{invert?'INVERSION ON':'INVERSION OFF'}</button><span>LOGICAL BIT <strong>{logical}</strong></span></div><small>Inversion is applied after the raw majority vote when the inverse synchronization word was detected.</small></div>}
+        {step===3&&<div className="codeword-lab"><div><b>Test a 5-bit codeword</b><p>Move the slider through all 32 possible values. Only assigned codewords decode to a nibble.</p></div><strong>{codeword.toString(2).padStart(5,'0')}</strong><input type="range" min="0" max="31" value={codeword} onChange={e=>setCodeword(Number(e.target.value))} aria-label="Test receiver 5-bit codeword"/><span className={decoded>=0?'decode-valid':'decode-invalid'}>{decoded>=0?'VALID · NIBBLE 0x'+decoded.toString(16).toUpperCase():'INVALID · DECODER RESETS'}</span></div>}
+      </div>
+      <div className="rx-pipeline-controls"><button onClick={()=>setStep(v=>Math.max(0,v-1))} disabled={step===0}><ArrowLeft size={15}/> Previous</button><span>{step+1} of {stages.length}</span><button onClick={()=>setStep(v=>Math.min(stages.length-1,v+1))} disabled={step===stages.length-1}>Next step <ArrowRight size={15}/></button></div>
+    </div>
+    <div className="rx-pipeline-note"><CircleDot size={16}/><span>This is a source-grounded teaching model, not a live capture. The analog waveform and comparator threshold are demonstrated separately in the Hardware Map.</span></div>
+  </section>;
+}
+
 function Validation() {
-  return <section className="content-section validation-section" id="validation"><div className="section-heading"><div><span className="eyebrow">06 · INTEGRITY & VALIDATION</span><h2>Trust, but<br/>verify the bits.</h2></div><p>A completed transfer is not a single pass/fail light. Integrity is checked at multiple scopes.</p></div><div className="validation-cards"><article><span>01</span><ShieldCheck/><h3>Chunk CRC</h3><p>Checks a payload chunk before it is accepted and stored.</p></article><article><span>02</span><Layers/><h3>Frame CRC</h3><p>Checks the assembled frame structure and contents.</p></article><article><span>03</span><FileCode2/><h3>File CRC</h3><p>Checks integrity across the reconstructed file.</p></article><article><span>04</span><Activity/><h3>BER comparison</h3><p>Compares reconstructed data with the corresponding original reference file.</p></article></div><div className="distinction"><b>CRC PASS ≠ BER = 0%</b><span>CRC validates defined data units. BER compares corresponding bits in the reference and received data. They answer different questions. <code>BER = differing bits ÷ compared bits × 100%</code></span></div></section>;
+  return <section className="content-section validation-section" id="validation"><div className="section-heading"><div><span className="eyebrow">07 · INTEGRITY & VALIDATION</span><h2>Trust, but<br/>verify the bits.</h2></div><p>A completed transfer is not a single pass/fail light. Integrity is checked at multiple scopes.</p></div><div className="validation-cards"><article><span>01</span><ShieldCheck/><h3>Chunk CRC</h3><p>Checks a payload chunk before it is accepted and stored.</p></article><article><span>02</span><Layers/><h3>Frame CRC</h3><p>Checks the assembled frame structure and contents.</p></article><article><span>03</span><FileCode2/><h3>File CRC</h3><p>Checks integrity across the reconstructed file.</p></article><article><span>04</span><Activity/><h3>BER comparison</h3><p>Compares reconstructed data with the corresponding original reference file.</p></article></div><div className="distinction"><b>CRC PASS ≠ BER = 0%</b><span>CRC validates defined data units. BER compares corresponding bits in the reference and received data. They answer different questions. <code>BER = differing bits ÷ compared bits × 100%</code></span></div></section>;
 }
 
 function SourceFooter() {
