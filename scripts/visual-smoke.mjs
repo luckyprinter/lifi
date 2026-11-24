@@ -70,7 +70,8 @@ try {
     const inventoryStats = await page.locator('.deep-dive-stats').innerText();
     if (!inventoryStats.includes('88') || !inventoryStats.includes('56') || !inventoryStats.includes('960')) failures.push(width + 'px Deep Dive inventory totals are incomplete');
     await page.locator('.deep-search input').fill('tx_app_state.py');
-    await page.locator('.deep-file-list button').filter({ hasText: 'application-source/gui_dev_v3/tx_app_state.py' }).click();
+    await page.locator('.deep-file-list button').first().click();
+    if (!(await page.locator('.deep-file-head code').innerText()).endsWith('tx_app_state.py')) failures.push(width + 'px Deep Dive search did not select the TXAppState source file');
     if (!(await page.locator('.deep-symbol-list').innerText()).includes('start_transmission')) failures.push(width + 'px Deep Dive did not index TXAppState.start_transmission');
     if (!(await page.locator('.deep-file-head a').getAttribute('href')).includes('/blob/411f183a')) failures.push(width + 'px Deep Dive full-source link is not pinned to the audited commit');
     const deepScroll = await page.evaluate(() => document.documentElement.scrollWidth);
