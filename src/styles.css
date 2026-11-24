@@ -39,3 +39,5 @@
 .lesson-source-link svg{flex-shrink:0;margin-left:auto}
 .lesson-source-link:hover code,.lesson-source-link:hover>span{color:var(--coral)}
 @media(max-width:760px){.lesson-source-link{gap:7px}.lesson-source-link code{font-size:8px}}
+
+.distinction code{display:inline-block;margin:8px 0 0;padding:6px 8px;background:#f2e9df;border:1px solid #d8cbbd;font:9px var(--mono);color:#8c5548}
