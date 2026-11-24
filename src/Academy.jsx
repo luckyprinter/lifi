@@ -969,7 +969,7 @@ export default function Academy(){
    {view==='paths'&&<PathCards onOpen={openPath}/>}
    {view==='code'&&<CodeStudio initialLesson={codeSelection}/>}
    {view==='deepdive'&&<DeepDive onOpenCode={openCode}/>}
-   {view==='practice'&&<PracticePage openPath={openPath}/ >}
+   {view==='practice'&&<PracticePage openPath={openPath}/>}
    {view==='path'&&<PathDetail key={path} id={path} onBack={backToPaths}/>}
   </motion.div></AnimatePresence></main>
   <footer className="academy-footer"><div><Brand/><p>An interactive guide to the physical OpenVLC visible-light communication prototype.</p></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> SOURCE CODE <ArrowUpRight size={13}/></a><a href="https://github.com/luckyprinter/lifi" target="_blank" rel="noreferrer">ACADEMY WEBSITE REPO <ArrowUpRight size={13}/></a></div><div className="footer-bottom"><span>FIRMWARE BASELINE · {FW.slice(0,8)}</span><span>APPLICATION SOURCE · MAIN · {APP.slice(0,8)}</span><span>CONCEPTUAL MODELS ARE NOT LIVE HARDWARE TELEMETRY</span></div></footer>
