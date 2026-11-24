@@ -1,30 +1,26 @@
-# OpenVLC Field Guide
+# OpenVLC Academy
 
-An animated, interactive technical guide to the ESP32 visible-light communication prototype, with source excerpts linked to exact GitHub lines.
+An interactive, mobile-first engineering course for understanding the physical ESP32 visible-light communication prototype, from the optical hardware and protocol to the firmware and desktop application code.
 
-## Source snapshots and provenance
+## Source provenance
 
-The site deliberately separates two source snapshots:
+- **Firmware and protocol baseline:** `luckyprinter/OpenVLC-Public` commit `411f183a8592d8285118f613bb4909c5bbd9d3cc` (the current `main` branch head as checked on 2026-11-24).
+- **Desktop application snapshot:** `luckyprinter/OpenVLC-Public` draft PR #18 head `80ef4afa63a3fe571ffd5026560bf7d7d90fbecc`. This is unfinished development work and is explicitly labelled as such.
+- The application snapshot is not represented as part of the thesis-tested firmware baseline. PR #18 is still a draft and its hardware-dependent behavior has not been physically validated by this site.
+- The physical architecture is the teaching focus. Conceptual animations explain the signal path; they are not live hardware telemetry or measured oscilloscope captures.
 
-- **Firmware / protocol baseline:** `luckyprinter/OpenVLC-Public` commit `411f183a8592d8285118f613bb4909c5bbd9d3cc`. The firmware files were not changed by the desktop-app redesign branch, so firmware excerpts link to this fixed thesis-artifact baseline.
-- **Desktop application development snapshot:** branch `redesign/product-shell-method2`, commit `80ef4afa63a3fe571ffd5026560bf7d7d90fbecc`, from draft [PR #18](https://github.com/luckyprinter/OpenVLC-Public/pull/18). This is unfinished development work and is not merged into `main`. App excerpts are pinned to this exact commit.
+## Learning experiences
 
-The application code still contains optional simulation backends, but TX and RX application state default to physical mode. The software-architecture switch on this website changes only the explanatory diagram; it does not connect to hardware or execute the Python application.
+- Six progressive learning paths from project orientation to coding practice.
+- An eight-stage animated physical signal journey.
+- Responsive, stage-specific visual models rather than one cropped desktop diagram.
+- Source code studio with pinned commit links, exact line ranges, syntax highlighting, and selectable line-by-line explanations.
+- Initial guided examples for TX application state, USB serial handshake, 4B5B encoding, GPIO symbol output, frame construction, RX majority sampling, byte decoding, and frame validation.
+- A short knowledge-check interaction.
 
-The PR #18 development notes include important capability limits: the current firmware/host protocol does not stream raw symbol-rate comparator samples, so the live receiver trend is based on PVo/Vref/margin telemetry rather than a fabricated OOK waveform. No physical ESP32 or optical-link validation is implied by desktop CI.
+## Accuracy and teaching policy
 
-The thesis remains the authority for experimental methodology and measured results. The website is an explanatory companion, not a replacement for the source repository or thesis.
-
-## Included experiences
-
-- Chapter-based learning navigation
-- Animated end-to-end transmission walkthrough
-- Step-by-step source code excerpts with exact file, line range, and pinned GitHub links
-- Interactive 4B5B encoder/decoder and NRZ/OOK waveform
-- Receiver sampling, synchronization, decoding, and CRC walkthrough
-- Hardware signal-chain guide and Vref calibration explanation
-- CRC versus reference-file BER explanation
-- Desktop-app development notes covering serial discovery, telemetry honesty, Method 2 BER, and bounded batch reconstruction
+The website distinguishes the physical prototype from explanatory models. It does not present a simulation backend as the experimental system, invent live optical telemetry, or imply that CI proves ESP32/USB/optical performance. Source excerpts must match the pinned repository commit and displayed line numbers. The thesis remains authoritative for experimental methodology and measured results.
 
 ## Local development
 
@@ -33,15 +29,9 @@ Requirements: Node.js 20+ and npm.
 ```bash
 npm install
 npm run dev
-```
-
-Production build:
-
-```bash
 npm run build
-npm run preview
 ```
 
 ## Deployment
 
-The project is a Vite static site deployed through GitHub Pages. Vercel deployment remains separate and is not configured by this change.
+The static Vite application is deployed through GitHub Pages. Vercel deployment remains deferred and is not configured by this work.
