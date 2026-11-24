@@ -1204,9 +1204,9 @@
     "blob": "c0ea4b3518cca9f45b9ec8d12b24d6942fefb78d",
     "bytes": 6176,
     "category": "Application · Tools",
-    "status": "active",
+    "status": "supporting",
     "kind": "python",
-    "summary": "Dashboard patch/compatibility helper; supporting rather than the primary application entry.",
+    "summary": "Dashboard patch/compatibility helper retained in the repository; not the primary application entry point.",
     "lineCount": 164,
     "symbols": [
       {
@@ -2376,9 +2376,9 @@
     "blob": "dffbcab9fb25f57bc43f15055b1ee67055481d54",
     "bytes": 2835,
     "category": "Application · RX",
-    "status": "active",
+    "status": "supporting",
     "kind": "python",
-    "summary": "Supporting RX pages and placeholder/utility screens.",
+    "summary": "Supporting receiver utility and placeholder screens; not the main physical receive pipeline.",
     "lineCount": 76,
     "symbols": [
       {
