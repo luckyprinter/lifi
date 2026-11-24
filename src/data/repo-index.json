@@ -7288,12 +7288,16 @@
       {
         "name": "VERSION",
         "kind": "constant",
-        "line": 1
+        "line": 1,
+        "endLine": 1,
+        "signature": "VERSION = \"1.0.0\""
       },
       {
         "name": "BUILD_DATE",
         "kind": "constant",
-        "line": 2
+        "line": 2,
+        "endLine": 3,
+        "signature": "BUILD_DATE = \"2026-07-28\""
       }
     ],
     "headings": []
@@ -7311,192 +7315,270 @@
       {
         "name": "muted_label",
         "kind": "function",
-        "line": 26
+        "line": 26,
+        "endLine": 32,
+        "signature": "def muted_label(text: str) -> QLabel:"
       },
       {
         "name": "value_label",
         "kind": "function",
-        "line": 33
+        "line": 33,
+        "endLine": 41,
+        "signature": "def value_label(text: str, color: str | None = None) -> QLabel:"
       },
       {
         "name": "status_green_label",
         "kind": "function",
-        "line": 42
+        "line": 42,
+        "endLine": 47,
+        "signature": "def status_green_label(text: str) -> QLabel:"
       },
       {
         "name": "panel_header",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "doc": "Uppercase blue panel header matching the image design.",
+        "endLine": 54,
+        "signature": "def panel_header(text: str) -> QLabel:"
       },
       {
         "name": "Card",
         "kind": "class",
-        "line": 55
+        "line": 55,
+        "endLine": 68,
+        "signature": "class Card(QFrame):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 58
+        "line": 58,
+        "endLine": 68,
+        "signature": "def __init__(self, title: str = \"\", parent: QWidget | None = None) -> None:"
       },
       {
         "name": "SectionCard",
         "kind": "class",
-        "line": 69
+        "line": 69,
+        "endLine": 77,
+        "signature": "class SectionCard(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 72
+        "line": 72,
+        "endLine": 77,
+        "signature": "def __init__(self, title: str, subtitle: str = \"\", parent: QWidget | None = None) -> None:"
       },
       {
         "name": "scrollable",
         "kind": "function",
-        "line": 78
+        "line": 78,
+        "endLine": 86,
+        "signature": "def scrollable(widget: QWidget) -> QScrollArea:"
       },
       {
         "name": "MetricCard",
         "kind": "class",
-        "line": 87
+        "line": 87,
+        "endLine": 99,
+        "signature": "class MetricCard(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 90
+        "line": 90,
+        "endLine": 99,
+        "signature": "def __init__(self, title: str, value: str, helper: str = \"\", parent: QWidget | None = None) -> None:"
       },
       {
         "name": "StatusBadge",
         "kind": "class",
-        "line": 100
+        "line": 100,
+        "endLine": 112,
+        "signature": "class StatusBadge(QLabel):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 103
+        "line": 103,
+        "endLine": 112,
+        "signature": "def __init__(self, text: str, color: str | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "DetailRow",
         "kind": "class",
-        "line": 113
+        "line": 113,
+        "endLine": 133,
+        "signature": "class DetailRow(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 116
+        "line": 116,
+        "endLine": 133,
+        "signature": "def __init__(self, label: str, value: str, value_color: str | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "ProgressBar",
         "kind": "class",
-        "line": 134
+        "line": 134,
+        "endLine": 175,
+        "signature": "class ProgressBar(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 137
+        "line": 137,
+        "endLine": 143,
+        "signature": "def __init__(self, percent: int = 0, height: int = 12, color: str | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_percent",
         "kind": "function",
-        "line": 144
+        "line": 144,
+        "endLine": 149,
+        "signature": "def set_percent(self, percent: int) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 150
+        "line": 150,
+        "endLine": 175,
+        "signature": "def paintEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "MetricGrid",
         "kind": "class",
-        "line": 176
+        "line": 176,
+        "endLine": 187,
+        "signature": "class MetricGrid(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 179
+        "line": 179,
+        "endLine": 187,
+        "signature": "def __init__(self, metrics: list[tuple[str, str, str]], columns: int = 3, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "ActivityLogTable",
         "kind": "class",
-        "line": 188
+        "line": 188,
+        "endLine": 234,
+        "signature": "class ActivityLogTable(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 191
+        "line": 191,
+        "endLine": 213,
+        "signature": "def __init__(self, entries: list[dict[str, str]] | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "update_entries",
         "kind": "function",
-        "line": 214
+        "line": 214,
+        "endLine": 234,
+        "signature": "def update_entries(self, entries: list[dict[str, str]]) -> None:"
       },
       {
         "name": "WaveformWidget",
         "kind": "class",
-        "line": 235
+        "line": 235,
+        "endLine": 322,
+        "signature": "class WaveformWidget(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 238
+        "line": 238,
+        "endLine": 244,
+        "signature": "def __init__(self, active: bool = True, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_active",
         "kind": "function",
-        "line": 245
+        "line": 245,
+        "endLine": 249,
+        "signature": "def set_active(self, active: bool) -> None:"
       },
       {
         "name": "set_samples",
         "kind": "function",
-        "line": 250
+        "line": 250,
+        "endLine": 254,
+        "signature": "def set_samples(self, samples: list[float]) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 255
+        "line": 255,
+        "endLine": 322,
+        "signature": "def paintEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "primary_button",
         "kind": "function",
-        "line": 323
+        "line": 323,
+        "endLine": 328,
+        "signature": "def primary_button(text: str) -> QPushButton:"
       },
       {
         "name": "secondary_button",
         "kind": "function",
-        "line": 329
+        "line": 329,
+        "doc": "Secondary/ghost button, styled via QSS #Secondary objectName.",
+        "endLine": 336,
+        "signature": "def secondary_button(text: str, parent: QWidget | None = None) -> QPushButton:"
       },
       {
         "name": "ModeSelectCard",
         "kind": "class",
-        "line": 337
+        "line": 337,
+        "endLine": 399,
+        "signature": "class ModeSelectCard(QFrame):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 341
+        "line": 341,
+        "endLine": 380,
+        "signature": "def __init__(self, title: str, description: str, icon_name: str, active: bool = False, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_active",
         "kind": "function",
-        "line": 381
+        "line": 381,
+        "endLine": 385,
+        "signature": "def set_active(self, active: bool) -> None:"
       },
       {
         "name": "update_style",
         "kind": "function",
-        "line": 386
+        "line": 386,
+        "endLine": 395,
+        "signature": "def update_style(self) -> None:"
       },
       {
         "name": "mousePressEvent",
         "kind": "function",
-        "line": 396
+        "line": 396,
+        "endLine": 399,
+        "signature": "def mousePressEvent(self, event) -> None:"
       },
       {
         "name": "InfoIcon",
         "kind": "class",
-        "line": 400
+        "line": 400,
+        "endLine": 421,
+        "signature": "class InfoIcon(QLabel):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 402
+        "line": 402,
+        "endLine": 421,
+        "signature": "def __init__(self, tooltip_text: str, parent: QWidget | None = None) -> None:"
       }
     ],
     "headings": []
@@ -7705,332 +7787,464 @@
       {
         "name": "setVrefMilliVolts",
         "kind": "function",
-        "line": 132
+        "line": 132,
+        "endLine": 141,
+        "signature": "void setVrefMilliVolts(int mv, bool report);"
       },
       {
         "name": "setupVrefPwmOutput",
         "kind": "function",
-        "line": 134
+        "line": 134,
+        "endLine": 141,
+        "signature": "void setupVrefPwmOutput() {"
       },
       {
         "name": "writeVrefPwmDuty",
         "kind": "function",
-        "line": 143
+        "line": 143,
+        "endLine": 149,
+        "signature": "void writeVrefPwmDuty(uint8_t duty) {"
       },
       {
         "name": "crc16_ccitt",
         "kind": "function",
-        "line": 151
+        "line": 151,
+        "endLine": 157,
+        "signature": "uint16_t crc16_ccitt(const uint8_t *data, size_t len, uint16_t crc = 0xFFFF) {"
       },
       {
         "name": "getU16",
         "kind": "function",
-        "line": 159
+        "line": 159,
+        "endLine": 159,
+        "signature": "uint16_t getU16(const uint8_t *buf, size_t pos) { return ((uint16_t)buf[pos] << 8) | buf[pos + 1]; }"
       },
       {
         "name": "getU32",
         "kind": "function",
-        "line": 160
+        "line": 160,
+        "endLine": 162,
+        "signature": "uint32_t getU32(const uint8_t *buf, size_t pos) {"
       },
       {
         "name": "printHexByte",
         "kind": "function",
-        "line": 163
+        "line": 163,
+        "endLine": 163,
+        "signature": "void printHexByte(uint8_t b) { const char hex[] = \"0123456789ABCDEF\"; Serial.write(hex[(b >> 4) & 0x0F]); Serial.write(hex[b & 0x0F]); }"
       },
       {
         "name": "printHexBytes",
         "kind": "function",
-        "line": 164
+        "line": 164,
+        "endLine": 164,
+        "signature": "void printHexBytes(const uint8_t *data, size_t len) { for (size_t i = 0; i < len; i++) printHexByte(data[i]); }"
       },
       {
         "name": "adcCountsToVoltage",
         "kind": "function",
-        "line": 166
+        "line": 166,
+        "endLine": 166,
+        "signature": "float adcCountsToVoltage(int counts) { return (counts * ADC_REF_VOLTAGE) / ADC_MAX_COUNTS; }"
       },
       {
         "name": "readVoltage",
         "kind": "function",
-        "line": 167
+        "line": 167,
+        "endLine": 167,
+        "signature": "float readVoltage(int pin) { return adcCountsToVoltage(analogRead(pin)); }"
       },
       {
         "name": "adcMonitorToFrontEndVoltage",
         "kind": "function",
-        "line": 168
+        "line": 168,
+        "endLine": 168,
+        "signature": "float adcMonitorToFrontEndVoltage(float adcVoltage) { return adcVoltage * ADC_MONITOR_SCALE; }"
       },
       {
         "name": "readVoltageMilliVolts",
         "kind": "function",
-        "line": 169
+        "line": 169,
+        "endLine": 169,
+        "signature": "int readVoltageMilliVolts(int pin) { return (int)(readVoltage(pin) * 1000.0f + 0.5f); }"
       },
       {
         "name": "sampleSignalWindowFor",
         "kind": "function",
-        "line": 171
+        "line": 171,
+        "endLine": 181,
+        "signature": "void sampleSignalWindowFor(uint32_t windowUs, float &signalMin, float &signalMax) {"
       },
       {
         "name": "sampleSignalWindow",
         "kind": "function",
-        "line": 183
+        "line": 183,
+        "endLine": 185,
+        "signature": "void sampleSignalWindow(float &signalMin, float &signalMax) {"
       },
       {
         "name": "sampleCalibrationSignal",
         "kind": "function",
-        "line": 187
+        "line": 187,
+        "endLine": 209,
+        "signature": "void sampleCalibrationSignal(float &signalMin, float &signalMax, float &swing, int &peakDeltaMv) {"
       },
       {
         "name": "reachableVrefMaxMv",
         "kind": "function",
-        "line": 211
+        "line": 211,
+        "endLine": 213,
+        "signature": "int reachableVrefMaxMv() {"
       },
       {
         "name": "vrefPwmFullScaleActualMv",
         "kind": "function",
-        "line": 215
+        "line": 215,
+        "endLine": 217,
+        "signature": "int vrefPwmFullScaleActualMv() {"
       },
       {
         "name": "milliVoltsToPwmDuty",
         "kind": "function",
-        "line": 219
+        "line": 219,
+        "endLine": 226,
+        "signature": "uint8_t milliVoltsToPwmDuty(int mv) {"
       },
       {
         "name": "parseVrefMilliVolts",
         "kind": "function",
-        "line": 228
+        "line": 228,
+        "endLine": 237,
+        "signature": "int parseVrefMilliVolts(String value) {"
       },
       {
         "name": "parseMarginMilliVolts",
         "kind": "function",
-        "line": 239
+        "line": 239,
+        "endLine": 248,
+        "signature": "int parseMarginMilliVolts(String value) {"
       },
       {
         "name": "parsePercentValue",
         "kind": "function",
-        "line": 250
+        "line": 250,
+        "endLine": 257,
+        "signature": "int parsePercentValue(String value) {"
       },
       {
         "name": "parseDurationMilliseconds",
         "kind": "function",
-        "line": 259
+        "line": 259,
+        "endLine": 273,
+        "signature": "int parseDurationMilliseconds(String value) {"
       },
       {
         "name": "vrefPwmDutyPercent",
         "kind": "function",
-        "line": 275
+        "line": 275,
+        "endLine": 277,
+        "signature": "int vrefPwmDutyPercent() {"
       },
       {
         "name": "percentToVrefPwmDuty",
         "kind": "function",
-        "line": 279
+        "line": 279,
+        "endLine": 283,
+        "signature": "uint8_t percentToVrefPwmDuty(int percent) {"
       },
       {
         "name": "setVrefControlMode",
         "kind": "function",
-        "line": 285
+        "line": 285,
+        "endLine": 297,
+        "signature": "void setVrefControlMode(String value, bool report = true) {"
       },
       {
         "name": "setVrefSettleMilliseconds",
         "kind": "function",
-        "line": 299
+        "line": 299,
+        "endLine": 308,
+        "signature": "void setVrefSettleMilliseconds(int ms, bool report = true) {"
       },
       {
         "name": "setVrefPwmFullScaleAdcMilliVolts",
         "kind": "function",
-        "line": 310
+        "line": 310,
+        "endLine": 323,
+        "signature": "void setVrefPwmFullScaleAdcMilliVolts(int mv, bool report = true) {"
       },
       {
         "name": "applyVrefPwmDutyAndSettle",
         "kind": "function",
-        "line": 325
+        "line": 325,
+        "endLine": 329,
+        "signature": "void applyVrefPwmDutyAndSettle(uint8_t duty) {"
       },
       {
         "name": "setVrefPwmPercent",
         "kind": "function",
-        "line": 331
+        "line": 331,
+        "endLine": 352,
+        "signature": "void setVrefPwmPercent(int percent, bool report = true) {"
       },
       {
         "name": "setVrefMilliVolts",
         "kind": "function",
-        "line": 354
+        "line": 354,
+        "endLine": 379,
+        "signature": "void setVrefMilliVolts(int mv, bool report = true) {"
       },
       {
         "name": "setTargetMarginMilliVolts",
         "kind": "function",
-        "line": 381
+        "line": 381,
+        "endLine": 390,
+        "signature": "void setTargetMarginMilliVolts(int mv, bool report = true) {"
       },
       {
         "name": "reportVrefState",
         "kind": "function",
-        "line": 392
+        "line": 392,
+        "endLine": 414,
+        "signature": "void reportVrefState() {"
       },
       {
         "name": "tuneVrefToMeasuredTarget",
         "kind": "function",
-        "line": 416
+        "line": 416,
+        "endLine": 485,
+        "signature": "void tuneVrefToMeasuredTarget(int targetMv, int &finalMeasuredMv, int &finalErrorMv, int &iterations, bool &reached) {"
       },
       {
         "name": "calibrateVrefFromSignal",
         "kind": "function",
-        "line": 487
+        "line": 487,
+        "endLine": 557,
+        "signature": "void calibrateVrefFromSignal(bool requireSwing = false) {"
       },
       {
         "name": "runVrefSweep",
         "kind": "function",
-        "line": 559
+        "line": 559,
+        "endLine": 605,
+        "signature": "void runVrefSweep(String args) {"
       },
       {
         "name": "computePassRate",
         "kind": "function",
-        "line": 607
+        "line": 607,
+        "endLine": 610,
+        "signature": "float computePassRate() {"
       },
       {
         "name": "reportLinkQuality",
         "kind": "function",
-        "line": 619
+        "line": 619,
+        "endLine": 649,
+        "signature": "void reportLinkQuality() {"
       },
       {
         "name": "reportLinkQualityIfIdleDue",
         "kind": "function",
-        "line": 651
+        "line": 651,
+        "endLine": 658,
+        "signature": "void reportLinkQualityIfIdleDue() {"
       },
       {
         "name": "resetFrameParser",
         "kind": "function",
-        "line": 660
+        "line": 660,
+        "endLine": 666,
+        "signature": "void resetFrameParser() {"
       },
       {
         "name": "resetLineDecoder",
         "kind": "function",
-        "line": 668
+        "line": 668,
+        "endLine": 673,
+        "signature": "void resetLineDecoder() {"
       },
       {
         "name": "clearRxTransfer",
         "kind": "function",
-        "line": 675
+        "line": 675,
+        "endLine": 680,
+        "signature": "void clearRxTransfer() {"
       },
       {
         "name": "clearRxDuplicateHistory",
         "kind": "function",
-        "line": 682
+        "line": 682,
+        "endLine": 691,
+        "signature": "void clearRxDuplicateHistory() {"
       },
       {
         "name": "clearStaleRxTransferIfNeeded",
         "kind": "function",
-        "line": 693
+        "line": 693,
+        "endLine": 701,
+        "signature": "void clearStaleRxTransferIfNeeded() {"
       },
       {
         "name": "rememberCompletedTransfer",
         "kind": "function",
-        "line": 703
+        "line": 703,
+        "endLine": 713,
+        "signature": "void rememberCompletedTransfer() {"
       },
       {
         "name": "isRecentlyCompletedTransfer",
         "kind": "function",
-        "line": 715
+        "line": 715,
+        "endLine": 727,
+        "signature": "bool isRecentlyCompletedTransfer(uint16_t tid, uint8_t frameType, uint32_t totalSize, uint16_t totalChunks, uint16_t fileCrc, uint8_t nameLen, const uint8_t *nameData) {"
       },
       {
         "name": "waitUntil",
         "kind": "function",
-        "line": 729
+        "line": 729,
+        "endLine": 729,
+        "signature": "void waitUntil(uint32_t targetMicros) { while ((int32_t)(micros() - targetMicros) < 0) {} }"
       },
       {
         "name": "waitStableIdleFor",
         "kind": "function",
-        "line": 731
+        "line": 731,
+        "endLine": 742,
+        "signature": "bool waitStableIdleFor(uint32_t stableNeededUs, bool &idleLevel) {"
       },
       {
         "name": "waitStartTransition",
         "kind": "function",
-        "line": 744
+        "line": 744,
+        "endLine": 752,
+        "signature": "bool waitStartTransition(bool idleLevel, uint32_t &edgeTime) {"
       },
       {
         "name": "phaseOffsetUs",
         "kind": "function",
-        "line": 754
+        "line": 754,
+        "endLine": 759,
+        "signature": "uint32_t phaseOffsetUs() {"
       },
       {
         "name": "sampleRawAt",
         "kind": "function",
-        "line": 761
+        "line": 761,
+        "endLine": 771,
+        "signature": "bool sampleRawAt(uint32_t sampleTimeUs) {"
       },
       {
         "name": "acquire4b5bSync",
         "kind": "function",
-        "line": 773
+        "line": 773,
+        "endLine": 804,
+        "signature": "bool acquire4b5bSync() {"
       },
       {
         "name": "readLogicalBit",
         "kind": "function",
-        "line": 806
+        "line": 806,
+        "endLine": 811,
+        "signature": "bool readLogicalBit(bool &bitValue) {"
       },
       {
         "name": "alignToEncodedSof",
         "kind": "function",
-        "line": 813
+        "line": 813,
+        "endLine": 828,
+        "signature": "bool alignToEncodedSof(uint8_t &value) {"
       },
       {
         "name": "read5b",
         "kind": "function",
-        "line": 830
+        "line": 830,
+        "endLine": 838,
+        "signature": "bool read5b(uint8_t &code) {"
       },
       {
         "name": "read4b5bByte",
         "kind": "function",
-        "line": 840
+        "line": 840,
+        "endLine": 854,
+        "signature": "bool read4b5bByte(uint8_t &value) {"
       },
       {
         "name": "readOpticalByte",
         "kind": "function",
-        "line": 856
+        "line": 856,
+        "endLine": 858,
+        "signature": "bool readOpticalByte(uint8_t &value) {"
       },
       {
         "name": "beginOrValidateBufferedTransfer",
         "kind": "function",
-        "line": 860
+        "line": 860,
+        "endLine": 872,
+        "signature": "bool beginOrValidateBufferedTransfer(uint16_t tid, uint8_t frameType, uint32_t totalSize, uint16_t totalChunks, uint16_t fileCrc, uint8_t nameLen, const uint8_t *nameData, uint16_t chunkLen) {"
       },
       {
         "name": "dumpBufferedFile",
         "kind": "function",
-        "line": 874
+        "line": 874,
+        "endLine": 885,
+        "signature": "void dumpBufferedFile() {"
       },
       {
         "name": "bufferVerifiedChunk",
         "kind": "function",
-        "line": 887
+        "line": 887,
+        "endLine": 905,
+        "signature": "void bufferVerifiedChunk(uint16_t tid, uint8_t frameType, uint32_t totalSize, uint16_t totalChunks, uint16_t chunkIndex, uint16_t chunkLen, uint16_t fileCrc, uint8_t nameLen, const uint8_t *nameData, const uint8_t *payloadData) {"
       },
       {
         "name": "processCompleteFrame",
         "kind": "function",
-        "line": 907
+        "line": 907,
+        "endLine": 942,
+        "signature": "void processCompleteFrame() {"
       },
       {
         "name": "processFrameByte",
         "kind": "function",
-        "line": 944
+        "line": 944,
+        "endLine": 966,
+        "signature": "void processFrameByte(uint8_t b) {"
       },
       {
         "name": "setSymbolRate",
         "kind": "function",
-        "line": 968
+        "line": 968,
+        "endLine": 976,
+        "signature": "void setSymbolRate(uint32_t hz) {"
       },
       {
         "name": "setSamplePhase",
         "kind": "function",
-        "line": 978
+        "line": 978,
+        "endLine": 984,
+        "signature": "void setSamplePhase(int phasePercent) {"
       },
       {
         "name": "setMode",
         "kind": "function",
-        "line": 986
+        "line": 986,
+        "endLine": 992,
+        "signature": "void setMode(String value) {"
       },
       {
         "name": "setup",
         "kind": "function",
-        "line": 994
+        "line": 994,
+        "endLine": 1012,
+        "signature": "void setup() {"
       },
       {
         "name": "loop",
         "kind": "function",
-        "line": 1014
+        "line": 1014,
+        "endLine": 1048,
+        "signature": "void loop() {"
       }
     ],
     "headings": []
@@ -8151,187 +8365,261 @@
       {
         "name": "crc16_ccitt",
         "kind": "function",
-        "line": 54
+        "line": 54,
+        "endLine": 60,
+        "signature": "uint16_t crc16_ccitt(const uint8_t *data, size_t len, uint16_t crc = 0xFFFF) {"
       },
       {
         "name": "hexVal",
         "kind": "function",
-        "line": 62
+        "line": 62,
+        "endLine": 67,
+        "signature": "int hexVal(char c) {"
       },
       {
         "name": "hexToBytes",
         "kind": "function",
-        "line": 69
+        "line": 69,
+        "endLine": 82,
+        "signature": "bool hexToBytes(const String &hex, uint8_t *out, size_t maxLen, size_t &outLen) {"
       },
       {
         "name": "putU16",
         "kind": "function",
-        "line": 84
+        "line": 84,
+        "endLine": 84,
+        "signature": "void putU16(uint8_t *buf, size_t &pos, uint16_t v) { buf[pos++] = (v >> 8) & 0xFF; buf[pos++] = v & 0xFF; }"
       },
       {
         "name": "putU32",
         "kind": "function",
-        "line": 85
+        "line": 85,
+        "endLine": 87,
+        "signature": "void putU32(uint8_t *buf, size_t &pos, uint32_t v) {"
       },
       {
         "name": "waitUntil",
         "kind": "function",
-        "line": 89
+        "line": 89,
+        "endLine": 89,
+        "signature": "void waitUntil(uint32_t targetMicros) { while ((int32_t)(micros() - targetMicros) < 0) {} }"
       },
       {
         "name": "beginSymbolClock",
         "kind": "function",
-        "line": 90
+        "line": 90,
+        "endLine": 90,
+        "signature": "void beginSymbolClock() { nextSymbolAtUs = micros(); }"
       },
       {
         "name": "waitSymbolBoundary",
         "kind": "function",
-        "line": 91
+        "line": 91,
+        "endLine": 91,
+        "signature": "void waitSymbolBoundary() { nextSymbolAtUs += symbolUs; waitUntil(nextSymbolAtUs); }"
       },
       {
         "name": "setSymbolRate",
         "kind": "function",
-        "line": 93
+        "line": 93,
+        "endLine": 102,
+        "signature": "void setSymbolRate(uint32_t hz) {"
       },
       {
         "name": "clampPercent",
         "kind": "function",
-        "line": 104
+        "line": 104,
+        "endLine": 108,
+        "signature": "uint8_t clampPercent(int percent) {"
       },
       {
         "name": "pinDutyForLightPercent",
         "kind": "function",
-        "line": 110
+        "line": 110,
+        "endLine": 113,
+        "signature": "uint8_t pinDutyForLightPercent(uint8_t percent) {"
       },
       {
         "name": "writeLightPercent",
         "kind": "function",
-        "line": 115
+        "line": 115,
+        "endLine": 115,
+        "signature": "void writeLightPercent(uint8_t percent) { analogWrite(TX_PIN, pinDutyForLightPercent(percent)); }"
       },
       {
         "name": "levelForLight",
         "kind": "function",
-        "line": 116
+        "line": 116,
+        "endLine": 116,
+        "signature": "int levelForLight(bool lightOn) { return activeLowDriver ? (lightOn ? LOW : HIGH) : (lightOn ? HIGH : LOW); }"
       },
       {
         "name": "lineOneLevel",
         "kind": "function",
-        "line": 117
+        "line": 117,
+        "endLine": 117,
+        "signature": "int lineOneLevel() { return levelForLight(true); }"
       },
       {
         "name": "lineZeroLevel",
         "kind": "function",
-        "line": 118
+        "line": 118,
+        "endLine": 118,
+        "signature": "int lineZeroLevel() { return levelForLight(false); }"
       },
       {
         "name": "idleLevel",
         "kind": "function",
-        "line": 119
+        "line": 119,
+        "endLine": 119,
+        "signature": "int idleLevel() { return levelForLight(idleOn); }"
       },
       {
         "name": "applyIdleLevel",
         "kind": "function",
-        "line": 120
+        "line": 120,
+        "endLine": 120,
+        "signature": "void applyIdleLevel() { digitalWrite(TX_PIN, idleLevel()); }"
       },
       {
         "name": "reportLineConfig",
         "kind": "function",
-        "line": 122
+        "line": 122,
+        "endLine": 134,
+        "signature": "void reportLineConfig() {"
       },
       {
         "name": "setActiveLow",
         "kind": "function",
-        "line": 136
+        "line": 136,
+        "endLine": 136,
+        "signature": "void setActiveLow(bool value) { activeLowDriver = value; applyIdleLevel(); if (!quietMode) reportLineConfig(); }"
       },
       {
         "name": "setIdleOn",
         "kind": "function",
-        "line": 137
+        "line": 137,
+        "endLine": 137,
+        "signature": "void setIdleOn(bool value) { idleOn = value; applyIdleLevel(); if (!quietMode) reportLineConfig(); }"
       },
       {
         "name": "setQuietMode",
         "kind": "function",
-        "line": 138
+        "line": 138,
+        "endLine": 138,
+        "signature": "void setQuietMode(bool value) { quietMode = value; Serial.print(\"TX 4B5B QUIET = \"); Serial.println(quietMode ? 1 : 0); }"
       },
       {
         "name": "setMode",
         "kind": "function",
-        "line": 140
+        "line": 140,
+        "endLine": 145,
+        "signature": "void setMode(String value) {"
       },
       {
         "name": "send4b5bBit",
         "kind": "function",
-        "line": 147
+        "line": 147,
+        "endLine": 150,
+        "signature": "void send4b5bBit(bool bitValue) {"
       },
       {
         "name": "sendRawWord",
         "kind": "function",
-        "line": 152
+        "line": 152,
+        "endLine": 154,
+        "signature": "void sendRawWord(uint16_t word, int bits) {"
       },
       {
         "name": "send4b5bCode",
         "kind": "function",
-        "line": 156
+        "line": 156,
+        "endLine": 158,
+        "signature": "void send4b5bCode(uint8_t code) {"
       },
       {
         "name": "send4b5bEncodedByte",
         "kind": "function",
-        "line": 160
+        "line": 160,
+        "endLine": 163,
+        "signature": "void send4b5bEncodedByte(uint8_t value) {"
       },
       {
         "name": "send4b5bPreambleAndSync",
         "kind": "function",
-        "line": 165
+        "line": 165,
+        "endLine": 169,
+        "signature": "void send4b5bPreambleAndSync() {"
       },
       {
         "name": "sendOpticalFrame",
         "kind": "function",
-        "line": 171
+        "line": 171,
+        "endLine": 180,
+        "signature": "void sendOpticalFrame(const uint8_t *data, size_t len, bool finalFrame) {"
       },
       {
         "name": "buildFrame",
         "kind": "function",
-        "line": 182
+        "line": 182,
+        "endLine": 201,
+        "signature": "size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {"
       },
       {
         "name": "clearStream",
         "kind": "function",
-        "line": 203
+        "line": 203,
+        "endLine": 206,
+        "signature": "void clearStream() {"
       },
       {
         "name": "splitFields",
         "kind": "function",
-        "line": 208
+        "line": 208,
+        "endLine": 217,
+        "signature": "int splitFields(const String &line, String *fields, int maxFields) {"
       },
       {
         "name": "handleStreamBegin",
         "kind": "function",
-        "line": 219
+        "line": 219,
+        "endLine": 242,
+        "signature": "void handleStreamBegin(String line) {"
       },
       {
         "name": "handleStreamData",
         "kind": "function",
-        "line": 244
+        "line": 244,
+        "endLine": 257,
+        "signature": "void handleStreamData(String line) {"
       },
       {
         "name": "handleStreamStart",
         "kind": "function",
-        "line": 259
+        "line": 259,
+        "endLine": 279,
+        "signature": "void handleStreamStart() {"
       },
       {
         "name": "handleBulbCommand",
         "kind": "function",
-        "line": 281
+        "line": 281,
+        "endLine": 288,
+        "signature": "void handleBulbCommand(String value) {"
       },
       {
         "name": "setup",
         "kind": "function",
-        "line": 290
+        "line": 290,
+        "endLine": 304,
+        "signature": "void setup() {"
       },
       {
         "name": "loop",
         "kind": "function",
-        "line": 306
+        "line": 306,
+        "endLine": 332,
+        "signature": "void loop() {"
       }
     ],
     "headings": []
