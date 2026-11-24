@@ -8,8 +8,8 @@ const formatLines=(lines='')=>lines.split(',').map(part=>'L'+part.trim().replace
 
 const deepRelations = {
  'application-source/gui_dev_v3/app.py':[
-  {label:'Creates the TX navigation shell',path:'application-source/gui_dev_v3/tx/shell.py',lines:'1-40'},
-  {label:'Creates the RX navigation shell',path:'application-source/gui_dev_v3/rx/shell.py',lines:'1-40'}
+  {label:'Launches the TX shell from the unified app window',path:'application-source/gui_dev_v3/app.py',lines:'321-330'},
+  {label:'Launches the RX shell from the unified app window',path:'application-source/gui_dev_v3/app.py',lines:'331-338'}
  ],
  'application-source/gui_dev_v3/tx/dashboard.py':[
   {label:'Delegates the selected path to TXAppState',path:'application-source/gui_dev_v3/tx_app_state.py',lines:'225-238'},
@@ -34,7 +34,7 @@ const deepRelations = {
  ],
  'firmware/rx/rx.ino':[
   {label:'RX physical backend parses firmware output',path:'application-source/gui_dev_v3/rx/backends/physical.py',lines:'909-950'},
-  {label:'RX firmware line dispatch',path:'application-source/gui_dev_v3/rx/backends/physical.py',lines:'300-370'},
+  {label:'RX backend parses firmware transfer notices and received-file records',path:'application-source/gui_dev_v3/rx/backends/physical.py',lines:'299-370'},
   {label:'Protocol field definitions',path:'firmware/specs/protocol_spec.md',lines:'1-46'}
  ],
  'application-source/gui_dev_v3/rx/backends/physical.py':[
