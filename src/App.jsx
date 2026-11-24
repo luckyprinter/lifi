@@ -32,7 +32,7 @@ const navItems = [
 ];
 
 function Packet({ step }) {
-  const positions = [[90,176],[205,176],[330,176],[455,176],[580,176],[705,176],[830,176],[955,176]];
+  const positions = [[98,176],[221,176],[355,176],[482,176],[619,164],[743,164],[881,176],[988,176]];
   const [x,y] = positions[step] || positions[0];
   return <motion.g initial={false} animate={{x:x-90,y:y-176,opacity:1}} transition={{type:'spring',stiffness:90,damping:18}}>
     <circle cx="90" cy="176" r="13" fill="#ef765b" opacity=".16"/>
@@ -127,7 +127,7 @@ function SignalDiagram({ active, onSelect }) {
       <Packet step={active}/>
       </g>
     </svg>
-    <div className="diagram-caption"><span>FIG. 01</span><span>One file, eight transformations, one optical channel.</span><span className="diagram-mobile-hint">SWIPE TO VIEW FULL DIAGRAM</span><span>NOT TO SCALE</span></div>
+    <div className="diagram-caption"><span>FIG. 01</span><span>Electrical data links surround one LED-to-photodiode optical hop.</span><span className="diagram-mobile-hint">SWIPE TO VIEW FULL DIAGRAM</span><span>NOT TO SCALE</span></div>
   </div>;
 }
 
