@@ -123,7 +123,7 @@ function SignalDiagram({ active, onSelect }) {
       <Packet step={active}/>
       </g>
     </svg>
-    <div className="diagram-caption"><span>FIG. 01</span><span>One file, eight transformations, one optical channel.</span><span><span className="diagram-mobile-hint">DRAG TO EXPLORE</span><span>NOT TO SCALE</span></div>
+    <div className="diagram-caption"><span>FIG. 01</span><span>One file, eight transformations, one optical channel.</span><span className="diagram-mobile-hint">DRAG TO EXPLORE</span><span>NOT TO SCALE</span></div>
   </div>;
 }
 
