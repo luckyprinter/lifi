@@ -244,12 +244,41 @@ function CodeLesson({lesson,selected,onSelect}){
  </article>
 }
 
+const sourceFiles = [
+ {group:'FIRMWARE',name:'tx/tx.ino',path:'firmware/tx/tx.ino',ref:FW,role:'Transmitter firmware',desc:'Serial command handling, stream validation, frame construction, 4B5B encoding, symbol timing, and GPIO5 optical output.'},
+ {group:'FIRMWARE',name:'rx/rx.ino',path:'firmware/rx/rx.ino',ref:FW,role:'Receiver firmware',desc:'Comparator sampling, symbol timing, preamble/sync acquisition, 4B5B decoding, frame parsing, CRC checks, chunk storage, and file output.'},
+ {group:'FIRMWARE',name:'specs/protocol_spec.md',path:'firmware/specs/protocol_spec.md',ref:FW,role:'Shared protocol contract',desc:'Defines the frame fields, transfer identifiers, chunk structure, CRC coverage, and transmission sequence shared by both endpoints.'},
+ {group:'TX APPLICATION',name:'tx_app_state.py',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,role:'TX application state',desc:'Holds the transmitter console state, selected file information, and physical transfer configuration.'},
+ {group:'TX APPLICATION',name:'tx/backends/physical.py',path:'application-source/gui_dev_v3/tx/backends/physical.py',ref:APP,role:'Physical TX backend',desc:'Connects the desktop transmitter workspace to real TX firmware over USB serial and publishes physical-backend snapshots.'},
+ {group:'TX APPLICATION',name:'tx/shell.py',path:'application-source/gui_dev_v3/tx/shell.py',ref:APP,role:'TX workspace shell',desc:'Builds the transmitter window navigation and coordinates its pages and refresh cycle.'},
+ {group:'TX APPLICATION',name:'tx/dashboard.py',path:'application-source/gui_dev_v3/tx/dashboard.py',ref:APP,role:'TX dashboard',desc:'Presents selected-file information, link settings, start controls, progress, and transmitter status.'},
+ {group:'SHARED APPLICATION',name:'app.py',path:'application-source/gui_dev_v3/app.py',ref:APP,role:'Desktop application entry',desc:'Creates the Qt application and launches the transmitter or receiver console.'},
+ {group:'SHARED APPLICATION',name:'serial/controllers.py',path:'application-source/gui_dev_v3/serial/controllers.py',ref:APP,role:'Serial transfer controller',desc:'Builds firmware commands, performs the STREAM handshake, preloads data blocks, and interprets serial acknowledgements.'},
+ {group:'SHARED APPLICATION',name:'serial/session.py',path:'application-source/gui_dev_v3/serial/session.py',ref:APP,role:'Serial session foundation',desc:'Owns the serial connection lifecycle, reader thread, line handling, command writes, and response waiting.'},
+ {group:'SHARED APPLICATION',name:'serial/detection.py',path:'application-source/gui_dev_v3/serial/detection.py',ref:APP,role:'Hardware discovery',desc:'Enumerates serial ports and identifies compatible TX or RX firmware before a physical connection is opened.'},
+ {group:'SHARED APPLICATION',name:'models.py',path:'application-source/gui_dev_v3/models.py',ref:APP,role:'Shared data models',desc:'Defines typed records and snapshots exchanged between application state, backends, and UI pages.'},
+ {group:'RX APPLICATION',name:'rx/backends/physical.py',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP,role:'Physical RX backend',desc:'Communicates with real RX firmware, reads status and signal telemetry, receives transfer output, and exposes receiver snapshots.'},
+ {group:'RX APPLICATION',name:'rx/shell.py',path:'application-source/gui_dev_v3/rx/shell.py',ref:APP,role:'RX workspace shell',desc:'Builds the receiver workspace and routes navigation between receiver pages.'},
+ {group:'RX APPLICATION',name:'rx/receive_page.py',path:'application-source/gui_dev_v3/rx/receive_page.py',ref:APP,role:'Receive workspace',desc:'Presents receiver transfer activity and the files emitted by the physical receiver backend.'},
+ {group:'RX APPLICATION',name:'logic/ber_bridge.py',path:'application-source/gui_dev_v3/logic/ber_bridge.py',ref:APP,role:'BER integration',desc:'Connects transfer data to the application’s BER analysis path. Method 2 compares the reconstructed file with its original reference.'}
+];
+const sourceGroups=['FIRMWARE','TX APPLICATION','RX APPLICATION','SHARED APPLICATION'];
+function SourceMap(){
+ const [group,setGroup]=useState('FIRMWARE');
+ const visible=sourceFiles.filter(f=>f.group===group);
+ return <section className="source-map-section"><div className="source-map-heading"><div><span className="eyebrow">EXPLORE THE REPOSITORY</span><h3>Know where each responsibility lives.</h3><p>These are the core files in the pinned firmware baseline and application development snapshot. Open any file at its exact commit.</p></div><a href={REPO} target="_blank" rel="noreferrer">FULL REPOSITORY <ArrowUpRight size={14}/></a></div>
+  <div className="source-map-tabs">{sourceGroups.map(g=><button key={g} className={group===g?'active':''} onClick={()=>setGroup(g)}>{g}</button>)}</div>
+  <div className="source-file-grid"><AnimatePresence mode="wait"><motion.div key={group} className="source-file-grid-inner" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-5}} transition={{duration:.18}}>{visible.map(file=><a className="source-file-card" key={file.path} href={link(file.path,file.ref)} target="_blank" rel="noreferrer"><div><FileCode2 size={16}/><span>{file.group}</span><ArrowUpRight size={13}/></div><code>{file.name}</code><b>{file.role}</b><p>{file.desc}</p></a>)}</motion.div></AnimatePresence></div>
+  <div className="call-sequence"><div className="eyebrow">HOW THE RESPONSIBILITIES CONNECT</div><div className="call-sequence-row"><span>TX desktop app</span><ChevronRight/><span>Physical TX backend</span><ChevronRight/><span>USB serial controller</span><ChevronRight/><span>TX firmware</span></div><div className="call-sequence-row optical"><span>Frame builder</span><ChevronRight/><span>4B5B encoder</span><ChevronRight/><span>GPIO symbol output</span><ChevronRight/><span>LED driver + light</span></div><div className="call-sequence-row receive"><span>Photodiode + comparator</span><ChevronRight/><span>RX firmware decoder</span><ChevronRight/><span>Physical RX backend</span><ChevronRight/><span>RX desktop app</span></div><p>This is the system responsibility flow. The detailed lessons will progressively document exact direct function-call edges, arguments, return values, and state changes.</p></div>
+ </section>
+}
+
 function CodeStudio(){
  const [active,setActive]=useState('tx-encode'); const [query,setQuery]=useState(''); const selected=codeLessons.find(x=>x.id===active)||codeLessons[0];
  const groups=['APPLICATION','FIRMWARE · TX','FIRMWARE · RX'];
  const filtered=useMemo(()=>codeLessons.filter(x=>(x.name+' '+x.path+' '+x.level).toLowerCase().includes(query.toLowerCase())),[query]);
  return <section className="code-studio" id="code"><div className="section-kicker">SOURCE CODE STUDIO <span>REAL FILES · PINNED LINES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM SURFACE KNOWLEDGE TO CODE CONFIDENCE</p><h2>Understand the code.<br/><i>One line at a time.</i></h2></div><p className="section-intro">Select a source lesson, tap any line, and read what it does. Each example is pinned to a commit so the code and line numbers stay traceable.</p></div>
- <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div>
+ <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div><SourceMap/>
  </section>
 }
 
