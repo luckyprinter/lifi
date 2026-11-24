@@ -17,7 +17,7 @@ const sourceFor = (path) => path.startsWith('application-source/') ? APP_SOURCE(
 const CODE_4B5B = [0b11110,0b01001,0b10100,0b10101,0b01010,0b01011,0b01110,0b01111,0b10010,0b10011,0b10110,0b10111,0b11010,0b11011,0b11100,0b11101];
 const toBits = (value, width) => value.toString(2).padStart(width, '0');
 const lessons = [
-  { id:'prepare', n:'01', title:'Prepare the transfer', group:'TRANSMITTER', tag:'DESKTOP APPLICATION', body:'A file enters the transmitter application. The GUI holds the selected file and transfer settings, then hands the job to its selected backend.', detail:'The development application state defaults to physical mode. Its optional simulation backend can exercise software flows without an ESP32 or optical transmission.', code:'tx_state.start_transmission(filepath)', file:'application-source/gui_dev_v3/tx_app_state.py', color:'coral' },
+  { id:'prepare', n:'01', title:'Prepare the transfer', group:'TRANSMITTER', tag:'DESKTOP APPLICATION', body:'A file enters the transmitter application. The GUI holds the selected file and transfer settings, then hands the job to its selected backend.', detail:'This guide follows the physical prototype path: the desktop application communicates with the transmitter ESP32 over USB serial, and the receiver application reads the physical receiver ESP32.', code:'tx_state.start_transmission(filepath)', file:'application-source/gui_dev_v3/tx_app_state.py', color:'coral' },
   { id:'stream', n:'02', title:'Move bytes to the ESP32', group:'TRANSMITTER', tag:'USB SERIAL', body:'The TX serial controller sends transfer metadata and file data to the transmitter ESP32 over USB serial.', detail:'The STREAM path sends STREAM_BEGIN, waits for a firmware acknowledgement, then sends STREAM_DATA blocks and waits for acknowledgements before starting the optical round.', code:'STREAM_BEGIN  →  STREAM_DATA', file:'application-source/gui_dev_v3/serial/controllers.py', color:'blue' },
   { id:'encode', n:'03', title:'Encode with 4B5B', group:'LINE CODING', tag:'4B5B · TWO NIBBLES', body:'Every source byte is split into two 4-bit nibbles. Each nibble is translated into a 5-bit codeword using the transmitter lookup table.', detail:'Two 5-bit codewords carry one original byte. The added bit provides transition-friendly coding; it is not encryption or error correction.', code:'high = value >> 4   ·   low = value & 0x0F', file:'firmware/tx/tx.ino', color:'lime' },
   { id:'frame', n:'04', title:'Build a framed message', group:'TRANSMISSION', tag:'FRAME + INTEGRITY', body:'Encoded payload bytes are carried in protocol frames with synchronization and metadata so the receiver can find, interpret, and validate them.', detail:'The protocol specification defines the frame structure and CRC coverage. Consult it for exact field widths, byte ordering, and validation rules.', code:'SYNC  →  HEADER  →  PAYLOAD  →  CRC', file:'firmware/tx/tx.ino', color:'blue' },
@@ -171,11 +171,24 @@ const codeExamples = {
 }` }
 };
 
+function highlightSourceLine(line, language) {
+  const pattern = /(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\b|\b(?:Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)\b|\b\d+(?:\.\d+)?\b)/g;
+  return line.split(pattern).filter(Boolean).map((part,index) => {
+    let kind = 'plain';
+    if (/^(\/\/|#)/.test(part)) kind = 'comment';
+    else if (/^("|')/.test(part)) kind = 'string';
+    else if (/^\d/.test(part)) kind = 'number';
+    else if (/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part)) kind = 'keyword';
+    else if (/^(Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)$/.test(part)) kind = 'function';
+    return <span className={'syntax-' + kind} key={index}>{part}</span>;
+  });
+}
+
 function SourceCodePanel({ lessonId }) {
   const [open, setOpen] = useState(false);
   const example = codeExamples[lessonId];
   if (!example) return null;
-  const url = SOURCE(example.path, example.ref) + `#L\${example.start}-L\${example.end}`;
+  const url = SOURCE(example.path, example.ref) + `#L${example.start}-L${example.end}`;
   return <div className="source-code-panel">
     <div className="source-code-heading">
       <div><span className="eyebrow">IMPLEMENTATION · EXACT SOURCE LINES</span><b>{example.title}</b></div>
@@ -183,8 +196,8 @@ function SourceCodePanel({ lessonId }) {
     </div>
     <AnimatePresence initial={false}>
       {open && <motion.div className="source-code-body" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:.24}}>
-        <div className="source-code-meta"><span>{example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
-        <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
+        <div className="source-code-meta"><span><b>{example.language.toUpperCase()}</b> · {example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
+        <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{highlightSourceLine(line || ' ', example.language)}</span></span>)}</code></pre>
         <div className="source-related">{(example.related || []).map(item=><a key={item.title} href={SOURCE(item.path,item.ref)+`#L${item.start}-L${item.end}`} target="_blank" rel="noreferrer">RELATED: {item.title} · L{item.start}–L{item.end} <ExternalLink size={11}/></a>)}</div><p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
       </motion.div>}
     </AnimatePresence>
@@ -211,6 +224,34 @@ function Packet({ step }) {
   </motion.g>;
 }
 
+const mobileStages = [
+  {label:'TRANSMITTER DESKTOP',detail:'A selected file and transfer settings enter the TX application.',flow:'FILE → TRANSFER JOB',icon:FileCode2},
+  {label:'USB SERIAL LINK',detail:'The desktop controller sends acknowledged STREAM commands to the TX ESP32.',flow:'STREAM_BEGIN → STREAM_DATA',icon:Cable},
+  {label:'4B5B LINE CODING',detail:'Each byte becomes two 5-bit codewords before frame construction.',flow:'8 DATA BITS → 10 CODE BITS',icon:Code2},
+  {label:'FRAME CONSTRUCTION',detail:'Synchronization, metadata, payload, and CRC fields form a receiver-readable frame.',flow:'SYNC → HEADER → PAYLOAD → CRC',icon:Layers},
+  {label:'LED DRIVER + OPTICAL LINK',detail:'GPIO5 switches the LED driver; encoded symbols modulate the light output.',flow:'GPIO5 → DRIVER → 12 V LED',icon:Lightbulb},
+  {label:'PHOTODIODE FRONT END',detail:'BPW34 photocurrent is amplified by the OPA2604 TIA and sliced by the LM393.',flow:'BPW34 → OPA2604 → LM393',icon:Activity},
+  {label:'RECEIVER ESP32',detail:'The RX firmware samples the comparator output, finds sync, and decodes valid codewords.',flow:'SAMPLE → SYNC → DECODE',icon:Cpu},
+  {label:'FILE RECONSTRUCTION',detail:'Verified chunks are reassembled; the desktop can compare the result with the reference file.',flow:'CRC → REASSEMBLE → BER',icon:ShieldCheck}
+];
+
+function MobileStageModel({active}) {
+  const stage=mobileStages[active];
+  const Icon=stage.icon;
+  return <div className={`mobile-stage-model model-stage-${active}`} aria-live="polite">
+    <div className="mobile-model-grid"/>
+    <motion.div key={active} className="mobile-model-device" initial={{opacity:0,y:16,scale:.94}} animate={{opacity:1,y:0,scale:1}} transition={{duration:.32,ease:'easeOut'}}>
+      <span className="mobile-model-index">{String(active+1).padStart(2,'0')} / 08</span>
+      <div className="mobile-model-icon"><Icon size={42} strokeWidth={1.45}/><i/></div>
+      <b>{stage.label}</b>
+      <p>{stage.detail}</p>
+      <code>{stage.flow}</code>
+    </motion.div>
+    <div className="mobile-model-track"><span className="track-origin">TX</span><div><motion.i key={active} initial={{scaleX:0}} animate={{scaleX:1}} transition={{duration:.45}}/></div><span className="track-end">RX</span></div>
+    <span className="mobile-model-caption">STAGE-SPECIFIC SYSTEM VIEW · NOT LIVE TELEMETRY</span>
+  </div>;
+}
+
 function SignalDiagram({ active, onSelect }) {
   const [zoom,setZoom] = useState(1);
   const names = ['TX GUI','USB','4B5B','FRAME','LED','BPW34','RX MCU','FILE'];
@@ -218,6 +259,7 @@ function SignalDiagram({ active, onSelect }) {
   const activeX = stageX[active];
   return <div className="diagram-frame">
     <div className="diagram-topline"><span><i/> ANIMATED SYSTEM MODEL · NOT LIVE TELEMETRY</span><div className="diagram-toolbar"><span>INTERACTIVE · 08 STAGES</span><button onClick={()=>setZoom(v=>Math.max(.85,v-.15))} aria-label="Zoom out">−</button><button onClick={()=>setZoom(v=>Math.min(1.6,v+.15))} aria-label="Zoom in">+</button><button onClick={()=>setZoom(1)} aria-label="Fit diagram">FIT</button></div></div>
+    <MobileStageModel active={active}/>
     <svg className="signal-svg" viewBox="0 0 1020 330" role="img" aria-label="Isometric diagram of the visible light communication signal path">
       <defs>
         <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="#d7cbbd" strokeWidth=".7"/></pattern>
@@ -362,18 +404,17 @@ function Architecture() {
 
 function SoftwareArchitecture() {
   const [view,setView]=useState('tx');
-  const [mode,setMode]=useState('physical');
   const flows={
     tx:[
       ['01','TX desktop shell','The PySide6 transmitter window hosts dashboard, transmission controls, settings, and logs.','application-source/gui_dev_v3/tx/shell.py'],
       ['02','TXAppState','Observable application state tracks the selected file, chunk count, progress, serial status, and transmission history.','application-source/gui_dev_v3/tx_app_state.py'],
-      ['03',mode==='physical'?'TX physical backend':'TX simulation backend',mode==='physical'?'The physical strategy communicates with the transmitter ESP32 through the serial controller.':'The simulation strategy generates a virtual transmitter session without the optical hardware.',mode==='physical'?'application-source/gui_dev_v3/tx/backends/physical.py':'application-source/gui_dev_v3/tx/backends/simulation.py'],
-      ['04',mode==='physical'?'USB serial controller':'Virtual transmission model',mode==='physical'?'The serial controller streams file data to firmware using the STREAM_BEGIN / STREAM_DATA / STREAM_START lifecycle.':'The virtual backend exercises the application workflow using generated state rather than a live ESP32.','application-source/gui_dev_v3/serial/controllers.py']
+      ['03','TX physical backend','The physical strategy opens the transmitter ESP32 serial port, identifies the board, and sends the transfer through the hardware protocol.','application-source/gui_dev_v3/tx/backends/physical.py'],
+      ['04','USB serial controller','The serial controller streams file data to firmware using the STREAM_BEGIN / STREAM_DATA / STREAM_START lifecycle.','application-source/gui_dev_v3/serial/controllers.py']
     ],
     rx:[
       ['01','RX desktop shell','The PySide6 receiver window organizes dashboard, experiment tools, table builder, settings, and logs.','application-source/gui_dev_v3/rx/shell.py'],
       ['02','RXAppState','Observable receiver state exposes session, signal, transfer, activity log, and capture data to the UI.','application-source/gui_dev_v3/app_state.py'],
-      ['03',mode==='physical'?'RX physical backend':'RX simulation backend',mode==='physical'?'Reads receiver state from the ESP32 and exposes signal and transfer measurements.':'Generates a virtual optical channel and simulated reception state without physical hardware.',mode==='physical'?'application-source/gui_dev_v3/rx/backends/physical.py':'application-source/gui_dev_v3/rx/backends/simulation.py'],
+      ['03','RX physical backend','Reads receiver state from the physical ESP32 and exposes received signal and transfer measurements.','application-source/gui_dev_v3/rx/backends/physical.py'],
       ['04','Receiver logic + dashboard','The UI presents reception state, waveform, file information, and transfer-quality metrics.','application-source/gui_dev_v3/logic/codemap.md']
     ],
     shared:[
@@ -384,8 +425,8 @@ function SoftwareArchitecture() {
     ]
   };
   const rows=flows[view];
-  return <section className="content-section software-section" id="software"><div className="section-heading"><div><span className="eyebrow">03 · DESKTOP SOFTWARE ARCHITECTURE</span><h2>Two apps.<br/>One shared core.</h2></div><p>The PySide6 tools are not just serial terminals. They separate UI state, backend strategies, serial transport, and transfer-quality logic.</p></div><div className="software-toolbar"><div className="software-tabs"><button className={view==='tx'?'selected':''} aria-pressed={view==='tx'} onClick={()=>setView('tx')}>TRANSMITTER APP</button><button className={view==='rx'?'selected':''} aria-pressed={view==='rx'} onClick={()=>setView('rx')}>RECEIVER APP</button><button className={view==='shared'?'selected':''} aria-pressed={view==='shared'} onClick={()=>setView('shared')}>SHARED CORE</button></div>{view!=='shared'&&<div className="software-mode"><span>BACKEND STRATEGY</span><button className={mode==='physical'?'selected':''} aria-pressed={mode==='physical'} onClick={()=>setMode('physical')}>PHYSICAL</button><button className={mode==='simulated'?'selected':''} aria-pressed={mode==='simulated'} onClick={()=>setMode('simulated')}>SIMULATED</button></div>}</div><div className="software-flow">{rows.map(([n,title,desc,file],i)=><React.Fragment key={n}><article className="software-node"><span className="software-index">{n}</span><div><b>{title}</b><p>{desc}</p><a href={sourceFor(file)} target="_blank" rel="noreferrer">OPEN SOURCE MAP <ArrowUpRight size={12}/></a></div></article>{i<rows.length-1&&<div className="software-connector"><ArrowDown size={15}/></div>}</React.Fragment>)}</div><div className="software-foot"><span><i/> SOURCE-BASED ARCHITECTURE · PHYSICAL IS THE DEFAULT</span><a href={APP_SOURCE('application-source/gui_dev_v3/codemap.md')} target="_blank" rel="noreferrer">ROOT APPLICATION CODEMAP <ExternalLink size={12}/></a></div>
-    <div className="software-provenance"><div><span className="eyebrow">HOW TO READ THIS SWITCH</span><b>It changes this teaching diagram — not a live connection.</b><p>The development application defaults to the physical ESP32 backend. Its optional simulation backend remains available for software testing, but it does not send data through the LED or photodiode.</p></div><a href="https://github.com/luckyprinter/OpenVLC-Public/pull/18" target="_blank" rel="noreferrer">APP DEVELOPMENT BRANCH · DRAFT PR #18 <ExternalLink size={13}/></a></div>
+  return <section className="content-section software-section" id="software"><div className="section-heading"><div><span className="eyebrow">03 · DESKTOP SOFTWARE ARCHITECTURE</span><h2>Two apps.<br/>One shared core.</h2></div><p>The PySide6 tools are not just serial terminals. They separate UI state, backend strategies, serial transport, and transfer-quality logic.</p></div><div className="software-toolbar"><div className="software-tabs"><button className={view==='tx'?'selected':''} aria-pressed={view==='tx'} onClick={()=>setView('tx')}>TRANSMITTER APP</button><button className={view==='rx'?'selected':''} aria-pressed={view==='rx'} onClick={()=>setView('rx')}>RECEIVER APP</button><button className={view==='shared'?'selected':''} aria-pressed={view==='shared'} onClick={()=>setView('shared')}>SHARED CORE</button></div></div><div className="software-flow">{rows.map(([n,title,desc,file],i)=><React.Fragment key={n}><article className="software-node"><span className="software-index">{n}</span><div><b>{title}</b><p>{desc}</p><a href={sourceFor(file)} target="_blank" rel="noreferrer">OPEN SOURCE MAP <ArrowUpRight size={12}/></a></div></article>{i<rows.length-1&&<div className="software-connector"><ArrowDown size={15}/></div>}</React.Fragment>)}</div><div className="software-foot"><span><i/> SOURCE-BASED ARCHITECTURE · PHYSICAL IS THE DEFAULT</span><a href={APP_SOURCE('application-source/gui_dev_v3/codemap.md')} target="_blank" rel="noreferrer">ROOT APPLICATION CODEMAP <ExternalLink size={12}/></a></div>
+    <div className="software-provenance"><div><span className="eyebrow">THE PHYSICAL PROTOTYPE</span><b>One transmitter. One optical link. One receiver.</b><p>This architecture follows the real hardware path used by the prototype: two ESP32 endpoints connected through USB to their desktop applications, with the LED-to-photodiode path carrying the data between them. No simulated backend is presented in this guide.</p></div><a href="https://github.com/luckyprinter/OpenVLC-Public/pull/18" target="_blank" rel="noreferrer">HARDWARE-FIRST APP DEVELOPMENT · PR #18 <ExternalLink size={13}/></a></div>
     <div className="development-notes"><div className="development-notes-head"><span className="eyebrow">WHAT CHANGED IN THE NEWER APPLICATION WORK</span><h3>More honest measurements. Safer transfers.</h3><p>These are changes in the draft development branch, not claims about a completed physical test.</p></div><div className="development-note-grid">
       <article><span>01 · HARDWARE-FIRST</span><b>Real serial discovery</b><p>TX and RX identify their own firmware, prioritize their own saved port, and keep the other board's port separate.</p><a href={APP_SOURCE('application-source/gui_dev_v3/tx/backends/physical.py')+'#L128-L190'} target="_blank" rel="noreferrer">TX discovery code <ArrowUpRight size={12}/></a></article>
       <article><span>02 · TELEMETRY HONESTY</span><b>No invented OOK trace</b><p>The live RX view uses received PVo, Vref, and margin telemetry. Raw symbol-rate OOK samples remain unavailable until firmware streams them.</p><a href="https://github.com/luckyprinter/OpenVLC-Public/pull/18" target="_blank" rel="noreferrer">PR #18 implementation notes <ArrowUpRight size={12}/></a></article>
