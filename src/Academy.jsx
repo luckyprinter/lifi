@@ -339,19 +339,41 @@ function PathDetail({id,onBack}){
 
 function QuizPreview(){const [answer,setAnswer]=useState('');const [checked,setChecked]=useState(false);return <div className="quiz-card"><div className="eyebrow">QUICK KNOWLEDGE CHECK</div><h3>Why does the receiver take three samples?</h3><div className="quiz-options">{[{v:'a',t:'To triple the data rate'},{v:'b',t:'To reduce the effect of a noisy or unstable single reading'},{v:'c',t:'To calculate the file CRC'}].map(o=><button key={o.v} className={answer===o.v?'selected':''} onClick={()=>{setAnswer(o.v);setChecked(false)}}><i>{o.v.toUpperCase()}</i>{o.t}</button>)}</div><button className="quiz-submit" disabled={!answer} onClick={()=>setChecked(true)}>CHECK ANSWER <ArrowRight size={14}/></button>{checked&&<p className={answer==='b'?'correct':'incorrect'}>{answer==='b'?'Correct. Majority voting accepts the value seen by at least two of the three samples.':'Not quite. Think about what can happen when one sample lands near a noisy edge.'}</p>}</div>}
 
+function HomePage({navigate}){
+ return <>
+  <section className="academy-hero" id="home"><div className="hero-copy"><div className="hero-eyebrow"><i/> AN INTERACTIVE ENGINEERING COURSE</div><h1>Data carried<br/>by <em>light.</em></h1><p>Learn how a real ESP32 visible-light communication prototype works—from the LED driver and photodiode to the firmware and desktop code that make it communicate.</p><div className="hero-buttons"><button className="hero-primary" onClick={()=>navigate('paths')}>START LEARNING <ArrowRight size={16}/></button><button className="hero-secondary" onClick={()=>navigate('journey')}>EXPLORE THE SIGNAL <Waves size={16}/></button></div><div className="hero-stats"><div><b>06</b><span>LEARNING PATHS</span></div><div><b>08</b><span>TRANSMISSION STAGES</span></div><div><b>REAL</b><span>HARDWARE SOURCE</span></div></div></div><HeroModel/></section>
+  <div className="academy-ticker"><span>ESP32 TRANSMITTER</span><i/><span>4B5B + NRZ/OOK</span><i/><span>VISIBLE LIGHT</span><i/><span>BPW34 RECEIVER</span><i/><span>CRC VERIFIED FILE</span></div>
+  <section className="home-start"><div><span className="eyebrow">PICK UP THE THREAD THAT INTERESTS YOU</span><h2>A clear route from<br/><i>concept to code.</i></h2><p>Explore the physical device, follow a complete transmission, or open the real source code. Each area is its own focused learning space.</p></div><div className="home-start-grid"><button onClick={()=>navigate('paths')}><Lightbulb/><b>Learning paths</b><span>Build knowledge step by step</span><ArrowUpRight/></button><button onClick={()=>navigate('journey')}><Waves/><b>Signal journey</b><span>Watch data travel through the prototype</span><ArrowUpRight/></button><button onClick={()=>navigate('code')}><Code2/><b>Code studio</b><span>Read real files and understand each line</span><ArrowUpRight/></button></div></section>
+ </>
+}
+
+function PracticePage({openPath}){
+ return <section className="practice-section practice-page"><div><div className="section-kicker">LEARN BY DOING <span>CHECK YOUR UNDERSTANDING</span></div><p className="eyebrow">A LITTLE PRACTICE GOES A LONG WAY</p><h2>Don't just read it.<br/><i>Trace it yourself.</i></h2><p className="section-intro">Move from recognizing a concept to predicting what the program will do. Practice with real encoding rules, receiver logic, CRC validation, and debugging scenarios.</p><button className="practice-cta" onClick={()=>openPath('practice')}>OPEN THE PRACTICE PATH <ArrowRight size={15}/></button></div><QuizPreview/></section>
+}
+
 export default function Academy(){
- const [view,setView]=useState('home');const [path,setPath]=useState('start');const [menu,setMenu]=useState(false);
+ const initialHash=window.location.hash.replace(/^#/,'');
+ const initialPath=initialHash.startsWith('path/')?initialHash.slice(5):'start';
+ const [view,setView]=useState(()=>initialHash.startsWith('path/')?'path':['journey','paths','code','practice'].includes(initialHash)?initialHash:'home');
+ const [path,setPath]=useState(initialPath);
+ const [menu,setMenu]=useState(false);
+ const navigate=page=>{setView(page);setMenu(false);window.location.hash=page==='home'?'home':page};
  const openPath=id=>{setPath(id);setView('path');setMenu(false);window.location.hash='path/'+id};
- const backHome=()=>{setView('home');window.location.hash='home'};
+ const backToPaths=()=>navigate('paths');
+ React.useEffect(()=>{
+  const onHash=()=>{const h=window.location.hash.replace(/^#/,'');if(h.startsWith('path/')){setPath(h.slice(5));setView('path')}else if(['journey','paths','code','practice'].includes(h)){setView(h)}else{setView('home')}};
+  window.addEventListener('hashchange',onHash);return()=>window.removeEventListener('hashchange',onHash);
+ },[]);
  return <div className="academy-shell">
-  <header className="academy-header"><Brand/><nav className={menu?'open':''}><a href="#learn" onClick={()=>{setView('home');setMenu(false)}}>LEARNING PATHS</a><a href="#journey" onClick={()=>{setView('home');setMenu(false)}}>SIGNAL JOURNEY</a><a href="#code" onClick={()=>{setView('home');setMenu(false)}}>CODE STUDIO</a><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
-  {view==='path'?<PathDetail key={path} id={path} onBack={backHome}/>:<>
-   <main><section className="academy-hero" id="home"><div className="hero-copy"><div className="hero-eyebrow"><i/> AN INTERACTIVE ENGINEERING COURSE</div><h1>Data carried<br/>by <em>light.</em></h1><p>Learn how a real ESP32 visible-light communication prototype works—from the LED driver and photodiode to the firmware and desktop code that make it communicate.</p><div className="hero-buttons"><a href="#learn" className="hero-primary">START LEARNING <ArrowRight size={16}/></a><a href="#journey" className="hero-secondary">EXPLORE THE SIGNAL <Waves size={16}/></a></div><div className="hero-stats"><div><b>06</b><span>LEARNING PATHS</span></div><div><b>08</b><span>TRANSMISSION STAGES</span></div><div><b>REAL</b><span>HARDWARE SOURCE</span></div></div></div><HeroModel/></section>
-   <div className="academy-ticker"><span>ESP32 TRANSMITTER</span><i/><span>4B5B + NRZ/OOK</span><i/><span>VISIBLE LIGHT</span><i/><span>BPW34 RECEIVER</span><i/><span>CRC VERIFIED FILE</span></div>
-   <SignalJourney/><PathCards onOpen={openPath}/><CodeStudio/>
-   <section className="practice-section" id="practice"><div><div className="section-kicker">LEARN BY DOING <span>COMING INTO FOCUS</span></div><p className="eyebrow">A LITTLE PRACTICE GOES A LONG WAY</p><h2>Don't just read it.<br/><i>Trace it yourself.</i></h2><p className="section-intro">The course will grow from guided examples into short challenges: predict a bit pattern, trace a function call, identify a bug, and explain why a hardware setting matters.</p><button className="practice-cta" onClick={()=>openPath('practice')}>EXPLORE PRACTICE PATH <ArrowRight size={15}/></button></div><QuizPreview/></section>
+  <header className="academy-header"><Brand/><nav className={menu?'open':''}><button className={view==='paths'||view==='path'?'active':''} onClick={()=>navigate('paths')}>LEARNING PATHS</button><button className={view==='journey'?'active':''} onClick={()=>navigate('journey')}>SIGNAL JOURNEY</button><button className={view==='code'?'active':''} onClick={()=>navigate('code')}>CODE STUDIO</button><button className={view==='practice'?'active':''} onClick={()=>navigate('practice')}>PRACTICE</button><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
+  <main>
+   {view==='home'&&<HomePage navigate={navigate}/>}
+   {view==='journey'&&<SignalJourney/>}
+   {view==='paths'&&<PathCards onOpen={openPath}/>}
+   {view==='code'&&<CodeStudio/>}
+   {view==='practice'&&<PracticePage openPath={openPath}/>}
+   {view==='path'&&<PathDetail key={path} id={path} onBack={backToPaths}/>}
   </main>
   <footer className="academy-footer"><div><Brand/><p>An interactive guide to the physical OpenVLC visible-light communication prototype.</p></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> SOURCE CODE <ArrowUpRight size={13}/></a><a href="https://github.com/luckyprinter/lifi" target="_blank" rel="noreferrer">ACADEMY WEBSITE REPO <ArrowUpRight size={13}/></a></div><div className="footer-bottom"><span>FIRMWARE BASELINE · {FW.slice(0,8)}</span><span>APPLICATION SNAPSHOT · {APP.slice(0,8)} · DRAFT DEVELOPMENT</span><span>CONCEPTUAL MODELS ARE NOT LIVE HARDWARE TELEMETRY</span></div></footer>
-  </>}
  </div>
 }
