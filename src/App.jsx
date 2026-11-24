@@ -82,7 +82,10 @@ const codeExamples = {
   frameBuf[pos++] = streamNameLen;
   for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];
   for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];
-  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);` },
+  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);
+  putU16(frameBuf, pos, frameCrc);
+  return pos;
+}` },
   light: { title: 'The transmitter loops through chunks and sends optical frames', path: 'firmware/tx/tx.ino', ref: PIN, start: 259, end: 279, language: 'cpp', related: [{title:'Bit-level GPIO output and symbol timing',path:'firmware/tx/tx.ino',ref:PIN,start:147,end:179}], code: String.raw`void handleStreamStart() {
   if (streamTotalSize == 0) { Serial.println("TX_STREAM_ERROR:no_begin"); return; }
   if (streamLoadedBytes < streamTotalSize) { Serial.print("TX_STREAM_ERROR:not_loaded:"); Serial.print(streamLoadedBytes); Serial.print(":"); Serial.println(streamTotalSize); return; }
