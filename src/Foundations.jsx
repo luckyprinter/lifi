@@ -68,7 +68,7 @@ function Detector() {
     <h2>How does the receiver decide on a bit?</h2>
     <p>The photodiode converts incoming light to current. An amplifier converts the current to a voltage. The comparator compares it with a reference, and the ESP32 can take three digital samples and use the majority value.</p>
     <div className="foundation-instrument">
-      <label>Reference threshold <output>{threshold.toFixed(2)}</output>
+      <label>Reference threshold <span aria-hidden="true">{threshold.toFixed(2)}</span>
         <input type="range" min="0.2" max="0.85" step="0.01" value={threshold} onChange={e=>setThreshold(Number(e.target.value))}/>
       </label>
       <svg viewBox="0 0 360 125" role="img" aria-label="Three modeled samples and an adjustable threshold">
