@@ -137,6 +137,17 @@ function LessonExplorer() {
     return () => clearInterval(timer);
   }, [playing]);
   const select = (n) => { setActive(Math.max(0,Math.min(lessons.length-1,n))); setPlaying(false); };
+  useEffect(() => {
+    const onKeyDown = (event) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && (target.isContentEditable || /INPUT|TEXTAREA|SELECT|BUTTON|A/.test(target.tagName))) return;
+      if (event.key === 'ArrowRight') { event.preventDefault(); setActive(v => Math.min(lessons.length - 1, v + 1)); setPlaying(false); }
+      else if (event.key === 'ArrowLeft') { event.preventDefault(); setActive(v => Math.max(0, v - 1)); setPlaying(false); }
+      else if (event.code === 'Space') { event.preventDefault(); setPlaying(v => !v); }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, []);
   return <section className="lesson-section" id="journey">
     <div className="section-heading"><div><span className="eyebrow">THE INTERACTIVE FIELD GUIDE · 01</span><h2>Follow the signal.</h2></div><p>Not a static block diagram. Step through what happens to the data as it crosses the optical link.</p></div>
     <div className="lesson-layout">
@@ -153,6 +164,7 @@ function LessonExplorer() {
             <AnimatePresence mode="wait"><motion.div key={lesson.id} aria-live="polite" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.2}}><h3>{lesson.title}</h3><p>{lesson.body}</p><p className="detail">{lesson.detail}</p><code className="inline-code">{lesson.code}</code><a className="lesson-source-link" href={SOURCE(lesson.file)} target="_blank" rel="noreferrer"><span>VIEW SOURCE FILE</span><code>{lesson.file}</code><ExternalLink size={14}/></a></motion.div></AnimatePresence>
           </div>
           <div className="lesson-controls">
+            <span className="keyboard-hint">KEYS <kbd>←</kbd><kbd>→</kbd> STEP <kbd>SPACE</kbd> PLAY / PAUSE</span>
             <button className="icon-btn" onClick={()=>select(active-1)} disabled={active===0} aria-label="Previous stage"><ArrowLeft size={17}/></button>
             <button className="play-btn" onClick={()=>setPlaying(v=>!v)}>{playing?<Pause size={15}/>:<Play size={15}/>} {playing?'Pause':'Auto play'}</button>
             <button className="icon-btn" onClick={()=>select(0)} aria-label="Restart"><RotateCcw size={16}/></button>
