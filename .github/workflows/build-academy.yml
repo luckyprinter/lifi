@@ -33,7 +33,7 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Install Chromium for responsive checks
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
       - name: Build production site
         run: npm run build
       - name: Verify generated entry point
