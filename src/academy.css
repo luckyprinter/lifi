@@ -272,3 +272,5 @@
  .deep-dive-callout{align-items:flex-start;flex-direction:column;padding:17px}
  .deep-dive-callout>button{min-height:40px}
 }
+
+.deep-dive-loading{display:flex;align-items:center;justify-content:center;min-height:45vh;color:#9ab7b7;font:11px var(--mono);letter-spacing:.08em}
