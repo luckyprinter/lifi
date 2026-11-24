@@ -220,14 +220,14 @@ function SignalJourney(){
 function PathCards({onOpen}){return <section className="paths-section" id="learn"><div className="section-kicker">YOUR LEARNING ROUTE <span>01—06</span></div><div className="section-title-row"><div><p className="eyebrow">BUILT FOR CURIOUS BEGINNERS</p><h2>Learn it in layers.<br/><i>Build real understanding.</i></h2></div><p className="section-intro">Short lessons, clear prerequisites, interactive models, and practical checks. Take your time—each path prepares you for the next.</p></div><div className="path-grid">{paths.map((p,i)=><motion.button key={p.id} className={'path-card path-'+p.id} onClick={()=>onOpen(p.id)} whileHover={{y:-6}} whileTap={{scale:.99}}><div className="path-card-top"><span>{p.number} / 06</span><span>{p.duration}</span></div><div className="path-icon">{[<Lightbulb/>,<CircuitBoard/>,<Radio/>,<Cpu/>,<Code2/>,<ShieldCheck/>][i]}</div><h3>{p.title}</h3><p>{p.desc}</p><div className="path-card-bottom"><span>{p.items.length} LESSONS</span><ArrowUpRight size={18}/></div></motion.button>)}</div></section>}
 
 function highlightLine(source){
- const pattern=/(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\\b|\\b\\d+(?:\\.\\d+)?\\b)/g;
+ const pattern=/(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\b|\b\d+(?:\.\d+)?\b)/g;
  return source.split(pattern).filter(Boolean).map((part,i)=>{
   let type='plain';
   if(/^(\/\/|#)/.test(part))type='comment';
   else if(/^("|')/.test(part))type='string';
-  else if(/^\\d/.test(part))type='number';
+  else if(/^\d/.test(part))type='number';
   else if(/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part))type='keyword';
-  else if(/^[A-Za-z_][A-Za-z0-9_]*(?=\\()/.test(part))type='function';
+  else if(/^[A-Za-z_][A-Za-z0-9_]*(?=\()/.test(part))type='function';
   return <span className={'token-'+type} key={i}>{part}</span>;
  });
 }
