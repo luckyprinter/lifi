@@ -38,7 +38,7 @@ try {
     await page.waitForSelector('.stage-visual');
     if (await page.locator('.stage-rail button').count() !== 8) failures.push(width + 'px signal journey does not expose all eight stages');
     await page.locator('.stage-rail button').nth(7).click();
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(380);
     const stageWidth = await page.locator('.journey-content').evaluate(el => el.getBoundingClientRect().width);
     if (stageWidth > width + 1) failures.push(width + 'px journey panel exceeds viewport: ' + stageWidth);
     const journeyScroll = await page.evaluate(() => document.documentElement.scrollWidth);
