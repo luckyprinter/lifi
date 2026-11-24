@@ -4,7 +4,7 @@ import {
   Activity, ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen,
   Cable, Check, ChevronDown, ChevronRight, CircuitBoard, Code2, Cpu,
   FileCode2, Github, Lightbulb, Menu, Radio, RotateCcw, Search,
-  ShieldCheck, Sparkles, Waves, X, Zap
+  ShieldCheck, Sparkles, Waves, X, Zap, RefreshCw
 } from 'lucide-react';
 import './academy.css';
 const DeepDive = React.lazy(() => import('./DeepDive.jsx'));
