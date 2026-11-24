@@ -2914,8 +2914,24 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/rx.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 36,
+    "symbols": [
+      {
+        "name": "StudyDataPage",
+        "kind": "class",
+        "line": 8
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 11
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 29
+      }
+    ],
     "headings": []
   },
   {
@@ -2926,8 +2942,149 @@
     "status": "active",
     "kind": "python",
     "summary": "Selectable/reorderable experiment columns and generated mock table previews.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 945,
+    "symbols": [
+      {
+        "name": "VLC_PAPER_TEMPLATES",
+        "kind": "constant",
+        "line": 40
+      },
+      {
+        "name": "TableBuilderPage",
+        "kind": "class",
+        "line": 98
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 101
+      },
+      {
+        "name": "_build_builder_view",
+        "kind": "function",
+        "line": 122
+      },
+      {
+        "name": "_build_available_list",
+        "kind": "function",
+        "line": 284
+      },
+      {
+        "name": "_filter_available",
+        "kind": "function",
+        "line": 303
+      },
+      {
+        "name": "_add_selected",
+        "kind": "function",
+        "line": 316
+      },
+      {
+        "name": "_remove_selected",
+        "kind": "function",
+        "line": 326
+      },
+      {
+        "name": "_rebuild_selected",
+        "kind": "function",
+        "line": 334
+      },
+      {
+        "name": "_on_manual_toggle",
+        "kind": "function",
+        "line": 341
+      },
+      {
+        "name": "_on_selected_list_changed",
+        "kind": "function",
+        "line": 345
+      },
+      {
+        "name": "_on_manual_list_changed",
+        "kind": "function",
+        "line": 361
+      },
+      {
+        "name": "_on_template_selected",
+        "kind": "function",
+        "line": 368
+      },
+      {
+        "name": "_build_preview_view",
+        "kind": "function",
+        "line": 422
+      },
+      {
+        "name": "_show_builder",
+        "kind": "function",
+        "line": 491
+      },
+      {
+        "name": "_show_preview",
+        "kind": "function",
+        "line": 495
+      },
+      {
+        "name": "_on_preview",
+        "kind": "function",
+        "line": 499
+      },
+      {
+        "name": "_on_generate",
+        "kind": "function",
+        "line": 505
+      },
+      {
+        "name": "_get_column_keys",
+        "kind": "function",
+        "line": 510
+      },
+      {
+        "name": "_get_column_labels",
+        "kind": "function",
+        "line": 534
+      },
+      {
+        "name": "_generate_table_data",
+        "kind": "function",
+        "line": 550
+      },
+      {
+        "name": "_compute_mock_value",
+        "kind": "function",
+        "line": 596
+      },
+      {
+        "name": "_export_csv",
+        "kind": "function",
+        "line": 865
+      },
+      {
+        "name": "_export_excel",
+        "kind": "function",
+        "line": 873
+      },
+      {
+        "name": "_copy_table",
+        "kind": "function",
+        "line": 892
+      },
+      {
+        "name": "_save_template",
+        "kind": "function",
+        "line": 913
+      },
+      {
+        "name": "_table_to_csv",
+        "kind": "function",
+        "line": 916
+      },
+      {
+        "name": "_show_toast",
+        "kind": "function",
+        "line": 930
+      }
+    ],
     "headings": []
   },
   {
@@ -2938,7 +3095,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/serial.",
-    "lineCount": null,
+    "lineCount": 45,
     "symbols": [],
     "headings": []
   },
@@ -2962,8 +3119,174 @@
     "status": "active",
     "kind": "python",
     "summary": "TX/RX serial controllers, file-transfer commands, acknowledgements, and progress reporting.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 756,
+    "symbols": [
+      {
+        "name": "TXSerialController",
+        "kind": "class",
+        "line": 40
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 46
+      },
+      {
+        "name": "handle_line",
+        "kind": "function",
+        "line": 57
+      },
+      {
+        "name": "dma_capable",
+        "kind": "function",
+        "line": 79
+      },
+      {
+        "name": "apply_4b5b_settings",
+        "kind": "function",
+        "line": 89
+      },
+      {
+        "name": "bulb_on",
+        "kind": "function",
+        "line": 139
+      },
+      {
+        "name": "bulb_off",
+        "kind": "function",
+        "line": 140
+      },
+      {
+        "name": "bulb_idle",
+        "kind": "function",
+        "line": 141
+      },
+      {
+        "name": "send_file",
+        "kind": "function",
+        "line": 145
+      },
+      {
+        "name": "_send_dma",
+        "kind": "function",
+        "line": 220
+      },
+      {
+        "name": "_send_stream",
+        "kind": "function",
+        "line": 326
+      },
+      {
+        "name": "RXSerialController",
+        "kind": "class",
+        "line": 462
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 472
+      },
+      {
+        "name": "handle_line",
+        "kind": "function",
+        "line": 486
+      },
+      {
+        "name": "_parse_lq",
+        "kind": "function",
+        "line": 521
+      },
+      {
+        "name": "_margin_label",
+        "kind": "function",
+        "line": 558
+      },
+      {
+        "name": "_parse_rx_file_hex",
+        "kind": "function",
+        "line": 566
+      },
+      {
+        "name": "_save_to_disk",
+        "kind": "function",
+        "line": 625
+      },
+      {
+        "name": "_parse_ram_store",
+        "kind": "function",
+        "line": 645
+      },
+      {
+        "name": "_parse_transfer_notice",
+        "kind": "function",
+        "line": 666
+      },
+      {
+        "name": "_parse_vref_state",
+        "kind": "function",
+        "line": 688
+      },
+      {
+        "name": "request_config",
+        "kind": "function",
+        "line": 702
+      },
+      {
+        "name": "lock_vref",
+        "kind": "function",
+        "line": 707
+      },
+      {
+        "name": "lock_vref_with_swing",
+        "kind": "function",
+        "line": 711
+      },
+      {
+        "name": "set_vref_mv",
+        "kind": "function",
+        "line": 715
+      },
+      {
+        "name": "set_vref_margin_mv",
+        "kind": "function",
+        "line": 718
+      },
+      {
+        "name": "set_vref_settle_ms",
+        "kind": "function",
+        "line": 721
+      },
+      {
+        "name": "set_vref_pwm_full_scale_mv",
+        "kind": "function",
+        "line": 724
+      },
+      {
+        "name": "sweep_vref",
+        "kind": "function",
+        "line": 727
+      },
+      {
+        "name": "start_receive",
+        "kind": "function",
+        "line": 731
+      },
+      {
+        "name": "stop_receive",
+        "kind": "function",
+        "line": 738
+      },
+      {
+        "name": "clear_buffer",
+        "kind": "function",
+        "line": 745
+      },
+      {
+        "name": "set_save_dir",
+        "kind": "function",
+        "line": 749
+      }
+    ],
     "headings": []
   },
   {
@@ -2974,8 +3297,49 @@
     "status": "active",
     "kind": "python",
     "summary": "Serial port discovery and firmware-role identification.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 112,
+    "symbols": [
+      {
+        "name": "BAUDRATE_TX",
+        "kind": "constant",
+        "line": 10
+      },
+      {
+        "name": "BAUDRATE_RX",
+        "kind": "constant",
+        "line": 11
+      },
+      {
+        "name": "BAUDRATE",
+        "kind": "constant",
+        "line": 15
+      },
+      {
+        "name": "SerialPortInfo",
+        "kind": "class",
+        "line": 26
+      },
+      {
+        "name": "list_serial_ports",
+        "kind": "function",
+        "line": 32
+      },
+      {
+        "name": "probe_serial_port",
+        "kind": "function",
+        "line": 56
+      },
+      {
+        "name": "infer_firmware_role",
+        "kind": "function",
+        "line": 102
+      },
+      {
+        "name": "baud_for_role",
+        "kind": "function",
+        "line": 107
+      }
+    ],
     "headings": []
   },
   {
@@ -2986,8 +3350,114 @@
     "status": "active",
     "kind": "python",
     "summary": "Shared serial session lifecycle, command writes, line reads, and connection handling.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 246,
+    "symbols": [
+      {
+        "name": "MAX_STREAM_FILE_BYTES",
+        "kind": "constant",
+        "line": 17
+      },
+      {
+        "name": "MAX_NAME_BYTES",
+        "kind": "constant",
+        "line": 18
+      },
+      {
+        "name": "STREAM_SERIAL_BLOCK",
+        "kind": "constant",
+        "line": 19
+      },
+      {
+        "name": "crc16_ccitt",
+        "kind": "function",
+        "line": 30
+      },
+      {
+        "name": "write_status",
+        "kind": "function",
+        "line": 40
+      },
+      {
+        "name": "SerialSession",
+        "kind": "class",
+        "line": 49
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 60
+      },
+      {
+        "name": "last_lines",
+        "kind": "function",
+        "line": 80
+      },
+      {
+        "name": "_append_line",
+        "kind": "function",
+        "line": 85
+      },
+      {
+        "name": "is_connected",
+        "kind": "function",
+        "line": 94
+      },
+      {
+        "name": "is_connected",
+        "kind": "function",
+        "line": 99
+      },
+      {
+        "name": "connect",
+        "kind": "function",
+        "line": 105
+      },
+      {
+        "name": "disconnect",
+        "kind": "function",
+        "line": 145
+      },
+      {
+        "name": "send_line",
+        "kind": "function",
+        "line": 160
+      },
+      {
+        "name": "line_counter",
+        "kind": "function",
+        "line": 175
+      },
+      {
+        "name": "wait_for_line_containing",
+        "kind": "function",
+        "line": 179
+      },
+      {
+        "name": "_reader_loop",
+        "kind": "function",
+        "line": 201
+      },
+      {
+        "name": "handle_line",
+        "kind": "function",
+        "line": 225
+      },
+      {
+        "name": "status",
+        "kind": "function",
+        "line": 231
+      },
+      {
+        "name": "log",
+        "kind": "function",
+        "line": 241
+      },
+      {
+        "name": "close",
+        "kind": "function",
+        "line": 244
+      }
+    ],
     "headings": []
   },
   {
@@ -2998,8 +3468,334 @@
     "status": "active",
     "kind": "python",
     "summary": "QSettings persistence manager and UI binding helpers.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 644,
+    "symbols": [
+      {
+        "name": "SettingsManager",
+        "kind": "class",
+        "line": 36
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 44
+      },
+      {
+        "name": "get",
+        "kind": "function",
+        "line": 47
+      },
+      {
+        "name": "set",
+        "kind": "function",
+        "line": 54
+      },
+      {
+        "name": "value",
+        "kind": "function",
+        "line": 58
+      },
+      {
+        "name": "clear",
+        "kind": "function",
+        "line": 62
+      },
+      {
+        "name": "bind_toggle",
+        "kind": "function",
+        "line": 68
+      },
+      {
+        "name": "bind_radio_node",
+        "kind": "function",
+        "line": 74
+      },
+      {
+        "name": "bind_spin",
+        "kind": "function",
+        "line": 81
+      },
+      {
+        "name": "bind_double_spin",
+        "kind": "function",
+        "line": 91
+      },
+      {
+        "name": "bind_combo",
+        "kind": "function",
+        "line": 101
+      },
+      {
+        "name": "bind_radio_group",
+        "kind": "function",
+        "line": 110
+      },
+      {
+        "name": "SettingRow",
+        "kind": "class",
+        "line": 124
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 127
+      },
+      {
+        "name": "ToggleSetting",
+        "kind": "class",
+        "line": 147
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 150
+      },
+      {
+        "name": "ComboSetting",
+        "kind": "class",
+        "line": 156
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 159
+      },
+      {
+        "name": "SpinSetting",
+        "kind": "class",
+        "line": 167
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 170
+      },
+      {
+        "name": "FreeformSpinSetting",
+        "kind": "class",
+        "line": 180
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 183
+      },
+      {
+        "name": "_check_bounds",
+        "kind": "function",
+        "line": 198
+      },
+      {
+        "name": "FreeformDoubleSpinSetting",
+        "kind": "class",
+        "line": 208
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 211
+      },
+      {
+        "name": "_check_bounds",
+        "kind": "function",
+        "line": 226
+      },
+      {
+        "name": "RadioNodeSetting",
+        "kind": "class",
+        "line": 234
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 238
+      },
+      {
+        "name": "_on_toggled",
+        "kind": "function",
+        "line": 260
+      },
+      {
+        "name": "isChecked",
+        "kind": "function",
+        "line": 263
+      },
+      {
+        "name": "setChecked",
+        "kind": "function",
+        "line": 266
+      },
+      {
+        "name": "DoubleSpinSetting",
+        "kind": "class",
+        "line": 271
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 274
+      },
+      {
+        "name": "BrowseButton",
+        "kind": "class",
+        "line": 285
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 288
+      },
+      {
+        "name": "RadioGroup",
+        "kind": "class",
+        "line": 293
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 296
+      },
+      {
+        "name": "SliderSpinSetting",
+        "kind": "class",
+        "line": 311
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 314
+      },
+      {
+        "name": "bind_double_spin",
+        "kind": "function",
+        "line": 334
+      },
+      {
+        "name": "bind_slider_spin",
+        "kind": "function",
+        "line": 344
+      },
+      {
+        "name": "DirectorySetting",
+        "kind": "class",
+        "line": 357
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 361
+      },
+      {
+        "name": "_on_browse",
+        "kind": "function",
+        "line": 381
+      },
+      {
+        "name": "text",
+        "kind": "function",
+        "line": 388
+      },
+      {
+        "name": "setText",
+        "kind": "function",
+        "line": 391
+      },
+      {
+        "name": "bind_directory_setting",
+        "kind": "function",
+        "line": 395
+      },
+      {
+        "name": "SettingsContainer",
+        "kind": "class",
+        "line": 405
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 412
+      },
+      {
+        "name": "_on_nav_changed",
+        "kind": "function",
+        "line": 483
+      },
+      {
+        "name": "_on_dev_toggle",
+        "kind": "function",
+        "line": 487
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 496
+      },
+      {
+        "name": "refresh_all",
+        "kind": "function",
+        "line": 506
+      },
+      {
+        "name": "_SwatchCard",
+        "kind": "class",
+        "line": 514
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 523
+      },
+      {
+        "name": "_build",
+        "kind": "function",
+        "line": 533
+      },
+      {
+        "name": "_update_style",
+        "kind": "function",
+        "line": 555
+      },
+      {
+        "name": "set_active",
+        "kind": "function",
+        "line": 570
+      },
+      {
+        "name": "mousePressEvent",
+        "kind": "function",
+        "line": 574
+      },
+      {
+        "name": "ThemePickerGrid",
+        "kind": "class",
+        "line": 579
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 588
+      },
+      {
+        "name": "_on_card_clicked",
+        "kind": "function",
+        "line": 608
+      },
+      {
+        "name": "set_current",
+        "kind": "function",
+        "line": 626
+      },
+      {
+        "name": "bind_theme_picker",
+        "kind": "function",
+        "line": 632
+      },
+      {
+        "name": "_on_theme_changed",
+        "kind": "function",
+        "line": 638
+      }
+    ],
     "headings": []
   },
   {
@@ -3010,8 +3806,34 @@
     "status": "active",
     "kind": "python",
     "summary": "Application-wide display and preference settings persistence.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 79,
+    "symbols": [
+      {
+        "name": "SETTINGS_DIR",
+        "kind": "constant",
+        "line": 12
+      },
+      {
+        "name": "SETTINGS_PATH",
+        "kind": "constant",
+        "line": 13
+      },
+      {
+        "name": "AppSettings",
+        "kind": "class",
+        "line": 44
+      },
+      {
+        "name": "load_settings",
+        "kind": "function",
+        "line": 53
+      },
+      {
+        "name": "save_settings",
+        "kind": "function",
+        "line": 76
+      }
+    ],
     "headings": []
   },
   {
@@ -3022,8 +3844,49 @@
     "status": "active",
     "kind": "python",
     "summary": "Application visual theme, accent, density, and Qt stylesheet generation.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 945,
+    "symbols": [
+      {
+        "name": "apply_theme",
+        "kind": "function",
+        "line": 479
+      },
+      {
+        "name": "apply_design_tokens",
+        "kind": "function",
+        "line": 505
+      },
+      {
+        "name": "set_theme",
+        "kind": "function",
+        "line": 517
+      },
+      {
+        "name": "set_accent",
+        "kind": "function",
+        "line": 521
+      },
+      {
+        "name": "set_density",
+        "kind": "function",
+        "line": 525
+      },
+      {
+        "name": "get_color",
+        "kind": "function",
+        "line": 529
+      },
+      {
+        "name": "build_qss",
+        "kind": "function",
+        "line": 533
+      },
+      {
+        "name": "APP_QSS",
+        "kind": "constant",
+        "line": 944
+      }
+    ],
     "headings": []
   },
   {
@@ -3034,7 +3897,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/tx.",
-    "lineCount": null,
+    "lineCount": 2,
     "symbols": [],
     "headings": []
   },
