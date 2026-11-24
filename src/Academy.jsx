@@ -462,7 +462,7 @@ const dataTopics = [
 ];
 
 function AtlasSources({items,onOpenCode}) {
- return <div className="atlas-source-list"><span className="eyebrow">SOURCE LOCATIONS</span>{items.map((source,i)=><div className="atlas-source" key={source.path+'-'+i}><div><b>{source.label}</b><code>{source.path.split('/').slice(-1)[0]}{source.lines?' · L'+source.lines.replace('-','–L'):''}</code></div><div className="atlas-source-actions"><a href={link(source.path,APP,source.lines||'')} target="_blank" rel="noreferrer">OPEN SOURCE <ArrowUpRight size={12}/></a>{source.lesson&&<button onClick={()=>onOpenCode(source.lesson)}><Code2 size={12}/> CODE LESSON</button>}</div></div>)}</div>
+ return <div className="atlas-source-list"><span className="eyebrow">SOURCE LOCATIONS</span>{items.map((source,i)=><div className="atlas-source" key={source.path+'-'+i}><div><b>{source.label}</b><code>{source.path.split('/').slice(-1)[0]}{source.lines?' · '+formatLines(source.lines):''}</code></div><div className="atlas-source-actions"><a href={link(source.path,APP,source.lines||'')} target="_blank" rel="noreferrer">OPEN SOURCE <ArrowUpRight size={12}/></a>{source.lesson&&<button onClick={()=>onOpenCode(source.lesson)}><Code2 size={12}/> CODE LESSON</button>}</div></div>)}</div>
 }
 
 function AppAtlas({onOpenCode}) {
