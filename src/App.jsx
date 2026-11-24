@@ -25,10 +25,14 @@ const lessons = [
   { id:'verify', n:'08', title:'Validate and reconstruct', group:'INTEGRITY', tag:'CRC · CHUNKS · FILE', body:'The receiver checks integrity, accepts valid payload chunks, and reconstructs the original file. The desktop RX application presents the result and reception data.', detail:'Chunk, frame, and whole-file CRC checks serve different scopes. BER is evaluated by comparing reconstructed data with the corresponding original reference file.', code:'CRC checks  +  reference-file BER comparison', file:'firmware/specs/protocol_spec.md', color:'coral' }
 ];
 
-const navItems = [
-  ['journey','The signal journey'], ['architecture','System architecture'],
-  ['software','Desktop software'], ['protocol','Protocol notes'],
-  ['hardware','Hardware map'], ['receiver-lab','Receiver pipeline'], ['validation','Integrity checks']
+const pageRoutes = [
+  { id:'overview', label:'Overview', title:'Data, carried by light.', description:'A guided introduction to the short-range ESP32 visible-light communication prototype.' },
+  { id:'journey', label:'Signal journey', title:'Follow the signal.', description:'Trace a file through desktop software, line coding, the optical channel, and reconstruction.' },
+  { id:'architecture', label:'Architecture', title:'Two endpoints. One link.', description:'Understand how the transmitter, optical channel, receiver, and desktop applications fit together.' },
+  { id:'protocol', label:'Protocol & coding', title:'Bits need a shared language.', description:'Explore 4B5B encoding, frame structure, synchronization, and the protocol rules.' },
+  { id:'hardware', label:'Hardware', title:'From photons to logic.', description:'Inspect the LED driver, photodiode front end, comparator, and ESP32 signal roles.' },
+  { id:'receiver', label:'Receiver pipeline', title:'From a light pulse to a verified file.', description:'Step through sampling, synchronization, decoding, CRC checks, and file reconstruction.' },
+  { id:'validation', label:'Validation', title:'Trust, but verify the bits.', description:'Separate frame integrity, chunk integrity, whole-file checks, and reference-file BER.' }
 ];
 
 function Packet({ step }) {
@@ -300,14 +304,42 @@ function SourceFooter() {
 
 export default function App() {
   const [menu,setMenu]=useState(false);
+  const [route,setRoute]=useState(()=>window.location.hash.replace(/^#\/?/,'') || 'overview');
   const [scrolled,setScrolled]=useState(false);
+  const currentIndex=Math.max(0,pageRoutes.findIndex(page=>page.id===route));
+  const current=pageRoutes[currentIndex] || pageRoutes[0];
+  useEffect(()=>{
+    const syncRoute=()=>{const next=window.location.hash.replace(/^#\/?/,'') || 'overview';setRoute(pageRoutes.some(page=>page.id===next)?next:'overview');setMenu(false);window.scrollTo({top:0,behavior:'auto'});};
+    window.addEventListener('hashchange',syncRoute);
+    if(!window.location.hash) window.location.hash='#/overview';
+    return()=>window.removeEventListener('hashchange',syncRoute);
+  },[]);
   useEffect(()=>{const fn=()=>setScrolled(window.scrollY>24);window.addEventListener('scroll',fn,{passive:true});return()=>window.removeEventListener('scroll',fn)},[]);
+  const pageContent=()=>{
+    switch(current.id){
+      case 'journey': return <LessonExplorer/>;
+      case 'architecture': return <><Architecture/><SoftwareArchitecture/></>;
+      case 'protocol': return <Protocol/>;
+      case 'hardware': return <Hardware/>;
+      case 'receiver': return <ReceiverPipeline/>;
+      case 'validation': return <Validation/>;
+      default: return <section className="overview-landing"><div className="overview-kicker">OPENVLC FIELD GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><div className="overview-grid">{pageRoutes.slice(1).map((page,index)=><a className="overview-card" key={page.id} href={`#/${page.id}`}><span>0{index+1} / FIELD NOTE</span><b>{page.label}</b><p>{page.description}</p><i>OPEN CHAPTER <ArrowUpRight size={14}/></i></a>)}</div><div className="overview-source"><div><span className="eyebrow">BUILT FROM THE IMPLEMENTATION</span><h2>Understand the system.<br/><em>Inspect the source.</em></h2><p>Each chapter connects the engineering explanation to the pinned public implementation. The thesis remains the authority for experimental methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div></section>;
+    }
+  };
+  const previous=pageRoutes[currentIndex-1], next=pageRoutes[currentIndex+1];
   return <div className="site-shell">
-    <header className={scrolled?'site-header compact':'site-header'}><a className="wordmark" href="#top"><span className="mark"><RadioTower size={19}/></span><span>OPEN<span className="wordmark-accent">VLC</span><small>FIELD GUIDE</small></span></a><nav id="site-navigation" aria-label="Site navigation" className={menu?'nav-open':''}>{navItems.map(([id,label])=><a key={id} href={`#${id}`} onClick={()=>setMenu(false)}>{label}</a>)}</nav><div className="header-actions"><a href={REPO} target="_blank" rel="noreferrer" className="header-source">SOURCE <ArrowUpRight size={13}/></a><button className="menu-toggle" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation" aria-controls="site-navigation" aria-expanded={menu}>{menu?<X/>:<Menu/>}</button></div></header>
-    <main id="top">
-      <section className="hero"><div className="hero-copy"><div className="hero-kicker"><span className="pulse-dot"/> AN INTERACTIVE ENGINEERING GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><h1>Data, carried<br/>by <em>light.</em></h1><p className="hero-intro">A guided exploration of a short-range VLC prototype — from a file on the transmitter desktop to a reconstructed file at the receiver.</p><div className="hero-ctas"><a className="primary-cta" href="#journey">Explore the signal <ArrowDown size={16}/></a><a className="secondary-cta" href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> View the implementation</a></div><div className="hero-facts"><div><b>4B5B</b><span>LINE CODING</span></div><div><b>NRZ / OOK</b><span>OPTICAL SIGNAL</span></div><div><b>CRC</b><span>INTEGRITY CHECKS</span></div></div></div><div className="hero-art" role="img" aria-label="Abstract visible light signal illustration"><div className="art-grid"/><div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/><div className="art-beam"/><div className="art-bulb"><Lightbulb size={52}/></div><div className="art-label label-a">15,000 SYMBOLS / SEC</div><div className="art-label label-b">VISIBLE LIGHT CHANNEL</div><div className="art-packet packet-a"/><div className="art-packet packet-b"/><div className="art-packet packet-c"/><span className="art-coord">TX / RX — LOS</span></div><div className="hero-bottom"><span>01 — SYSTEM OVERVIEW</span><span>SCROLL TO EXPLORE <ArrowDown size={13}/></span></div></section>
-      <div className="ticker"><span>ESP32</span><i/> <span>4B5B LINE CODING</span><i/> <span>NRZ / OOK</span><i/> <span>BPW34 PHOTODIODE</span><i/> <span>CRC VALIDATION</span><i/> <span>SHORT-RANGE INDOOR VLC</span></div>
-      <LessonExplorer/><Architecture/><SoftwareArchitecture/><Protocol/><Hardware/><ReceiverPipeline/><Validation/><SourceFooter/>
+    <a className="skip-link" href="#page-content">Skip to chapter content</a>
+    <header className={scrolled?'site-header compact':'site-header'}>
+      <a className="wordmark" href="#/overview" onClick={()=>setMenu(false)}><span className="mark"><RadioTower size={19}/></span><span>OPEN<span className="wordmark-accent">VLC</span><small>FIELD GUIDE</small></span></a>
+      <nav id="site-navigation" aria-label="Site navigation" className={menu?'nav-open':''}>{pageRoutes.map(page=><a key={page.id} href={`#/${page.id}`} aria-current={current.id===page.id?'page':undefined} className={current.id===page.id?'active':''} onClick={()=>setMenu(false)}>{page.label}</a>)}</nav>
+      <div className="header-actions"><a href={REPO} target="_blank" rel="noreferrer" className="header-source">SOURCE <ArrowUpRight size={13}/></a><button className="menu-toggle" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation" aria-controls="site-navigation" aria-expanded={menu}>{menu?<X/>:<Menu/>}</button></div>
+    </header>
+    <main id="top" className="chapter-shell">
+      {current.id==='overview'?<section className="hero"><div className="hero-copy"><div className="hero-kicker"><span className="pulse-dot"/> AN INTERACTIVE ENGINEERING GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><h1>Data, carried<br/>by <em>light.</em></h1><p className="hero-intro">A guided exploration of a short-range VLC prototype — from a file on the transmitter desktop to a reconstructed file at the receiver.</p><div className="hero-ctas"><a className="primary-cta" href="#/journey">Explore the signal <ArrowRight size={16}/></a><a className="secondary-cta" href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> View the implementation</a></div><div className="hero-facts"><div><b>4B5B</b><span>LINE CODING</span></div><div><b>NRZ / OOK</b><span>OPTICAL SIGNAL</span></div><div><b>CRC</b><span>INTEGRITY CHECKS</span></div></div></div><div className="hero-art" role="img" aria-label="Abstract visible light signal illustration"><div className="art-grid"/><div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/><div className="art-beam"/><div className="art-bulb"><Lightbulb size={52}/></div><div className="art-label label-a">15,000 SYMBOLS / SEC</div><div className="art-label label-b">VISIBLE LIGHT CHANNEL</div><div className="art-packet packet-a"/><div className="art-packet packet-b"/><div className="art-packet packet-c"/><span className="art-coord">TX / RX — LOS</span></div></section>:<div className="chapter-ribbon"><span>OPENVLC FIELD GUIDE <i/> CHAPTER {String(currentIndex).padStart(2,'0')} / 06</span><b>{current.label}</b><span>REFERENCE IMPLEMENTATION · {PIN.slice(0,12)}</span></div>}
+      {current.id==='overview'&&<div className="ticker"><span>ESP32</span><i/> <span>4B5B LINE CODING</span><i/> <span>NRZ / OOK</span><i/> <span>BPW34 PHOTODIODE</span><i/> <span>CRC VALIDATION</span><i/> <span>SHORT-RANGE INDOOR VLC</span></div>}
+      <div id="page-content" key={current.id} className="chapter-content">{pageContent()}</div>
+      {current.id!=='overview'&&<nav className="chapter-pagination" aria-label="Chapter navigation">{previous?<a href={`#/${previous.id}`}><span><ArrowLeft size={14}/> PREVIOUS CHAPTER</span><b>{previous.label}</b></a>:<span/>}{next?<a href={`#/${next.id}`} className="chapter-next"><span>NEXT CHAPTER <ArrowRight size={14}/></span><b>{next.label}</b></a>:<a href="#/overview" className="chapter-next"><span>BACK TO START <ArrowUpRight size={14}/></span><b>Field guide overview</b></a>}</nav>}
+      <SourceFooter/>
     </main>
   </div>;
 }
