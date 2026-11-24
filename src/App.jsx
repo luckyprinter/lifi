@@ -172,17 +172,18 @@ const codeExamples = {
 };
 
 function highlightSourceLine(line, language) {
-  const pattern = /(\\/\\/.*|#.*|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\\b|\\b(?:Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)\\b|\\b\\d+(?:\\.\\d+)?\\b)/g;
+  const pattern = /(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\b|\b(?:Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)\b|\b\d+(?:\.\d+)?\b)/g;
   return line.split(pattern).filter(Boolean).map((part,index) => {
     let kind = 'plain';
-    if (/^(\\/\\/|#)/.test(part)) kind = 'comment';
-    else if (/^(\"|')/.test(part)) kind = 'string';
-    else if (/^\\d/.test(part)) kind = 'number';
+    if (/^(\/\/|#)/.test(part)) kind = 'comment';
+    else if (/^("|')/.test(part)) kind = 'string';
+    else if (/^\d/.test(part)) kind = 'number';
     else if (/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part)) kind = 'keyword';
     else if (/^(Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)$/.test(part)) kind = 'function';
     return <span className={'syntax-' + kind} key={index}>{part}</span>;
   });
 }
+
 function SourceCodePanel({ lessonId }) {
   const [open, setOpen] = useState(false);
   const example = codeExamples[lessonId];
