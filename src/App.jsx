@@ -164,14 +164,14 @@ function SourceCodePanel({ lessonId }) {
     <AnimatePresence initial={false}>
       {open && <motion.div className="source-code-body" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:.24}}>
         <div className="source-code-meta"><span>{example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
-        <pre className="source-code"><code>{example.code.split('\\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
+        <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
         <p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
       </motion.div>}
     </AnimatePresence>
   </div>;
 }
 
-const pageRoutes = 
+const pageRoutes = [
   { id:'overview', label:'Overview', title:'Data, carried by light.', description:'A guided introduction to the short-range ESP32 visible-light communication prototype.' },
   { id:'journey', label:'Signal journey', title:'Follow the signal.', description:'Trace a file through desktop software, line coding, the optical channel, and reconstruction.' },
   { id:'architecture', label:'Architecture', title:'Two endpoints. One link.', description:'Understand how the transmitter, optical channel, receiver, and desktop applications fit together.' },
@@ -476,7 +476,7 @@ export default function App() {
       case 'hardware': return <Hardware/>;
       case 'receiver': return <ReceiverPipeline/>;
       case 'validation': return <Validation/>;
-      default: return <section className="overview-landing"><div className="overview-kicker">OPENVLC FIELD GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><div className="overview-grid">{pageRoutes.slice(1).map((page,index)=><a className="overview-card" key={page.id} href={`#/${page.id}`}><span>0{index+1} / FIELD NOTE</span><b>{page.label}</b><p>{page.description}</p><i>OPEN CHAPTER <ArrowUpRight size={14}/></i></a>)}</div><div className="overview-source"><div><span className="eyebrow">BUILT FROM TWO EXPLICIT SOURCE SNAPSHOTS</span><h2>Understand the system.<br/><em>Inspect the source.</em></h2><p>Each chapter links to exact source lines. Firmware links use the thesis baseline; desktop-app links use the newer draft development branch. The thesis remains the authority for experimental methodology and measured results.</p></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div></section>;
+      default: return <section className="overview-landing"><div className="overview-kicker">OPENVLC FIELD GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><div className="overview-grid">{pageRoutes.slice(1).map((page,index)=><a className="overview-card" key={page.id} href={`#/${page.id}`}><span>0{index+1} / FIELD NOTE</span><b>{page.label}</b><p>{page.description}</p><i>OPEN CHAPTER <ArrowUpRight size={14}/></i></a>)}</div><div className="overview-source"><div><span className="eyebrow">BUILT FROM TWO EXPLICIT SOURCE SNAPSHOTS</span><h2>Understand the system.<br/><em>Inspect the source.</em></h2><p>Each chapter links to exact source lines. Firmware links use the thesis baseline; desktop-app links use the newer draft development branch. The thesis remains the authority for experimental methodology and measured results.</p></div><div className="source-snapshot"><span>FIRMWARE BASELINE <b>{PIN.slice(0,7)}</b></span><span>APP DEVELOPMENT <b>{APP_PIN.slice(0,7)} · DRAFT PR #18</b></span></div><a className="repo-button" href={REPO} target="_blank" rel="noreferrer"><Github size={18}/> Explore source repository <ArrowUpRight size={16}/></a></div></section>;
     }
   };
   const previous=pageRoutes[currentIndex-1], next=pageRoutes[currentIndex+1];
