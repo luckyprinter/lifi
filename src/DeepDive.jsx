@@ -106,7 +106,7 @@ export default function DeepDive({onOpenCode,appPin,codeLessons}) {
  useEffect(()=>{let cancelled=false;setSourceText('');setSourceStatus('loading');fetch('https://raw.githubusercontent.com/luckyprinter/OpenVLC-Public/'+appPin+'/'+current.path).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(t=>{if(!cancelled){setSourceText(t);setSourceStatus('ready')}}).catch(()=>{if(!cancelled)setSourceStatus('error')});return()=>{cancelled=true}},[current.path,appPin]);
  const visibleSymbols=useMemo(()=>current.symbols.filter(s=>(s.name+' '+s.kind).toLowerCase().includes(symbolQuery.toLowerCase())),[current,symbolQuery]);
  const activeSymbol=current.symbols.find(s=>s.line===activeSymbolLine)||null;
- const sourceLines=sourceText.split('\\n');
+ const sourceLines=sourceText.split('\n');
  const activeSourceLines=activeSymbol?sourceLines.slice(activeSymbol.line-1,activeSymbol.endLine||activeSymbol.line):[];
  const relations=deepRelations[current.path]||[];
  const lessons=deepLessons[current.path]||[];
