@@ -303,3 +303,47 @@ button,a{touch-action:manipulation}
 @media(prefers-reduced-motion:reduce){
  .chapter-content{animation:none}
 }
+
+
+/* Source-linked implementation explorer */
+.source-code-panel{margin-top:18px;border:1px solid var(--line);background:#f1e9df;max-width:100%;overflow:hidden}
+.source-code-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 14px}
+.source-code-heading>div{display:flex;flex-direction:column;gap:5px;min-width:0}
+.source-code-heading .eyebrow{font-size:8px}
+.source-code-heading b{font:600 15px var(--display);line-height:1.3}
+.source-code-heading button{flex-shrink:0;display:flex;align-items:center;gap:7px;padding:9px 11px;border:1px solid #cfc1b2;background:#f8f3ec;color:#5e554c;font:9px var(--mono);letter-spacing:.08em;cursor:pointer}
+.source-code-heading button:hover{border-color:var(--coral);color:var(--coral)}
+.source-code-body{overflow:hidden;border-top:1px solid var(--line)}
+.source-code-meta{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 13px;background:#e9dfd3;font:8px var(--mono);color:#756a5f}
+.source-code-meta>span{min-width:0;overflow-wrap:anywhere}
+.source-code-meta a{display:flex;align-items:center;gap:5px;flex-shrink:0;color:#a45340}
+.source-code{margin:0;padding:12px 0;max-height:360px;overflow:auto;background:#25241f;color:#eee6dc;font:11px/1.65 var(--mono);tab-size:2}
+.source-code-line{display:grid;grid-template-columns:42px minmax(max-content,1fr);min-width:max-content;padding:0 14px 0 0;white-space:pre}
+.source-code-line i{padding-right:12px;text-align:right;color:#8e8579;font-style:normal;user-select:none;border-right:1px solid #49443b;margin-right:12px}
+.source-code-body>p{margin:0;padding:9px 13px;color:#81766b;font-size:9px;line-height:1.5}
+.software-provenance{display:flex;justify-content:space-between;align-items:center;gap:22px;margin-top:18px;padding:18px 20px;border:1px solid var(--line);background:#f0e8de}
+.software-provenance>div{max-width:700px}
+.software-provenance b{display:block;margin:8px 0 5px;font:600 19px var(--display)}
+.software-provenance p{margin:0;color:#756c62;font-size:11px;line-height:1.65}
+.software-provenance>a{display:flex;align-items:center;gap:6px;flex-shrink:0;color:#a45340;font:9px var(--mono);letter-spacing:.06em}
+.development-notes{margin-top:55px}
+.development-notes-head{margin-bottom:20px}
+.development-notes-head h3{margin:9px 0 6px;font:600 clamp(25px,3vw,36px) var(--display)}
+.development-notes-head p{margin:0;color:#7b7268;font-size:11px}
+.development-note-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.development-note-grid article{min-width:0;padding:18px;border:1px solid var(--line);background:#f7f1e9}
+.development-note-grid article>span{font:8px var(--mono);letter-spacing:.1em;color:#a45340}
+.development-note-grid article>b{display:block;margin:14px 0 8px;font:600 19px var(--display)}
+.development-note-grid article p{min-height:78px;margin:0 0 15px;color:#746b61;font-size:10px;line-height:1.65}
+.development-note-grid article a{display:inline-flex;align-items:center;gap:5px;color:#a45340;font:9px var(--mono)}
+.source-snapshot{display:flex;flex-direction:column;gap:9px;padding:15px 17px;border:1px solid var(--line);background:#f0e8de}
+.source-snapshot span{font:8px var(--mono);letter-spacing:.08em;color:#8b8074}
+.source-snapshot b{display:block;margin-top:4px;color:#4f4941;font-weight:600}
+@media(max-width:1000px){.development-note-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.source-code-heading{align-items:flex-start}.source-code-heading b{font-size:14px}.source-code-meta{align-items:flex-start;flex-direction:column}.source-code-meta a{white-space:normal}.software-provenance{align-items:flex-start;flex-direction:column}.development-note-grid{grid-template-columns:1fr}.development-note-grid article p{min-height:0}.source-snapshot{width:100%}}
+
+.source-related{display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px 0}
+.source-related a{display:inline-flex;align-items:center;gap:5px;padding:7px 8px;border:1px solid #d3c3b3;background:#f6efe7;color:#9f5846;font:8px var(--mono);line-height:1.45}
+.source-related a:hover{border-color:var(--coral);color:var(--coral)}
+.overview-source .source-snapshot{min-width:190px;flex-shrink:0}
+@media(max-width:760px){.overview-source .source-snapshot{min-width:0;margin-top:18px}.source-related{flex-direction:column;align-items:stretch}.source-related a{width:100%}}
