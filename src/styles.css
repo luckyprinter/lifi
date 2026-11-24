@@ -30,3 +30,5 @@
  .frame-demo{overflow-x:auto}
  .frame-demo .frame-band{min-width:70px}
 }
+
+.diagram-node{cursor:pointer}.diagram-node:focus-visible{opacity:1;filter:drop-shadow(0 0 7px #e66e54) saturate(1.15);outline:none}.diagram-mobile-hint{display:none}@media(max-width:760px){.diagram-mobile-hint{display:inline;color:#a95340;font-weight:500}}
