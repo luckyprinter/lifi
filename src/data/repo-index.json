@@ -5004,8 +5004,39 @@
     "status": "alternate/test",
     "kind": "python",
     "summary": "TX demo data helpers, separate from physical hardware telemetry.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 70,
+    "symbols": [
+      {
+        "name": "TXSettings",
+        "kind": "class",
+        "line": 8
+      },
+      {
+        "name": "TXFileInfo",
+        "kind": "class",
+        "line": 19
+      },
+      {
+        "name": "TXProgress",
+        "kind": "class",
+        "line": 29
+      },
+      {
+        "name": "TXState",
+        "kind": "class",
+        "line": 40
+      },
+      {
+        "name": "build_mock_tx_log",
+        "kind": "function",
+        "line": 51
+      },
+      {
+        "name": "build_mock_tx_state",
+        "kind": "function",
+        "line": 60
+      }
+    ],
     "headings": []
   },
   {
@@ -5016,8 +5047,19 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 3,
+    "symbols": [
+      {
+        "name": "VERSION",
+        "kind": "constant",
+        "line": 1
+      },
+      {
+        "name": "BUILD_DATE",
+        "kind": "constant",
+        "line": 2
+      }
+    ],
     "headings": []
   },
   {
@@ -5028,8 +5070,199 @@
     "status": "active",
     "kind": "python",
     "summary": "Shared PySide6 UI components and reusable controls.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 421,
+    "symbols": [
+      {
+        "name": "muted_label",
+        "kind": "function",
+        "line": 26
+      },
+      {
+        "name": "value_label",
+        "kind": "function",
+        "line": 33
+      },
+      {
+        "name": "status_green_label",
+        "kind": "function",
+        "line": 42
+      },
+      {
+        "name": "panel_header",
+        "kind": "function",
+        "line": 48
+      },
+      {
+        "name": "Card",
+        "kind": "class",
+        "line": 55
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 58
+      },
+      {
+        "name": "SectionCard",
+        "kind": "class",
+        "line": 69
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 72
+      },
+      {
+        "name": "scrollable",
+        "kind": "function",
+        "line": 78
+      },
+      {
+        "name": "MetricCard",
+        "kind": "class",
+        "line": 87
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 90
+      },
+      {
+        "name": "StatusBadge",
+        "kind": "class",
+        "line": 100
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 103
+      },
+      {
+        "name": "DetailRow",
+        "kind": "class",
+        "line": 113
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 116
+      },
+      {
+        "name": "ProgressBar",
+        "kind": "class",
+        "line": 134
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 137
+      },
+      {
+        "name": "set_percent",
+        "kind": "function",
+        "line": 144
+      },
+      {
+        "name": "paintEvent",
+        "kind": "function",
+        "line": 150
+      },
+      {
+        "name": "MetricGrid",
+        "kind": "class",
+        "line": 176
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 179
+      },
+      {
+        "name": "ActivityLogTable",
+        "kind": "class",
+        "line": 188
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 191
+      },
+      {
+        "name": "update_entries",
+        "kind": "function",
+        "line": 214
+      },
+      {
+        "name": "WaveformWidget",
+        "kind": "class",
+        "line": 235
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 238
+      },
+      {
+        "name": "set_active",
+        "kind": "function",
+        "line": 245
+      },
+      {
+        "name": "set_samples",
+        "kind": "function",
+        "line": 250
+      },
+      {
+        "name": "paintEvent",
+        "kind": "function",
+        "line": 255
+      },
+      {
+        "name": "primary_button",
+        "kind": "function",
+        "line": 323
+      },
+      {
+        "name": "secondary_button",
+        "kind": "function",
+        "line": 329
+      },
+      {
+        "name": "ModeSelectCard",
+        "kind": "class",
+        "line": 337
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 341
+      },
+      {
+        "name": "set_active",
+        "kind": "function",
+        "line": 381
+      },
+      {
+        "name": "update_style",
+        "kind": "function",
+        "line": 386
+      },
+      {
+        "name": "mousePressEvent",
+        "kind": "function",
+        "line": 396
+      },
+      {
+        "name": "InfoIcon",
+        "kind": "class",
+        "line": 400
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 402
+      }
+    ],
     "headings": []
   },
   {
@@ -5052,7 +5285,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Desktop application runner and startup entry script.",
-    "lineCount": null,
+    "lineCount": 14,
     "symbols": [],
     "headings": []
   },
@@ -5100,8 +5333,339 @@
     "status": "active",
     "kind": "arduino-cpp",
     "summary": "RX ESP32 firmware for symbol sampling, synchronization, 4B5B decoding, CRC validation, and file reconstruction.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 1049,
+    "symbols": [
+      {
+        "name": "setVrefMilliVolts",
+        "kind": "function",
+        "line": 132
+      },
+      {
+        "name": "setupVrefPwmOutput",
+        "kind": "function",
+        "line": 134
+      },
+      {
+        "name": "writeVrefPwmDuty",
+        "kind": "function",
+        "line": 143
+      },
+      {
+        "name": "crc16_ccitt",
+        "kind": "function",
+        "line": 151
+      },
+      {
+        "name": "getU16",
+        "kind": "function",
+        "line": 159
+      },
+      {
+        "name": "getU32",
+        "kind": "function",
+        "line": 160
+      },
+      {
+        "name": "printHexByte",
+        "kind": "function",
+        "line": 163
+      },
+      {
+        "name": "printHexBytes",
+        "kind": "function",
+        "line": 164
+      },
+      {
+        "name": "adcCountsToVoltage",
+        "kind": "function",
+        "line": 166
+      },
+      {
+        "name": "readVoltage",
+        "kind": "function",
+        "line": 167
+      },
+      {
+        "name": "adcMonitorToFrontEndVoltage",
+        "kind": "function",
+        "line": 168
+      },
+      {
+        "name": "readVoltageMilliVolts",
+        "kind": "function",
+        "line": 169
+      },
+      {
+        "name": "sampleSignalWindowFor",
+        "kind": "function",
+        "line": 171
+      },
+      {
+        "name": "sampleSignalWindow",
+        "kind": "function",
+        "line": 183
+      },
+      {
+        "name": "sampleCalibrationSignal",
+        "kind": "function",
+        "line": 187
+      },
+      {
+        "name": "reachableVrefMaxMv",
+        "kind": "function",
+        "line": 211
+      },
+      {
+        "name": "vrefPwmFullScaleActualMv",
+        "kind": "function",
+        "line": 215
+      },
+      {
+        "name": "milliVoltsToPwmDuty",
+        "kind": "function",
+        "line": 219
+      },
+      {
+        "name": "parseVrefMilliVolts",
+        "kind": "function",
+        "line": 228
+      },
+      {
+        "name": "parseMarginMilliVolts",
+        "kind": "function",
+        "line": 239
+      },
+      {
+        "name": "parsePercentValue",
+        "kind": "function",
+        "line": 250
+      },
+      {
+        "name": "parseDurationMilliseconds",
+        "kind": "function",
+        "line": 259
+      },
+      {
+        "name": "vrefPwmDutyPercent",
+        "kind": "function",
+        "line": 275
+      },
+      {
+        "name": "percentToVrefPwmDuty",
+        "kind": "function",
+        "line": 279
+      },
+      {
+        "name": "setVrefControlMode",
+        "kind": "function",
+        "line": 285
+      },
+      {
+        "name": "setVrefSettleMilliseconds",
+        "kind": "function",
+        "line": 299
+      },
+      {
+        "name": "setVrefPwmFullScaleAdcMilliVolts",
+        "kind": "function",
+        "line": 310
+      },
+      {
+        "name": "applyVrefPwmDutyAndSettle",
+        "kind": "function",
+        "line": 325
+      },
+      {
+        "name": "setVrefPwmPercent",
+        "kind": "function",
+        "line": 331
+      },
+      {
+        "name": "setVrefMilliVolts",
+        "kind": "function",
+        "line": 354
+      },
+      {
+        "name": "setTargetMarginMilliVolts",
+        "kind": "function",
+        "line": 381
+      },
+      {
+        "name": "reportVrefState",
+        "kind": "function",
+        "line": 392
+      },
+      {
+        "name": "tuneVrefToMeasuredTarget",
+        "kind": "function",
+        "line": 416
+      },
+      {
+        "name": "calibrateVrefFromSignal",
+        "kind": "function",
+        "line": 487
+      },
+      {
+        "name": "runVrefSweep",
+        "kind": "function",
+        "line": 559
+      },
+      {
+        "name": "computePassRate",
+        "kind": "function",
+        "line": 607
+      },
+      {
+        "name": "reportLinkQuality",
+        "kind": "function",
+        "line": 619
+      },
+      {
+        "name": "reportLinkQualityIfIdleDue",
+        "kind": "function",
+        "line": 651
+      },
+      {
+        "name": "resetFrameParser",
+        "kind": "function",
+        "line": 660
+      },
+      {
+        "name": "resetLineDecoder",
+        "kind": "function",
+        "line": 668
+      },
+      {
+        "name": "clearRxTransfer",
+        "kind": "function",
+        "line": 675
+      },
+      {
+        "name": "clearRxDuplicateHistory",
+        "kind": "function",
+        "line": 682
+      },
+      {
+        "name": "clearStaleRxTransferIfNeeded",
+        "kind": "function",
+        "line": 693
+      },
+      {
+        "name": "rememberCompletedTransfer",
+        "kind": "function",
+        "line": 703
+      },
+      {
+        "name": "isRecentlyCompletedTransfer",
+        "kind": "function",
+        "line": 715
+      },
+      {
+        "name": "waitUntil",
+        "kind": "function",
+        "line": 729
+      },
+      {
+        "name": "waitStableIdleFor",
+        "kind": "function",
+        "line": 731
+      },
+      {
+        "name": "waitStartTransition",
+        "kind": "function",
+        "line": 744
+      },
+      {
+        "name": "phaseOffsetUs",
+        "kind": "function",
+        "line": 754
+      },
+      {
+        "name": "sampleRawAt",
+        "kind": "function",
+        "line": 761
+      },
+      {
+        "name": "acquire4b5bSync",
+        "kind": "function",
+        "line": 773
+      },
+      {
+        "name": "readLogicalBit",
+        "kind": "function",
+        "line": 806
+      },
+      {
+        "name": "alignToEncodedSof",
+        "kind": "function",
+        "line": 813
+      },
+      {
+        "name": "read5b",
+        "kind": "function",
+        "line": 830
+      },
+      {
+        "name": "read4b5bByte",
+        "kind": "function",
+        "line": 840
+      },
+      {
+        "name": "readOpticalByte",
+        "kind": "function",
+        "line": 856
+      },
+      {
+        "name": "beginOrValidateBufferedTransfer",
+        "kind": "function",
+        "line": 860
+      },
+      {
+        "name": "dumpBufferedFile",
+        "kind": "function",
+        "line": 874
+      },
+      {
+        "name": "bufferVerifiedChunk",
+        "kind": "function",
+        "line": 887
+      },
+      {
+        "name": "processCompleteFrame",
+        "kind": "function",
+        "line": 907
+      },
+      {
+        "name": "processFrameByte",
+        "kind": "function",
+        "line": 944
+      },
+      {
+        "name": "setSymbolRate",
+        "kind": "function",
+        "line": 968
+      },
+      {
+        "name": "setSamplePhase",
+        "kind": "function",
+        "line": 978
+      },
+      {
+        "name": "setMode",
+        "kind": "function",
+        "line": 986
+      },
+      {
+        "name": "setup",
+        "kind": "function",
+        "line": 994
+      },
+      {
+        "name": "loop",
+        "kind": "function",
+        "line": 1014
+      }
+    ],
     "headings": []
   },
   {
@@ -5148,8 +5712,194 @@
     "status": "active",
     "kind": "arduino-cpp",
     "summary": "TX ESP32 firmware for STREAM preload, frame creation, 4B5B encoding, OOK timing, and GPIO output.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 333,
+    "symbols": [
+      {
+        "name": "crc16_ccitt",
+        "kind": "function",
+        "line": 54
+      },
+      {
+        "name": "hexVal",
+        "kind": "function",
+        "line": 62
+      },
+      {
+        "name": "hexToBytes",
+        "kind": "function",
+        "line": 69
+      },
+      {
+        "name": "putU16",
+        "kind": "function",
+        "line": 84
+      },
+      {
+        "name": "putU32",
+        "kind": "function",
+        "line": 85
+      },
+      {
+        "name": "waitUntil",
+        "kind": "function",
+        "line": 89
+      },
+      {
+        "name": "beginSymbolClock",
+        "kind": "function",
+        "line": 90
+      },
+      {
+        "name": "waitSymbolBoundary",
+        "kind": "function",
+        "line": 91
+      },
+      {
+        "name": "setSymbolRate",
+        "kind": "function",
+        "line": 93
+      },
+      {
+        "name": "clampPercent",
+        "kind": "function",
+        "line": 104
+      },
+      {
+        "name": "pinDutyForLightPercent",
+        "kind": "function",
+        "line": 110
+      },
+      {
+        "name": "writeLightPercent",
+        "kind": "function",
+        "line": 115
+      },
+      {
+        "name": "levelForLight",
+        "kind": "function",
+        "line": 116
+      },
+      {
+        "name": "lineOneLevel",
+        "kind": "function",
+        "line": 117
+      },
+      {
+        "name": "lineZeroLevel",
+        "kind": "function",
+        "line": 118
+      },
+      {
+        "name": "idleLevel",
+        "kind": "function",
+        "line": 119
+      },
+      {
+        "name": "applyIdleLevel",
+        "kind": "function",
+        "line": 120
+      },
+      {
+        "name": "reportLineConfig",
+        "kind": "function",
+        "line": 122
+      },
+      {
+        "name": "setActiveLow",
+        "kind": "function",
+        "line": 136
+      },
+      {
+        "name": "setIdleOn",
+        "kind": "function",
+        "line": 137
+      },
+      {
+        "name": "setQuietMode",
+        "kind": "function",
+        "line": 138
+      },
+      {
+        "name": "setMode",
+        "kind": "function",
+        "line": 140
+      },
+      {
+        "name": "send4b5bBit",
+        "kind": "function",
+        "line": 147
+      },
+      {
+        "name": "sendRawWord",
+        "kind": "function",
+        "line": 152
+      },
+      {
+        "name": "send4b5bCode",
+        "kind": "function",
+        "line": 156
+      },
+      {
+        "name": "send4b5bEncodedByte",
+        "kind": "function",
+        "line": 160
+      },
+      {
+        "name": "send4b5bPreambleAndSync",
+        "kind": "function",
+        "line": 165
+      },
+      {
+        "name": "sendOpticalFrame",
+        "kind": "function",
+        "line": 171
+      },
+      {
+        "name": "buildFrame",
+        "kind": "function",
+        "line": 182
+      },
+      {
+        "name": "clearStream",
+        "kind": "function",
+        "line": 203
+      },
+      {
+        "name": "splitFields",
+        "kind": "function",
+        "line": 208
+      },
+      {
+        "name": "handleStreamBegin",
+        "kind": "function",
+        "line": 219
+      },
+      {
+        "name": "handleStreamData",
+        "kind": "function",
+        "line": 244
+      },
+      {
+        "name": "handleStreamStart",
+        "kind": "function",
+        "line": 259
+      },
+      {
+        "name": "handleBulbCommand",
+        "kind": "function",
+        "line": 281
+      },
+      {
+        "name": "setup",
+        "kind": "function",
+        "line": 290
+      },
+      {
+        "name": "loop",
+        "kind": "function",
+        "line": 306
+      }
+    ],
     "headings": []
   }
 ]
