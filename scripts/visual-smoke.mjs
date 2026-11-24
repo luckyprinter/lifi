@@ -75,7 +75,7 @@ try {
     if (!(await page.locator('.deep-symbol-list').innerText()).includes('start_transmission')) failures.push(width + 'px Deep Dive did not index TXAppState.start_transmission');
     await page.locator('.deep-symbol-list button').filter({ hasText: 'start_transmission' }).click();
     if (!(await page.locator('.deep-symbol-detail h4').innerText()).includes('start_transmission')) failures.push(width + 'px selecting a symbol did not open its function outline');
-    if (!(await page.locator('.deep-symbol-detail pre').innerText()).includes('def start_transmission')) failures.push(width + 'px function outline does not show its source signature');
+    if (!(await page.locator('.deep-symbol-detail > pre').innerText()).includes('def start_transmission')) failures.push(width + 'px function outline does not show its source signature');
     if (!(await page.locator('.deep-symbol-detail a').getAttribute('href')).includes('#L225-L')) failures.push(width + 'px function source span does not link to its indexed line range');
     await page.waitForFunction(() => document.querySelector('.deep-source-head')?.innerText.includes('LINES LOADED'), { timeout: 12000 }).catch(() => failures.push(width + 'px pinned source text did not load into the inline viewer'));
     if (!(await page.locator('.deep-source-viewer pre').innerText()).includes('def start_transmission')) failures.push(width + 'px inline source viewer does not show the selected function body');
