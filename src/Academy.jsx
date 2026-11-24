@@ -219,13 +219,26 @@ function SignalJourney(){
 
 function PathCards({onOpen}){return <section className="paths-section" id="learn"><div className="section-kicker">YOUR LEARNING ROUTE <span>01—06</span></div><div className="section-title-row"><div><p className="eyebrow">BUILT FOR CURIOUS BEGINNERS</p><h2>Learn it in layers.<br/><i>Build real understanding.</i></h2></div><p className="section-intro">Short lessons, clear prerequisites, interactive models, and practical checks. Take your time—each path prepares you for the next.</p></div><div className="path-grid">{paths.map((p,i)=><motion.button key={p.id} className={'path-card path-'+p.id} onClick={()=>onOpen(p.id)} whileHover={{y:-6}} whileTap={{scale:.99}}><div className="path-card-top"><span>{p.number} / 06</span><span>{p.duration}</span></div><div className="path-icon">{[<Lightbulb/>,<CircuitBoard/>,<Radio/>,<Cpu/>,<Code2/>,<ShieldCheck/>][i]}</div><h3>{p.title}</h3><p>{p.desc}</p><div className="path-card-bottom"><span>{p.items.length} LESSONS</span><ArrowUpRight size={18}/></div></motion.button>)}</div></section>}
 
+function highlightLine(source){
+ const pattern=/(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\\b|\\b\\d+(?:\\.\\d+)?\\b)/g;
+ return source.split(pattern).filter(Boolean).map((part,i)=>{
+  let type='plain';
+  if(/^(\/\/|#)/.test(part))type='comment';
+  else if(/^("|')/.test(part))type='string';
+  else if(/^\\d/.test(part))type='number';
+  else if(/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part))type='keyword';
+  else if(/^[A-Za-z_][A-Za-z0-9_]*(?=\\()/.test(part))type='function';
+  return <span className={'token-'+type} key={i}>{part}</span>;
+ });
+}
+
 function CodeLesson({lesson,selected,onSelect}){
  const [line,setLine]=useState(0); const [showAll,setShowAll]=useState(false);
  React.useEffect(()=>{setLine(0);setShowAll(false)},[lesson.id]);
  const source=link(lesson.path,lesson.ref,lesson.range);
  return <article className="code-lesson">
   <div className="code-lesson-head"><div><span className="eyebrow">{lesson.level}</span><h3>{lesson.name}</h3><p>{lesson.summary}</p></div><a href={source} target="_blank" rel="noreferrer">SOURCE LINES <ArrowUpRight size={14}/></a></div>
-  <div className="code-editor"><div className="editor-bar"><span><i/> {lesson.path.split('/').slice(-1)[0]}</span><span>{lesson.lang.toUpperCase()} · L{lesson.range.replace('-', '–')}</span></div><div className="editor-code">{lesson.lines.map(([code,explain],i)=><button key={i} className={'editor-line '+(line===i?'chosen':'')} onClick={()=>setLine(i)}><span className="line-no">{Number(lesson.range.split('-')[0])+i}</span><code>{code}</code></button>)}</div><div className="editor-explain"><span>LINE EXPLAINER · {line+1}/{lesson.lines.length}</span><p>{lesson.lines[line][1]}</p><div><button disabled={line===0} onClick={()=>setLine(v=>v-1)}><ArrowLeft size={13}/> PREVIOUS LINE</button><button disabled={line===lesson.lines.length-1} onClick={()=>setLine(v=>v+1)}>NEXT LINE <ArrowRight size={13}/></button></div></div></div>
+  <div className="code-editor"><div className="editor-bar"><span><i/> {lesson.path.split('/').slice(-1)[0]}</span><span>{lesson.lang.toUpperCase()} · L{lesson.range.replace('-', '–')}</span></div><div className="editor-code">{lesson.lines.map(([code,explain],i)=><button key={i} className={'editor-line '+(line===i?'chosen':'')} onClick={()=>setLine(i)}><span className="line-no">{Number(lesson.range.split('-')[0])+i}</span><code>{highlightLine(code)}</code></button>)}</div><div className="editor-explain"><span>LINE EXPLAINER · {line+1}/{lesson.lines.length}</span><p>{lesson.lines[line][1]}</p><div><button disabled={line===0} onClick={()=>setLine(v=>v-1)}><ArrowLeft size={13}/> PREVIOUS LINE</button><button disabled={line===lesson.lines.length-1} onClick={()=>setLine(v=>v+1)}>NEXT LINE <ArrowRight size={13}/></button></div></div></div>
   <div className="code-concept"><Sparkles size={17}/><div><b>THE BIG IDEA</b><p>{lesson.concept}</p></div></div>
  </article>
 }
