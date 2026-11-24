@@ -389,7 +389,7 @@ codeLessons.push(
   ['        self._state.send_firmware_command(f"VREF_SET={vref_set}\\n")','Send the manual Vref target last in the command sequence.'],
   ['        ','A blank line separates the setting commands from the optional calibration call.'],
   ['        if vref_auto:','Run calibration only when firmware AUTO mode is selected.'],
-  ['            self._state.send_firmware_command("VREF_CAL\\n")','Ask firmware to calibrate Vref from the measured signal.'],
+  ['            self._state.send_firmware_command("VREF_CAL")','Ask firmware to calibrate Vref from the measured signal.'],
   ['            ','A blank line before the UI confirmation.'],
   ['        self._show_toast("Hardware settings applied to receiver")','Show the user that the command sequence has been sent.']
  ],concept:'The Settings UI saves values, but the Apply handler sends commands. The receiver firmware must have a matching command parser branch for each command; the Academy flags visible controls whose commands are not handled by the pinned firmware.'},
