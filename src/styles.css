@@ -32,3 +32,10 @@
 }
 
 .diagram-node{cursor:pointer}.diagram-node:focus-visible{opacity:1;filter:drop-shadow(0 0 7px #e66e54) saturate(1.15);outline:none}.diagram-mobile-hint{display:none}@media(max-width:760px){.diagram-mobile-hint{display:inline;color:#a95340;font-weight:500}}
+
+.lesson-source-link{display:flex;align-items:center;gap:10px;max-width:100%;margin-top:14px;padding-top:12px;border-top:1px solid var(--line);color:#8b5548}
+.lesson-source-link>span{font:8px var(--mono);letter-spacing:.12em;white-space:nowrap}
+.lesson-source-link code{min-width:0;overflow-wrap:anywhere;font:9px var(--mono);color:#74685c}
+.lesson-source-link svg{flex-shrink:0;margin-left:auto}
+.lesson-source-link:hover code,.lesson-source-link:hover>span{color:var(--coral)}
+@media(max-width:760px){.lesson-source-link{gap:7px}.lesson-source-link code{font-size:8px}}
