@@ -112,7 +112,7 @@ export default function DeepDive({onOpenCode,appPin,codeLessons}) {
   <div className="section-kicker">COMPLETE REPOSITORY DEEP DIVE <span>OPTIONAL · ADVANCED READING</span></div>
   <div className="section-title-row"><div><p className="eyebrow">GO BEYOND THE GUIDED CURRICULUM</p><h2>Explore the whole<br/><i>source repository.</i></h2></div><p className="section-intro">This is the optional reference layer. Search every tracked file, inspect indexed classes and functions, follow verified cross-file relationships, and open the exact source revision. You do not need this page to complete the beginner learning paths.</p></div>
   <div className="deep-dive-stats"><div><b>{files.length}</b><span>TRACKED FILES</span></div><div><b>{codeCount}</b><span>CODE FILES</span></div><div><b>{symbolCount.toLocaleString()}</b><span>INDEXED SYMBOLS</span></div><div><b>{docCount}</b><span>DOCUMENTS WITH HEADINGS</span></div></div>
-  <div className="deep-dive-pin"><span>PINNED SOURCE SNAPSHOT</span><code>OpenVLC-Public · {APP}</code><a href={'https://github.com/luckyprinter/OpenVLC-Public/tree/'+APP} target="_blank" rel="noreferrer">VIEW REPOSITORY <ArrowUpRight size={13}/></a></div>
+  <div className="deep-dive-pin"><span>PINNED SOURCE SNAPSHOT</span><code>OpenVLC-Public · {appPin}</code><a href={'https://github.com/luckyprinter/OpenVLC-Public/tree/'+appPin} target="_blank" rel="noreferrer">VIEW REPOSITORY <ArrowUpRight size={13}/></a></div>
   <div className="deep-dive-layout">
    <aside className="deep-dive-browser">
     <label className="deep-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search files, classes, functions…"/></label>
