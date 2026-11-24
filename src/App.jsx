@@ -304,12 +304,12 @@ function SourceFooter() {
 
 export default function App() {
   const [menu,setMenu]=useState(false);
-  const [route,setRoute]=useState(()=>window.location.hash.replace(/^#\\/?/,'') || 'overview');
+  const [route,setRoute]=useState(()=>window.location.hash.replace(/^#\/?/,'') || 'overview');
   const [scrolled,setScrolled]=useState(false);
   const currentIndex=Math.max(0,pageRoutes.findIndex(page=>page.id===route));
   const current=pageRoutes[currentIndex] || pageRoutes[0];
   useEffect(()=>{
-    const syncRoute=()=>{const next=window.location.hash.replace(/^#\\/?/,'') || 'overview';setRoute(pageRoutes.some(page=>page.id===next)?next:'overview');setMenu(false);window.scrollTo({top:0,behavior:'auto'});};
+    const syncRoute=()=>{const next=window.location.hash.replace(/^#\/?/,'') || 'overview';setRoute(pageRoutes.some(page=>page.id===next)?next:'overview');setMenu(false);window.scrollTo({top:0,behavior:'auto'});};
     window.addEventListener('hashchange',syncRoute);
     if(!window.location.hash) window.location.hash='#/overview';
     return()=>window.removeEventListener('hashchange',syncRoute);
