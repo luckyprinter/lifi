@@ -14,7 +14,7 @@ const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
 const link = (path, ref = FW, lines = '') => REPO + '/blob/' + ref + '/' + path + (lines ? '#L' + lines.replace('-', '-L') : '');
 
 const stages = [
-  {id:'file',label:'Choose a file',kind:'file',eyebrow:'01 · TX APPLICATION',title:'A person selects a file, then presses Start',copy:'Open the TX console, choose a file from the Dashboard, inspect its metadata, and press Start. File Manager queueing is a separate action and does not automatically start the Dashboard transfer.',signal:'SELECT FILE → METADATA → START',detail:'TX Dashboard → TXAppState → physical backend',code:'application-source/gui_dev_v3/tx/dashboard.py',codeLesson:'tx-select'},
+  {id:'file',label:'Choose a file',kind:'file',eyebrow:'01 · TX APPLICATION',title:'A person selects a file, then presses Start',copy:'Open the TX console, choose a file from the Dashboard, inspect its metadata, and press Start. File Manager queueing is a separate action and does not automatically start the Dashboard transfer.',signal:'SELECT FILE → METADATA → START',detail:'TX Dashboard → TXAppState → physical backend',code:'application-source/gui_dev_v3/app.py',codeLesson:'app-launch'},
   {id:'usb',label:'Prepare over USB',kind:'usb',eyebrow:'02 · HOST ↔ ESP32',title:'Python prepares the physical transmitter',copy:'The application state delegates to the physical backend, which starts a background serial-controller worker. The controller reads the file, calculates its CRC, chooses a supported transfer path, and performs the USB serial handshake.',signal:'STREAM_BEGIN → ACK → STREAM_DATA → ACK',detail:'TXAppState → TXPhysicalBackend → TXSerialController',code:'application-source/gui_dev_v3/serial/controllers.py',codeLesson:'tx-start'},
   {id:'frame',label:'Build protocol frames',kind:'frame',eyebrow:'03 · TX FIRMWARE',title:'The ESP32 builds frames and chunks',copy:'After STREAM_START, the TX firmware verifies the preloaded file CRC, creates a transfer-notice frame, divides the payload into chunks, and builds each frame with its metadata and integrity fields.',signal:'SOF → HEADER → NAME → PAYLOAD → CRC',detail:'handleStreamStart() → buildFrame()',code:'firmware/tx/tx.ino',codeLesson:'tx-frame'},
   {id:'coding',label:'Encode with 4B5B',kind:'coding',eyebrow:'04 · LINE CODING',title:'Eight data bits become ten encoded bits',copy:'Each frame byte is split into a high and low nibble. The TX firmware maps each nibble to a five-bit codeword, then sends the preamble and synchronization word before the encoded frame bytes.',signal:'BYTE → TWO 5-BIT CODEWORDS',detail:'send4b5bEncodedByte() → send4b5bCode()',code:'firmware/tx/tx.ino',codeLesson:'tx-encode'},
@@ -249,6 +249,35 @@ const codeLessons = [
 
 
 codeLessons.push(
+ {id:'app-launch',level:'APPLICATION',name:'Choose the TX console in the launcher',path:'application-source/gui_dev_v3/app.py',ref:APP,range:'256-262',lang:'python',summary:'The launcher builds the Transmitter Console card and connects its click signal to the main window. This is the first UI event in the TX journey.',lines:[
+  ['        tx_card = _ConsoleCard(','Create the transmitter console card shown on the launcher.'],
+  ['            \"Transmitter Console\",','Set the card title.'],
+  ['            \"Configure payloads, set symbol rates, and stream\\\\nvisible light data from your TX hardware.\",','Provide the short description shown to the reader.'],
+  ['            \"fa5s.broadcast-tower\",','Choose the icon used by the card.'],
+  ['            \"Launch TX\",','Set the action label displayed on the card.'],
+  ['        )','Finish creating the card.'],
+  ['        tx_card.clicked.connect(lambda: self._main_window.launch_mode(\"tx\"))','Connect the card click to the main window method that creates or opens the TX workspace.']
+ ],concept:'A GUI signal connects a user action to a function. The click does not start a transmission; it opens the TX console. File selection and Start happen later on the Dashboard.'},
+ {id:'console-launch',level:'APPLICATION',name:'Create the TX application workspace',path:'application-source/gui_dev_v3/app.py',ref:APP,range:'321-338',lang:'python',summary:'The main window receives the launcher request, initializes the TX state and shell when needed, then makes the TX workspace visible.',lines:[
+  ['    def launch_mode(self, mode: str) -> None:','Define the method that opens either the transmitter or receiver console.'],
+  ['        from gui_dev_v3.logger import reinit_logger','Import the logger initializer for the selected application mode.'],
+  ['        if mode == \"tx\":','Choose the transmitter branch when the launcher passes the string tx.'],
+  ['            if self._tx_shell is None:','Create the TX workspace only the first time it is opened.'],
+  ['                reinit_logger(\"tx\")','Switch the application logger to TX context.'],
+  ['                self._tx_state = build_default_tx_state()','Create the TX application state object.'],
+  ['                self._tx_shell = TXShell(self._tx_state)','Create the TX navigation shell and pass it the state object.'],
+  ['                self._stack.addWidget(self._tx_shell)','Add the new TX shell to the stacked main-window pages.'],
+  ['            self._stack.setCurrentWidget(self._tx_shell)','Show the TX workspace.'],
+  ['            self.setWindowTitle(\"VLC Transmitter\")','Update the window title to identify the active console.'],
+  ['        elif mode == \"rx\":','Choose the receiver branch when the launcher passes rx.'],
+  ['            if self._rx_shell is None:','Create the RX workspace only when it has not already been initialized.'],
+  ['                reinit_logger(\"rx\")','Switch the logger to RX context.'],
+  ['                self._rx_state = build_default_state()','Create the RX application state object.'],
+  ['                self._rx_shell = RXShell(self._rx_state)','Create the RX navigation shell with its state object.'],
+  ['                self._stack.addWidget(self._rx_shell)','Add the RX shell to the main window stack.'],
+  ['            self._stack.setCurrentWidget(self._rx_shell)','Show the RX workspace.'],
+  ['            self.setWindowTitle(\"VLC Receiver\")','Update the window title to identify the receiver console.']
+ ],concept:'The launcher card emits a click signal, launch_mode() chooses a console, and the main window creates a state object plus a navigation shell. None of these steps has started an optical transfer yet.'},
  {id:'tx-select',level:'APPLICATION',name:'Select a file in TX Dashboard',path:'application-source/gui_dev_v3/tx/dashboard.py',ref:APP,range:'719-730',lang:'python',summary:'This is the start of the real dashboard file-selection handler. It opens the file picker, validates the path, and stores the first pieces of file metadata.',lines:[
   ['    def _on_select_file_clicked(self) -> None:','Define the event handler called when the user presses Select File.'],
   ['        from PySide6.QtWidgets import QFileDialog','Import Qt’s native file-dialog widget.'],
