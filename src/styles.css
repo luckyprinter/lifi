@@ -341,3 +341,9 @@ button,a{touch-action:manipulation}
 .source-snapshot b{display:block;margin-top:4px;color:#4f4941;font-weight:600}
 @media(max-width:1000px){.development-note-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:760px){.source-code-heading{align-items:flex-start}.source-code-heading b{font-size:14px}.source-code-meta{align-items:flex-start;flex-direction:column}.source-code-meta a{white-space:normal}.software-provenance{align-items:flex-start;flex-direction:column}.development-note-grid{grid-template-columns:1fr}.development-note-grid article p{min-height:0}.source-snapshot{width:100%}}
+
+.source-related{display:flex;flex-wrap:wrap;gap:8px;padding:10px 13px 0}
+.source-related a{display:inline-flex;align-items:center;gap:5px;padding:7px 8px;border:1px solid #d3c3b3;background:#f6efe7;color:#9f5846;font:8px var(--mono);line-height:1.45}
+.source-related a:hover{border-color:var(--coral);color:var(--coral)}
+.overview-source .source-snapshot{min-width:190px;flex-shrink:0}
+@media(max-width:760px){.overview-source .source-snapshot{min-width:0;margin-top:18px}.source-related{flex-direction:column;align-items:stretch}.source-related a{width:100%}}
