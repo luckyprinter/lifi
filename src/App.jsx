@@ -10,7 +10,7 @@ import './styles.css';
 
 const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
 const PIN = '411f183a8592d8285118f613bb4909c5bbd9d3cc'; // thesis firmware baseline
-const APP_PIN = '80ef4afa63a3fe571ffd5026560bf7d7d90fbecc'; // draft development PR #18 snapshot
+const APP_PIN = PIN; // Audited application source is pinned to OpenVLC-Public main.
 const SOURCE = (path, ref = PIN) => `https://github.com/luckyprinter/OpenVLC-Public/blob/${ref}/${path}`;
 const APP_SOURCE = (path) => SOURCE(path, APP_PIN);
 const sourceFor = (path) => path.startsWith('application-source/') ? APP_SOURCE(path) : SOURCE(path);
