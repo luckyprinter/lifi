@@ -21,7 +21,7 @@ const stages = [
   {id:'light',label:'Light transmission',kind:'light',eyebrow:'05 · OPTICAL TX',title:'GPIO timing drives the LED',copy:'The ESP32 switches the LED driver according to the encoded symbol stream. The LED is the physical transmitter: the information travels across the room as changes in visible light.',signal:'GPIO5 → DRIVER → 12 V LED',detail:'TX sendOpticalFrame() → send4b5bBit()',code:'firmware/tx/tx.ino',codeLesson:'tx-bit'},
   {id:'detect',label:'Photodetection',kind:'detect',eyebrow:'06 · ANALOG RX',title:'Photons become an electrical signal',copy:'The BPW34 photodiode converts received light into photocurrent. The OPA2604 transimpedance amplifier produces a voltage, and the LM393 comparator converts the threshold crossing into a digital signal.',signal:'BPW34 → OPA2604 → LM393 → GPIO5',detail:'Physical receiver front end → RX ESP32',code:'firmware/rx/rx.ino',codeLesson:'rx-majority'},
   {id:'decode',label:'Sampling & decode',kind:'decode',eyebrow:'07 · RX FIRMWARE',title:'The receiver recovers symbols and bytes',copy:'The receiver samples around the expected symbol centre, uses majority voting when enabled, acquires synchronization, aligns to the encoded start marker, and decodes valid 5-bit codewords.',signal:'SAMPLES → SYNC → 5B → NIBBLES → BYTE',detail:'RX sampleRawAt() → read4b5bByte()',code:'firmware/rx/rx.ino',codeLesson:'rx-decode'},
-  {id:'verify',label:'Verify & rebuild',kind:'verify',eyebrow:'08 · INTEGRITY',title:'Verified chunks become the original file',copy:'The receiver checks frame and chunk CRCs before accepting payload data. After all chunks arrive, whole-file CRC validation protects the reconstructed file. The desktop application can then save and compare it with the original reference.',signal:'FRAME CRC → CHUNK CRC → FILE CRC',detail:'RX firmware → RX desktop application',code:'firmware/rx/rx.ino',codeLesson:'rx-crc'}
+  {id:'verify',label:'Verify & rebuild',kind:'verify',eyebrow:'08 · INTEGRITY',title:'Verified chunks become the original file',copy:'The receiver checks frame and chunk CRCs before accepting payload data. After all chunks arrive, whole-file CRC validation protects the reconstructed file. The desktop application can then save and compare it with the original reference.',signal:'FRAME CRC → CHUNK CRC → FILE CRC',detail:'RX firmware → RX desktop application',code:'firmware/rx/rx.ino',codeLesson:'rx-app'}
 ];
 
 
@@ -52,7 +52,7 @@ const stageTrace = {
   application:{title:'The Python app does not run the 4B5B lookup',body:'The Python controller sends the file and transfer commands to the board. The 4B5B lookup and symbol timing are implemented in the TX firmware, keeping the time-critical optical output close to the GPIO.',note:'This boundary is useful when reading the repository: Python prepares and supervises; embedded C++ produces the timed signal.',sources:[{label:'Serial controller STREAM path',path:'application-source/gui_dev_v3/serial/controllers.py',lines:'326-380'},{label:'Firmware 4B5B encoder',path:'firmware/tx/tx.ino',lines:'147-168',lesson:'tx-encode'}]},
   serial:{title:'USB is no longer carrying each optical symbol',body:'After STREAM_START, the ESP32 emits the frame over the LED output. USB serial remains the control/status channel for commands and completion notices; the encoded optical payload travels through the light path.',note:'The USB cable and the optical path have different jobs.',sources:[{label:'Firmware command parser',path:'firmware/tx/tx.ino',lines:'291-324'}]},
   hardware:{title:'One byte becomes ten encoded bits',body:'send4b5bEncodedByte() extracts the high nibble with a right shift and the low nibble with a mask. Each nibble indexes CODE_4B5B and produces one five-bit codeword. For 0xA5, the firmware table yields 10110 01011.',note:'4B5B adds one coded bit per nibble. It is not encryption and it does not repair corrupted bits.',sources:[{label:'4B5B byte encoder',path:'firmware/tx/tx.ino',lines:'160-163',lesson:'tx-encode'},{label:'Bit and codeword output',path:'firmware/tx/tx.ino',lines:'147-158',lesson:'tx-bit'}]},
-  observe:{title:'How to read the model',body:'The animation shows the relationship between an eight-bit byte and its two five-bit codewords. It is a source-derived teaching example, not a recorded transmission trace.',note:'Pause on the two nibbles, then open the code lesson and follow the shift, mask, lookup, and send calls.',sources:[{label:'TX 4B5B lookup and encoder',path:'firmware/tx/tx.ino',lines:'31-38,160-163',lesson:'tx-encode'}]}
+  observe:{title:'How to read the model',body:'The animation shows the relationship between an eight-bit byte and its two five-bit codewords. It is a source-derived teaching example, not a recorded transmission trace.',note:'Pause on the two nibbles, then open the code lesson and follow the shift, mask, lookup, and send calls.',sources:[{label:'TX 4B5B lookup and encoder',path:'firmware/tx/tx.ino',lines:'160-163',lesson:'tx-encode'}]}
  },
  light: {
   user:{title:'The person sees the LED as the transmitter',body:'No extra GUI action is needed once STREAM_START has begun. The commercial LED bulb remains the optical source; the receiver must have a usable line of sight to it.',note:'The room light can look steady to a person while its intensity is being modulated rapidly.',sources:[{label:'TX firmware pin and idle configuration',path:'firmware/tx/tx.ino',lines:'1-15'}]},
@@ -281,8 +281,9 @@ codeLessons.push(
  ],concept:'The button handler does not contain the serial protocol. It hands the selected path to TXAppState. This separation keeps the GUI event handler small and moves hardware work into the backend/controller.'},
  {id:'rx-app',level:'APPLICATION',name:'Receive and save the completed RX file',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP,range:'356-383',lang:'python',summary:'The RX physical backend receives a completed RX_FILE_HEX line, extracts the transfer metadata and file bytes, verifies CRC-16, and prepares to save the reconstructed file.',lines:[
   ['    def _handle_file_hex(self, line: str) -> None:','Define the handler for the completed-file serial record from RX firmware.'],
-  ['        \"\"\"Decode and save a completed file from RX_FILE_HEX line.','The docstring explains the incoming serial record format.'],
-  ['        Format: RX_FILE_HEX:<tid>:<frame_type>:<total_size>:<total_chunks>:<crc_hex>:<name_hex>:<data_hex>','The line contains transfer metadata, filename bytes, and the complete file bytes.'],
+  ['        \"\"\"Decode and save a completed file from RX_FILE_HEX line.','The docstring explains that this method decodes the completed file and saves it.'],
+  ['','This blank line separates the summary from the wire-format description.'],
+  ['        Format: RX_FILE_HEX:<tid>:<frame_type>:<total_size>:<total_chunks>:<crc_hex>:<name_hex>:<data_hex>','The serial record contains transfer metadata, filename bytes, and the complete file bytes.'],
   ['        \"\"\"','End the docstring.'],
   ['        now = time.strftime(\"%H:%M:%S\")','Capture a timestamp for the RX activity log.'],
   ['        try:','Start guarded parsing so malformed serial data does not crash the reader thread.'],
@@ -290,20 +291,23 @@ codeLessons.push(
   ['            if len(parts) < 8:','Reject a record that does not contain all eight expected fields.'],
   ['                self._log_queue.append({\"time\": now, \"event\": \"RX File\", \"details\": \"Malformed RX_FILE_HEX (too few fields)\"})','Add a diagnostic event for the malformed record.'],
   ['                return','Stop processing the invalid line.'],
+  ['','Separate the malformed-record guard from the field extraction.'],
   ['            tid = int(parts[1])','Parse the transfer ID.'],
   ['            total_size = int(parts[3])','Parse the expected total file size.'],
   ['            crc_expected_hex = parts[5]','Read the expected whole-file CRC from the record.'],
   ['            name_hex = parts[6]','Read the filename encoded as hexadecimal bytes.'],
   ['            data_hex = parts[7]','Read the reconstructed file bytes encoded as hexadecimal.'],
+  ['','Separate the raw fields from the decoding step.'],
   ['            filename = bytes.fromhex(name_hex).decode(\"utf-8\", errors=\"replace\") if name_hex else f\"rx_{tid}.bin\"','Decode the filename, with a fallback name if no name was supplied.'],
   ['            file_bytes = bytes.fromhex(data_hex)','Convert the hex payload back into the original byte sequence.'],
+  ['','Separate decoding from integrity validation.'],
   ['            # Verify CRC16-CCITT','The desktop backend independently verifies the reconstructed bytes.'],
   ['            calc_crc = crc16_ccitt(file_bytes)','Calculate CRC-16/CCITT over the received file bytes.'],
   ['            expected_crc = int(crc_expected_hex, 16)','Convert the expected CRC text into an integer.'],
-  ['            crc_ok = (calc_crc == expected_crc)','Compare the calculated CRC with the firmware-supplied expected value.'],
+  ['            crc_ok = (calc_crc == expected_crc)','Compare the calculated CRC with the expected value.'],
+  ['','Separate the integrity result from persistence.'],
   ['            # Save to disk','The backend is ready to persist the completed file.'],
-  ['            self._save_dir.mkdir(parents=True, exist_ok=True)','Create the capture directory if it does not already exist.'],
-  ['','The next lines handle batching, filename sanitization, and the actual write.']
+  ['            self._save_dir.mkdir(parents=True, exist_ok=True)','Create the capture directory if it does not already exist.']
  ],concept:'The RX ESP32 has already reconstructed the file and checked its whole-file CRC before emitting RX_FILE_HEX. The desktop backend decodes that line, performs another CRC check, and saves the bytes for the user.'},
  {id:'rx-ber',level:'APPLICATION',name:'Compare the received file with a reference',path:'application-source/gui_dev_v3/rx/ber_analyzer_page.py',ref:APP,range:'129-138',lang:'python',summary:'This is the actual Method 2 comparison point. The application compares received bytes against the expected reference bytes and displays BER and accuracy results.',lines:[
   ['        # Perform bit comparison if expected_bytes exists','Do not calculate reference-file BER until expected bytes are available.'],
@@ -363,28 +367,6 @@ function StageVisual({stage}){
 function LaptopGlyph(){return <Cable size={24}/>}
 
 
-function StageTraceDetails({stage,onOpenCode}) {
- const [layer,setLayer] = useState('user');
- React.useEffect(()=>setLayer('user'),[stage.id]);
- const detail = stageTrace[stage.id]?.[layer];
- const labels = [{id:'user',label:'USER ACTION'},{id:'application',label:'APPLICATION'},{id:'serial',label:'USB SERIAL'},{id:'hardware',label:'FIRMWARE / HARDWARE'},{id:'observe',label:'WHAT YOU SEE'}];
- if (!detail) return null;
- return <section className="stage-trace" aria-label="Cross-layer implementation trace">
-  <div className="trace-heading"><div><span className="eyebrow">FOLLOW THE SAME EVENT THROUGH THE SYSTEM</span><h4>Five connected layers</h4></div><span className="trace-revision">SOURCE · {FW.slice(0,8)}</span></div>
-  <div className="trace-tabs" role="tablist" aria-label="Implementation layers">
-   {labels.map(item=><button key={item.id} role="tab" aria-selected={layer===item.id} className={layer===item.id?'active':''} onClick={()=>setLayer(item.id)}>{item.label}</button>)}
-  </div>
-  <AnimatePresence mode="wait">
-   <motion.div key={stage.id+'-'+layer} className="trace-detail" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-5}} transition={{duration:.16}}>
-    <div className="trace-copy"><span className="trace-layer-index">{String(labels.findIndex(x=>x.id===layer)+1).padStart(2,'0')} / 05</span><h5>{detail.title}</h5><p>{detail.body}</p><div className="trace-note"><Lightbulb size={15}/><span>{detail.note}</span></div></div>
-    <div className="trace-sources"><span className="eyebrow">SOURCE LOCATIONS</span>
-     {detail.sources.map((source,i)=><div className="trace-source" key={source.path+'-'+i}><div><b>{source.label}</b><code>{source.path.split('/').slice(-1)[0]}{source.lines?' · L'+source.lines.replace('-','–L'):''}</code></div><div className="trace-source-actions"><a href={link(source.path,FW,source.lines||'')} target="_blank" rel="noreferrer">OPEN SOURCE <ArrowUpRight size={12}/></a>{source.lesson&&<button onClick={()=>onOpenCode(source.lesson)}><Code2 size={12}/> LINE LESSON</button>}</div></div>)}
-    </div>
-   </motion.div>
-  </AnimatePresence>
- </section>
-}
-
 function SignalJourney({onOpenCode}){
  const [index,setIndex]=useState(0); const [playing,setPlaying]=useState(false); const stage=stages[index];
  React.useEffect(()=>{if(!playing)return;const id=setInterval(()=>setIndex(v=>(v+1)%stages.length),3800);return()=>clearInterval(id)},[playing]);
@@ -435,13 +417,21 @@ const sourceFiles = [
  {group:'RX APPLICATION',name:'rx/backends/physical.py',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP,role:'Physical RX backend',desc:'Communicates with real RX firmware, reads status and signal telemetry, receives transfer output, and exposes receiver snapshots.'},
  {group:'RX APPLICATION',name:'rx/shell.py',path:'application-source/gui_dev_v3/rx/shell.py',ref:APP,role:'RX workspace shell',desc:'Builds the receiver workspace and routes navigation between receiver pages.'},
  {group:'RX APPLICATION',name:'rx/receive_page.py',path:'application-source/gui_dev_v3/rx/receive_page.py',ref:APP,role:'Receive workspace',desc:'Presents receiver transfer activity and the files emitted by the physical receiver backend.'},
+ {group:'TX APPLICATION',name:'tx/file_manager_page.py',path:'application-source/gui_dev_v3/tx/file_manager_page.py',ref:APP,role:'TX file manager',desc:'Browses files, calculates file metadata and CRC, and adds selected files to the transmit queue. This is distinct from Dashboard direct Start.'},
+ {group:'TX APPLICATION',name:'tx/settings.py',path:'application-source/gui_dev_v3/tx/settings.py',ref:APP,role:'TX settings',desc:'Builds the transmitter settings categories and connects setting controls to persistence and firmware application.'},
+ {group:'RX APPLICATION',name:'rx/dashboard.py',path:'application-source/gui_dev_v3/rx/dashboard.py',ref:APP,role:'RX dashboard',desc:'Combines reception status, CRC metrics, signal monitoring, waveform, bit-decode information, received-file details, and activity log.'},
+ {group:'RX APPLICATION',name:'rx/signal_page.py',path:'application-source/gui_dev_v3/rx/signal_page.py',ref:APP,role:'RX signal monitor',desc:'Presents PVo, Vref, margin, waveform, diagnostics, historical trends, transfer statistics, and signal-quality views.'},
+ {group:'RX APPLICATION',name:'rx/inspect_page.py',path:'application-source/gui_dev_v3/rx/inspect_page.py',ref:APP,role:'RX transfer inspector',desc:'Displays transfer snapshots, reference-file status, chunk health, chunk details, and byte-level inspection.'},
+ {group:'RX APPLICATION',name:'rx/ber_analyzer_page.py',path:'application-source/gui_dev_v3/rx/ber_analyzer_page.py',ref:APP,role:'RX BER analyzer',desc:'Compares reconstructed bytes against a loaded reference file and reports overlap BER, strict BER, bit errors, accuracy, and size difference.'},
+ {group:'RX APPLICATION',name:'rx/settings.py',path:'application-source/gui_dev_v3/rx/settings.py',ref:APP,role:'RX settings',desc:'Builds receiver settings for connection, signal monitoring, Vref control, experiments, database, and display behavior.'},
+ {group:'RX APPLICATION',name:'rx/export_page.py',path:'application-source/gui_dev_v3/rx/export_page.py',ref:APP,role:'RX history and export',desc:'Provides session/history inspection and export workflows for stored receiver records and captures.'},
  {group:'RX APPLICATION',name:'logic/ber_bridge.py',path:'application-source/gui_dev_v3/logic/ber_bridge.py',ref:APP,role:'BER integration',desc:'Connects transfer data to the application’s BER analysis path. Method 2 compares the reconstructed file with its original reference.'}
 ];
 const sourceGroups=['FIRMWARE','TX APPLICATION','RX APPLICATION','SHARED APPLICATION'];
 function SourceMap(){
  const [group,setGroup]=useState('FIRMWARE');
  const visible=sourceFiles.filter(f=>f.group===group);
- return <section className="source-map-section"><div className="source-map-heading"><div><span className="eyebrow">EXPLORE THE REPOSITORY</span><h3>Know where each responsibility lives.</h3><p>These are the core firmware and desktop-application files from the same audited main-branch snapshot. Open any file at its immutable commit.</p></div><a href={REPO} target="_blank" rel="noreferrer">FULL REPOSITORY <ArrowUpRight size={14}/></a></div>
+ return <section className="source-map-section"><div className="source-map-heading"><div><span className="eyebrow">EXPLORE THE REPOSITORY</span><h3>Know where each responsibility lives.</h3><p>These are the core firmware and desktop-application files from the same audited OpenVLC-Public main snapshot. Open any file at its immutable commit.</p></div><a href={REPO} target="_blank" rel="noreferrer">FULL REPOSITORY <ArrowUpRight size={14}/></a></div>
   <div className="source-map-tabs">{sourceGroups.map(g=><button key={g} className={group===g?'active':''} onClick={()=>setGroup(g)}>{g}</button>)}</div>
   <div className="source-file-grid"><AnimatePresence mode="wait"><motion.div key={group} className="source-file-grid-inner" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-5}} transition={{duration:.18}}>{visible.map(file=><a className="source-file-card" key={file.path} href={link(file.path,file.ref)} target="_blank" rel="noreferrer"><div><FileCode2 size={16}/><span>{file.group}</span><ArrowUpRight size={13}/></div><code>{file.name}</code><b>{file.role}</b><p>{file.desc}</p></a>)}</motion.div></AnimatePresence></div>
   <div className="call-sequence"><div className="eyebrow">HOW THE RESPONSIBILITIES CONNECT</div><div className="call-sequence-row"><span>TX desktop app</span><ChevronRight/><span>Physical TX backend</span><ChevronRight/><span>USB serial controller</span><ChevronRight/><span>TX firmware</span></div><div className="call-sequence-row optical"><span>Frame builder</span><ChevronRight/><span>4B5B encoder</span><ChevronRight/><span>GPIO symbol output</span><ChevronRight/><span>LED driver + light</span></div><div className="call-sequence-row receive"><span>Photodiode + comparator</span><ChevronRight/><span>RX firmware decoder</span><ChevronRight/><span>Physical RX backend</span><ChevronRight/><span>RX desktop app</span></div><p>This is the system responsibility flow. The detailed lessons will progressively document exact direct function-call edges, arguments, return values, and state changes.</p></div>
