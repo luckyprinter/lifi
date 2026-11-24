@@ -53,3 +53,7 @@
 
 .batch-note{display:flex;gap:12px;align-items:flex-start;margin-top:14px;padding:12px 14px;border:1px solid #5a5147;background:#282521;color:#eee5d9}.batch-note b{min-width:100px;color:#e9b16c;font:9px var(--mono);text-transform:uppercase;letter-spacing:.06em}.batch-note span{font-size:10px;line-height:1.6;color:#c4b9ac}
 @media(max-width:640px){.batch-note{display:block}.batch-note b{display:block;margin-bottom:6px}}
+
+.keyboard-hint{margin-right:auto;color:#81786d;font:8px var(--mono);letter-spacing:.04em;display:flex;align-items:center;gap:4px}.keyboard-hint kbd{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 4px;border:1px solid #cfc2b3;border-bottom-width:2px;border-radius:3px;background:#f7f0e7;color:#4b453e;font:9px var(--mono)}
+@media(max-width:760px){.keyboard-hint{width:100%;order:3;justify-content:flex-end;margin:0 0 3px}.lesson-controls{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto!important}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
