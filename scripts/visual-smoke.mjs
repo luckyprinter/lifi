@@ -65,6 +65,23 @@ try {
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/code-' + width + '.png', fullPage: true });
 
     if (width <= 720) await page.locator('.mobile-menu').click();
+    await page.getByRole('button', { name: 'APP ATLAS', exact: true }).click();
+    await page.waitForSelector('.app-atlas-section');
+    await page.getByRole('tab', { name: 'RX APPLICATION' }).click();
+    await page.getByRole('button', { name: /Inspect/ }).click();
+    if (!(await page.locator('.atlas-detail-card h3').innerText()).includes('Inspect')) failures.push(width + 'px RX Inspect atlas entry did not open');
+    await page.getByRole('tab', { name: 'SETTINGS' }).click();
+    await page.getByRole('button', { name: 'RECEIVER' }).click();
+    await page.getByRole('button', { name: /Invert Symbols/ }).click();
+    if (!(await page.locator('.atlas-setting-detail').innerText()).includes('NOT HANDLED BY PINNED FIRMWARE')) failures.push(width + 'px unsupported RX setting was not flagged');
+    await page.getByRole('tab', { name: 'SIGNAL & DATA' }).click();
+    await page.getByRole('button', { name: /Table Builder preview/ }).click();
+    if (!(await page.locator('.atlas-detail-card').last().innerText()).includes('MOCK / SYNTHETIC DATA')) failures.push(width + 'px Table Builder data provenance was not disclosed');
+    const atlasScroll = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (atlasScroll > width + 1) failures.push(width + 'px application atlas horizontal overflow: ' + atlasScroll);
+    if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/atlas-' + width + '.png', fullPage: true });
+
+    if (width <= 720) await page.locator('.mobile-menu').click();
     await page.getByRole('button', { name: 'LEARNING PATHS', exact: true }).click();
     await page.locator('.path-card').first().click();
     await page.waitForSelector('.focused-lesson');
