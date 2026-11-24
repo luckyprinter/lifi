@@ -172,7 +172,7 @@ try {
       if (await page.evaluate(() => document.documentElement.scrollWidth) > width + 1) failures.push(width + 'px Foundations horizontal overflow');
       await page.screenshot({ path: output + '/foundations-' + width + '.png', fullPage: true });
       await page.getByRole('button', { name: 'Next stage' }).click();
-      await page.getByLabel('Reference threshold').fill('0.75');
+      await page.getByRole('slider', { name: 'Reference threshold' }).press('End');
       await page.getByText('0 · 0 · 0', { exact: true }).waitFor();
       await page.getByRole('button', { name: 'Next stage' }).click();
       await page.getByRole('button', { name: 'Send with one corrupt frame' }).click();
