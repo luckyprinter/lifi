@@ -413,3 +413,11 @@ button,a{touch-action:manipulation}
   .source-code{font-size:11.5px}
 }
 @media(prefers-reduced-motion:reduce){.mobile-model-icon i{animation:none}}
+
+.syntax-keyword{color:#e6a16e;font-weight:600}
+.syntax-string{color:#b9cf9a}
+.syntax-number{color:#d9bd79}
+.syntax-comment{color:#918a80;font-style:italic}
+.syntax-function{color:#83c7d0}
+.syntax-plain{color:inherit}
+.source-code-meta b{color:#a65e49;font-weight:700}
