@@ -347,137 +347,200 @@
       {
         "name": "load_bundled_fonts",
         "kind": "function",
-        "line": 38
+        "line": 38,
+        "doc": "Load all TTF files in the assets/fonts directory into QFontDatabase.",
+        "endLine": 47,
+        "signature": "def load_bundled_fonts() -> None:"
       },
       {
         "name": "load_design_tokens",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "doc": "Load design tokens from design.json if it exists.",
+        "endLine": 59,
+        "signature": "def load_design_tokens() -> dict:"
       },
       {
         "name": "apply_design_tokens",
         "kind": "function",
-        "line": 60
+        "line": 60,
+        "doc": "Apply design tokens to the theme system.",
+        "endLine": 68,
+        "signature": "def apply_design_tokens(tokens: dict) -> None:"
       },
       {
         "name": "_BaseWindow",
         "kind": "class",
-        "line": 69
+        "line": 69,
+        "endLine": 148,
+        "signature": "class _BaseWindow(QMainWindow):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 74
+        "line": 74,
+        "endLine": 87,
+        "signature": "def __init__(self, title: str) -> None:"
       },
       {
         "name": "showEvent",
         "kind": "function",
-        "line": 88
+        "line": 88,
+        "endLine": 94,
+        "signature": "def showEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "_apply_display_mode",
         "kind": "function",
-        "line": 95
+        "line": 95,
+        "doc": "Apply borderless flag from settings before show().",
+        "endLine": 100,
+        "signature": "def _apply_display_mode(self) -> None:"
       },
       {
         "name": "_apply_theme",
         "kind": "function",
-        "line": 101
+        "line": 101,
+        "endLine": 108,
+        "signature": "def _apply_theme(self) -> None:"
       },
       {
         "name": "set_resolution",
         "kind": "function",
-        "line": 109
+        "line": 109,
+        "doc": "Look up preset and resize window, enforcing minimum size.",
+        "endLine": 122,
+        "signature": "def set_resolution(self, preset_key: str) -> None:"
       },
       {
         "name": "toggle_fullscreen",
         "kind": "function",
-        "line": 123
+        "line": 123,
+        "doc": "Toggle between fullscreen and normal window mode.",
+        "endLine": 132,
+        "signature": "def toggle_fullscreen(self) -> None:"
       },
       {
         "name": "keyPressEvent",
         "kind": "function",
-        "line": 133
+        "line": 133,
+        "doc": "Handle keyboard shortcuts.",
+        "endLine": 139,
+        "signature": "def keyPressEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "closeEvent",
         "kind": "function",
-        "line": 140
+        "line": 140,
+        "endLine": 151,
+        "signature": "def closeEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "_ConsoleCard",
         "kind": "class",
-        "line": 152
+        "line": 152,
+        "endLine": 201,
+        "signature": "class _ConsoleCard(QFrame):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 156
+        "line": 156,
+        "endLine": 196,
+        "signature": "def __init__(self, title: str, description: str, icon_name: str, accent_label: str, parent=None):"
       },
       {
         "name": "mousePressEvent",
         "kind": "function",
-        "line": 197
+        "line": 197,
+        "endLine": 201,
+        "signature": "def mousePressEvent(self, event):"
       },
       {
         "name": "VLCLauncherPage",
         "kind": "class",
-        "line": 202
+        "line": 202,
+        "endLine": 297,
+        "signature": "class VLCLauncherPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 205
+        "line": 205,
+        "endLine": 300,
+        "signature": "def __init__(self, main_window: \"VLCMainWindow\", parent: QWidget | None = None) -> None:"
       },
       {
         "name": "VLCMainWindow",
         "kind": "class",
-        "line": 301
+        "line": 301,
+        "endLine": 362,
+        "signature": "class VLCMainWindow(_BaseWindow):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 304
+        "line": 304,
+        "endLine": 320,
+        "signature": "def __init__(self) -> None:"
       },
       {
         "name": "launch_mode",
         "kind": "function",
-        "line": 321
+        "line": 321,
+        "endLine": 339,
+        "signature": "def launch_mode(self, mode: str) -> None:"
       },
       {
         "name": "return_to_launcher",
         "kind": "function",
-        "line": 340
+        "line": 340,
+        "endLine": 363,
+        "signature": "def return_to_launcher(self) -> None:"
       },
       {
         "name": "VLCReceiverWindow",
         "kind": "class",
-        "line": 364
+        "line": 364,
+        "endLine": 373,
+        "signature": "class VLCReceiverWindow(_BaseWindow):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 367
+        "line": 367,
+        "endLine": 373,
+        "signature": "def __init__(self) -> None:"
       },
       {
         "name": "VLCTransmitterWindow",
         "kind": "class",
-        "line": 374
+        "line": 374,
+        "endLine": 383,
+        "signature": "class VLCTransmitterWindow(_BaseWindow):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 377
+        "line": 377,
+        "endLine": 383,
+        "signature": "def __init__(self) -> None:"
       },
       {
         "name": "main",
         "kind": "function",
-        "line": 384
+        "line": 384,
+        "doc": "Launch the unified VLC System Suite.",
+        "endLine": 411,
+        "signature": "def main() -> int:"
       },
       {
         "name": "main_tx",
         "kind": "function",
-        "line": 412
+        "line": 412,
+        "doc": "Launch the VLC Transmitter directly (legacy/wrapper).",
+        "endLine": 418,
+        "signature": "def main_tx() -> int:"
       }
     ],
     "headings": []
@@ -495,127 +558,188 @@
       {
         "name": "POLL_INTERVAL_MS",
         "kind": "constant",
-        "line": 24
+        "line": 24,
+        "endLine": 25,
+        "signature": "POLL_INTERVAL_MS = 1000  # Refresh status every second"
       },
       {
         "name": "RXAppState",
         "kind": "class",
-        "line": 35
+        "line": 35,
+        "endLine": 342,
+        "signature": "class RXAppState:"
       },
       {
         "name": "__post_init__",
         "kind": "function",
-        "line": 60
+        "line": 60,
+        "endLine": 71,
+        "signature": "def __post_init__(self) -> None:"
       },
       {
         "name": "is_receiving",
         "kind": "function",
-        "line": 73
+        "line": 73,
+        "endLine": 77,
+        "signature": "def is_receiving(self) -> bool:"
       },
       {
         "name": "progress_percent",
         "kind": "function",
-        "line": 79
+        "line": 79,
+        "endLine": 82,
+        "signature": "def progress_percent(self) -> int:"
       },
       {
         "name": "current_file",
         "kind": "function",
-        "line": 84
+        "line": 84,
+        "endLine": 87,
+        "signature": "def current_file(self) -> str:"
       },
       {
         "name": "subscribe",
         "kind": "function",
-        "line": 88
+        "line": 88,
+        "endLine": 92,
+        "signature": "def subscribe(self, callback: StateSubscriber) -> None:"
       },
       {
         "name": "unsubscribe",
         "kind": "function",
-        "line": 93
+        "line": 93,
+        "endLine": 97,
+        "signature": "def unsubscribe(self, callback: StateSubscriber) -> None:"
       },
       {
         "name": "notify",
         "kind": "function",
-        "line": 98
+        "line": 98,
+        "endLine": 103,
+        "signature": "def notify(self) -> None:"
       },
       {
         "name": "apply_settings",
         "kind": "function",
-        "line": 104
+        "line": 104,
+        "endLine": 108,
+        "signature": "def apply_settings(self, settings: AppSettings) -> None:"
       },
       {
         "name": "set_mode",
         "kind": "function",
-        "line": 109
+        "line": 109,
+        "doc": "Switch between physical and simulated mode, then refresh.",
+        "endLine": 121,
+        "signature": "def set_mode(self, mode: AppMode) -> None:"
       },
       {
         "name": "update_simulation_params",
         "kind": "function",
-        "line": 122
+        "line": 122,
+        "doc": "Safely update simulation backend parameters and notify subscribers.",
+        "endLine": 134,
+        "signature": "def update_simulation_params(self, **kwargs: Any) -> None:"
       },
       {
         "name": "load_expected_file",
         "kind": "function",
-        "line": 135
+        "line": 135,
+        "doc": "Load expected/original reference file bytes for BER comparison.",
+        "endLine": 149,
+        "signature": "def load_expected_file(self, filepath: str) -> None:"
       },
       {
         "name": "clear_expected_file",
         "kind": "function",
-        "line": 150
+        "line": 150,
+        "doc": "Clear the loaded expected/original reference file.",
+        "endLine": 159,
+        "signature": "def clear_expected_file(self) -> None:"
       },
       {
         "name": "send_firmware_command",
         "kind": "function",
-        "line": 160
+        "line": 160,
+        "doc": "Send command to physical firmware if active.",
+        "endLine": 168,
+        "signature": "def send_firmware_command(self, cmd: str) -> bool:"
       },
       {
         "name": "_refresh",
         "kind": "function",
-        "line": 169
+        "line": 169,
+        "doc": "Refresh state by delegating to the active backend.",
+        "endLine": 193,
+        "signature": "def _refresh(self) -> None:"
       },
       {
         "name": "_apply_phy_snapshot",
         "kind": "function",
-        "line": 194
+        "line": 194,
+        "endLine": 208,
+        "signature": "def _apply_phy_snapshot(self, s: RXPhysicalSnapshot) -> None:"
       },
       {
         "name": "_apply_sim_snapshot",
         "kind": "function",
-        "line": 209
+        "line": 209,
+        "endLine": 216,
+        "signature": "def _apply_sim_snapshot(self, s: RXSimulationSnapshot) -> None:"
       },
       {
         "name": "_load_empty",
         "kind": "function",
-        "line": 217
+        "line": 217,
+        "endLine": 225,
+        "signature": "def _load_empty(self) -> None:"
       },
       {
         "name": "force_connect_serial",
         "kind": "function",
-        "line": 226
+        "line": 226,
+        "doc": "Force connect physical backend to a port, bypassing detection.",
+        "endLine": 239,
+        "signature": "def force_connect_serial(self, port: str) -> bool:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 240
+        "line": 240,
+        "doc": "Public refresh — called by QTimer.",
+        "endLine": 314,
+        "signature": "def refresh(self) -> None:"
       },
       {
         "name": "rebuild_backends",
         "kind": "function",
-        "line": 315
+        "line": 315,
+        "doc": "Recreate backend instances (useful after serial port changes).",
+        "endLine": 318,
+        "signature": "def rebuild_backends(self) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 319
+        "line": 319,
+        "doc": "Clean up and stop active backends.",
+        "endLine": 334,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "get_new_simulation_samples",
         "kind": "function",
-        "line": 335
+        "line": 335,
+        "doc": "Get new simulation samples from simulation backend, if available.",
+        "endLine": 342,
+        "signature": "def get_new_simulation_samples(self, last_idx: int) -> list[tuple[float, float, float, int]]:"
       },
       {
         "name": "build_default_state",
         "kind": "function",
-        "line": 343
+        "line": 343,
+        "endLine": 345,
+        "signature": "def build_default_state() -> RXAppState:"
       }
     ],
     "headings": []
@@ -783,72 +907,103 @@
       {
         "name": "_resolve_data_dir",
         "kind": "function",
-        "line": 13
+        "line": 13,
+        "doc": "Resolve a data directory, checking env var first.",
+        "endLine": 19,
+        "signature": "def _resolve_data_dir(parents: int, *parts: str) -> Path:"
       },
       {
         "name": "BETA_LOG_DIR",
         "kind": "constant",
-        "line": 20
+        "line": 20,
+        "endLine": 20,
+        "signature": "BETA_LOG_DIR = _resolve_data_dir(3, \"vlc_beta\", \"logs\", \"rx\")"
       },
       {
         "name": "PROJECT_LOG_DIR",
         "kind": "constant",
-        "line": 21
+        "line": 21,
+        "endLine": 21,
+        "signature": "PROJECT_LOG_DIR = _resolve_data_dir(2, \"logs\", \"rx\")"
       },
       {
         "name": "RECEIVE_FOLDER",
         "kind": "constant",
-        "line": 22
+        "line": 22,
+        "endLine": 22,
+        "signature": "RECEIVE_FOLDER = Path.home() / \"LiFiReceived\""
       },
       {
         "name": "TRANSFER_RECORDS_DIR",
         "kind": "constant",
-        "line": 23
+        "line": 23,
+        "endLine": 24,
+        "signature": "TRANSFER_RECORDS_DIR = RECEIVE_FOLDER / \"transfer_records\""
       },
       {
         "name": "_log_dir",
         "kind": "function",
-        "line": 31
+        "line": 31,
+        "endLine": 37,
+        "signature": "def _log_dir() -> Path:"
       },
       {
         "name": "parse_lq_detail",
         "kind": "function",
-        "line": 38
+        "line": 38,
+        "endLine": 50,
+        "signature": "def parse_lq_detail(detail: str) -> dict[str, float]:"
       },
       {
         "name": "_parse_transfer_record",
         "kind": "function",
-        "line": 51
+        "line": 51,
+        "doc": "Parse a vlc-rx-transfer-record-v1 JSON dict into a TransferRecord.",
+        "endLine": 132,
+        "signature": "def _parse_transfer_record(data: dict[str, Any]) -> TransferRecord | None:"
       },
       {
         "name": "load_real_transfer_history",
         "kind": "function",
-        "line": 133
+        "line": 133,
+        "doc": "Load transfer records from all available sources.",
+        "endLine": 189,
+        "signature": "def load_real_transfer_history() -> list[TransferRecord]:"
       },
       {
         "name": "load_tx_index_records",
         "kind": "function",
-        "line": 190
+        "line": 190,
+        "endLine": 193,
+        "signature": "def load_tx_index_records() -> list[dict[str, Any]]:"
       },
       {
         "name": "load_tx_transfer_records",
         "kind": "function",
-        "line": 194
+        "line": 194,
+        "endLine": 197,
+        "signature": "def load_tx_transfer_records(index: int) -> list[TransferRecord]:"
       },
       {
         "name": "empty_transfer",
         "kind": "function",
-        "line": 198
+        "line": 198,
+        "endLine": 222,
+        "signature": "def empty_transfer() -> TransferRecord:"
       },
       {
         "name": "save_session_capture",
         "kind": "function",
-        "line": 223
+        "line": 223,
+        "endLine": 234,
+        "signature": "def save_session_capture(capture: SessionCapture) -> None:"
       },
       {
         "name": "load_session_capture",
         "kind": "function",
-        "line": 235
+        "line": 235,
+        "endLine": 260,
+        "signature": "def load_session_capture(tid: int) -> SessionCapture | None:"
       }
     ],
     "headings": []
@@ -866,17 +1021,25 @@
       {
         "name": "build_session_from_status",
         "kind": "function",
-        "line": 19
+        "line": 19,
+        "doc": "Build a SessionState from the real-time vlc_beta status files.",
+        "endLine": 113,
+        "signature": "def build_session_from_status(role: str, transfer: TransferRecord | None = None) -> SessionState:"
       },
       {
         "name": "build_empty_session",
         "kind": "function",
-        "line": 114
+        "line": 114,
+        "doc": "Build an empty session when no status data is available.  All fields are explicitly set to zero/empty to prevent leaking dataclass defaults (e.g. data_rate=3.42, lux=420) into offline state.",
+        "endLine": 164,
+        "signature": "def build_empty_session() -> SessionState:"
       },
       {
         "name": "default_experiment_metadata",
         "kind": "function",
-        "line": 165
+        "line": 165,
+        "endLine": 173,
+        "signature": "def default_experiment_metadata() -> ExperimentMetadata:"
       }
     ],
     "headings": []
@@ -894,42 +1057,63 @@
       {
         "name": "_resolve_state_dir",
         "kind": "function",
-        "line": 11
+        "line": 11,
+        "doc": "Return the best available state directory, checking env var first.",
+        "endLine": 22,
+        "signature": "def _resolve_state_dir() -> Path:"
       },
       {
         "name": "_state_dir",
         "kind": "function",
-        "line": 26
+        "line": 26,
+        "doc": "Return the best available state directory.",
+        "endLine": 30,
+        "signature": "def _state_dir() -> Path:"
       },
       {
         "name": "status_path",
         "kind": "function",
-        "line": 31
+        "line": 31,
+        "endLine": 34,
+        "signature": "def status_path(role: str) -> Path:"
       },
       {
         "name": "read_status",
         "kind": "function",
-        "line": 35
+        "line": 35,
+        "doc": "Read a status file from the vlc_beta state directory.",
+        "endLine": 47,
+        "signature": "def read_status(role: str) -> dict[str, Any] | None:"
       },
       {
         "name": "read_runtime_status",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "doc": "Alias for read_status.",
+        "endLine": 52,
+        "signature": "def read_runtime_status(role: str) -> dict[str, Any] | None:"
       },
       {
         "name": "read_beta_status",
         "kind": "function",
-        "line": 53
+        "line": 53,
+        "endLine": 56,
+        "signature": "def read_beta_status(role: str) -> dict[str, Any] | None:"
       },
       {
         "name": "read_migration_status",
         "kind": "function",
-        "line": 57
+        "line": 57,
+        "endLine": 60,
+        "signature": "def read_migration_status(role: str) -> dict[str, Any] | None:"
       },
       {
         "name": "write_status",
         "kind": "function",
-        "line": 61
+        "line": 61,
+        "doc": "Write a status file (compatible with vlc_beta's write_status).",
+        "endLine": 83,
+        "signature": "def write_status(role: str, stage: str, detail: str = \"\", percent: float | None = None, state: str = \"idle\", **extra: Any) -> None:"
       }
     ],
     "headings": []
@@ -947,27 +1131,39 @@
       {
         "name": "get_base_dir",
         "kind": "function",
-        "line": 8
+        "line": 8,
+        "endLine": 13,
+        "signature": "def get_base_dir() -> str:"
       },
       {
         "name": "setup_logger",
         "kind": "function",
-        "line": 17
+        "line": 17,
+        "endLine": 71,
+        "signature": "def setup_logger(role: str = \"app\") -> str:"
       },
       {
         "name": "global_exception_handler",
         "kind": "function",
-        "line": 61
+        "line": 61,
+        "endLine": 66,
+        "signature": "def global_exception_handler(exctype, value, tb):"
       },
       {
         "name": "reinit_logger",
         "kind": "function",
-        "line": 72
+        "line": 72,
+        "doc": "Re-initialise the logger with a TX/RX role prefix once the mode is known.",
+        "endLine": 76,
+        "signature": "def reinit_logger(role: str) -> str:"
       },
       {
         "name": "file_log",
         "kind": "function",
-        "line": 79
+        "line": 79,
+        "doc": "Backwards compatibility for existing file_log calls.",
+        "endLine": 82,
+        "signature": "def file_log(role: str, event: str, details: str) -> None:"
       }
     ],
     "headings": []
