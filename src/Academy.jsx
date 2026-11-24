@@ -7,6 +7,8 @@ import {
   ShieldCheck, Sparkles, Waves, X, Zap
 } from 'lucide-react';
 import './academy.css';
+const DeepDive = React.lazy(() => import('./DeepDive.jsx'));
+
 
 const FW = '411f183a8592d8285118f613bb4909c5bbd9d3cc';
 const APP = FW; // Application and firmware lessons both use the audited OpenVLC-Public main snapshot.
@@ -741,9 +743,10 @@ function CodeStudio({initialLesson}){
  const groups=['APPLICATION','FIRMWARE · TX','FIRMWARE · RX'];
  const filtered=useMemo(()=>codeLessons.filter(x=>(x.name+' '+x.path+' '+x.level).toLowerCase().includes(query.toLowerCase())),[query]);
  return <section className="code-studio" id="code"><div className="section-kicker">SOURCE CODE STUDIO <span>REAL FILES · PINNED LINES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM SURFACE KNOWLEDGE TO CODE CONFIDENCE</p><h2>Understand the code.<br/><i>One line at a time.</i></h2></div><p className="section-intro">Select a source lesson, tap any line, and read what it does. Each example is pinned to a commit so the code and line numbers stay traceable.</p></div>
- <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div><SourceMap/>
+ <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div><div className="deep-dive-callout"><div><span>OPTIONAL ADVANCED REFERENCE</span><h3>Ready to explore every file?</h3><p>Open the full repository index with file paths, classes, functions, line references, and verified cross-file connections.</p></div><button onClick={()=>window.location.hash='deepdive'}>OPEN DEEP DIVE <ArrowUpRight size={14}/></button></div><SourceMap/>
  </section>
 }
+
 
 const topicNotes = {
  start:[
@@ -806,7 +809,7 @@ function HomePage({navigate}){
  return <>
   <section className="academy-hero" id="home"><div className="hero-copy"><div className="hero-eyebrow"><i/> AN INTERACTIVE ENGINEERING COURSE</div><h1>Data carried<br/>by <em>light.</em></h1><p>Learn how a real ESP32 visible-light communication prototype works—from the LED driver and photodiode to the firmware and desktop code that make it communicate.</p><div className="hero-buttons"><button className="hero-primary" onClick={()=>navigate('paths')}>START LEARNING <ArrowRight size={16}/></button><button className="hero-secondary" onClick={()=>navigate('journey')}>EXPLORE THE SIGNAL <Waves size={16}/></button></div><div className="hero-stats"><div><b>06</b><span>LEARNING PATHS</span></div><div><b>08</b><span>TRANSMISSION STAGES</span></div><div><b>REAL</b><span>HARDWARE SOURCE</span></div></div></div><HeroModel/></section>
   <div className="academy-ticker"><span>ESP32 TRANSMITTER</span><i/><span>4B5B + NRZ/OOK</span><i/><span>VISIBLE LIGHT</span><i/><span>BPW34 RECEIVER</span><i/><span>CRC VERIFIED FILE</span></div>
-  <section className="home-start"><div><span className="eyebrow">PICK UP THE THREAD THAT INTERESTS YOU</span><h2>A clear route from<br/><i>concept to code.</i></h2><p>Explore the physical device, follow a complete transmission, or open the real source code. Each area is its own focused learning space.</p></div><div className="home-start-grid"><button onClick={()=>navigate('paths')}><Lightbulb/><b>Learning paths</b><span>Build knowledge step by step</span><ArrowUpRight/></button><button onClick={()=>navigate('journey')}><Waves/><b>Signal journey</b><span>Watch data travel through the prototype</span><ArrowUpRight/></button><button onClick={()=>navigate('code')}><Code2/><b>Code studio</b><span>Read real files and understand each line</span><ArrowUpRight/></button><button onClick={()=>navigate('atlas')}><Activity/><b>App atlas</b><span>Explore screens, settings and signal viewers</span><ArrowUpRight/></button></div></section>
+  <section className="home-start"><div><span className="eyebrow">PICK UP THE THREAD THAT INTERESTS YOU</span><h2>A clear route from<br/><i>concept to code.</i></h2><p>Explore the physical device, follow a complete transmission, or open the real source code. Each area is its own focused learning space.</p></div><div className="home-start-grid"><button onClick={()=>navigate('paths')}><Lightbulb/><b>Learning paths</b><span>Build knowledge step by step</span><ArrowUpRight/></button><button onClick={()=>navigate('journey')}><Waves/><b>Signal journey</b><span>Watch data travel through the prototype</span><ArrowUpRight/></button><button onClick={()=>navigate('code')}><Code2/><b>Code studio</b><span>Read real files and understand each line</span><ArrowUpRight/></button><button onClick={()=>navigate('atlas')}><Activity/><b>App atlas</b><span>Explore screens, settings and signal viewers</span><ArrowUpRight/></button><button onClick={()=>navigate('deepdive')}><FileCode2/><b>Deep Dive</b><span>Search every tracked file and source symbol</span><ArrowUpRight/></button></div></section>
  </>
 }
 
@@ -817,7 +820,7 @@ function PracticePage({openPath}){
 export default function Academy(){
  const initialHash=window.location.hash.replace(/^#/,'');
  const initialPath=initialHash.startsWith('path/')?initialHash.slice(5):'start';
- const [view,setView]=useState(()=>initialHash.startsWith('path/')?'path':['journey','paths','atlas','code','practice'].includes(initialHash)?initialHash:'home');
+ const [view,setView]=useState(()=>initialHash.startsWith('path/')?'path':['journey','paths','atlas','code','deepdive','practice'].includes(initialHash)?initialHash:'home');
  const [path,setPath]=useState(initialPath);
  const [codeSelection,setCodeSelection]=useState('tx-encode');
  const [menu,setMenu]=useState(false);
@@ -826,17 +829,18 @@ export default function Academy(){
  const openCode=id=>{setCodeSelection(id||'tx-encode');navigate('code')};
  const backToPaths=()=>navigate('paths');
  React.useEffect(()=>{
-  const onHash=()=>{const h=window.location.hash.replace(/^#/,'');if(h.startsWith('path/')){setPath(h.slice(5));setView('path')}else if(['journey','paths','atlas','code','practice'].includes(h)){setView(h)}else{setView('home')}};
+  const onHash=()=>{const h=window.location.hash.replace(/^#/,'');if(h.startsWith('path/')){setPath(h.slice(5));setView('path')}else if(['journey','paths','atlas','code','deepdive','practice'].includes(h)){setView(h)}else{setView('home')}};
   window.addEventListener('hashchange',onHash);return()=>window.removeEventListener('hashchange',onHash);
  },[]);
  return <div className="academy-shell">
-  <header className="academy-header"><Brand/><nav className={menu?'open':''}><button className={view==='paths'||view==='path'?'active':''} onClick={()=>navigate('paths')}>LEARNING PATHS</button><button className={view==='journey'?'active':''} onClick={()=>navigate('journey')}>SIGNAL JOURNEY</button><button className={view==='atlas'?'active':''} onClick={()=>navigate('atlas')}>APP ATLAS</button><button className={view==='code'?'active':''} onClick={()=>navigate('code')}>CODE STUDIO</button><button className={view==='practice'?'active':''} onClick={()=>navigate('practice')}>PRACTICE</button><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
+  <header className="academy-header"><Brand/><nav className={menu?'open':''}><button className={view==='paths'||view==='path'?'active':''} onClick={()=>navigate('paths')}>LEARNING PATHS</button><button className={view==='journey'?'active':''} onClick={()=>navigate('journey')}>SIGNAL JOURNEY</button><button className={view==='atlas'?'active':''} onClick={()=>navigate('atlas')}>APP ATLAS</button><button className={view==='code'?'active':''} onClick={()=>navigate('code')}>CODE STUDIO</button><button className={view==='deepdive'?'active':''} onClick={()=>navigate('deepdive')}>DEEP DIVE</button><button className={view==='practice'?'active':''} onClick={()=>navigate('practice')}>PRACTICE</button><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
   <main className="academy-main"><AnimatePresence mode="wait" initial={false}><motion.div key={view+(view==='path'?path:'')} className="academy-page-transition" initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}} transition={{duration:.2,ease:'easeOut'}}>
    {view==='home'&&<HomePage navigate={navigate}/>}
    {view==='journey'&&<SignalJourney onOpenCode={openCode}/>}
    {view==='atlas'&&<AppAtlas onOpenCode={openCode}/>}
    {view==='paths'&&<PathCards onOpen={openPath}/>}
    {view==='code'&&<CodeStudio initialLesson={codeSelection}/>}
+   {view==='deepdive'&&<React.Suspense fallback={<div className="deep-dive-loading">Loading the complete repository index…</div>}><DeepDive onOpenCode={openCode} appPin={APP} codeLessons={codeLessons}/></React.Suspense>}
    {view==='practice'&&<PracticePage openPath={openPath}/>}
    {view==='path'&&<PathDetail key={path} id={path} onBack={backToPaths}/>}
   </motion.div></AnimatePresence></main>

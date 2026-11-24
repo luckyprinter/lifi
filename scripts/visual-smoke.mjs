@@ -65,6 +65,20 @@ try {
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/code-' + width + '.png', fullPage: true });
 
     if (width <= 720) await page.locator('.mobile-menu').click();
+    await page.getByRole('button', { name: 'DEEP DIVE', exact: true }).click();
+    await page.waitForSelector('.deep-dive-section');
+    const inventoryStats = await page.locator('.deep-dive-stats').innerText();
+    if (!inventoryStats.includes('88') || !inventoryStats.includes('56') || !inventoryStats.includes('960')) failures.push(width + 'px Deep Dive inventory totals are incomplete');
+    await page.locator('.deep-search input').fill('tx_app_state.py');
+    await page.locator('.deep-file-list button[data-path="application-source/gui_dev_v3/tx_app_state.py"]').click();
+    if (!(await page.locator('.deep-file-head code').innerText()).endsWith('tx_app_state.py')) failures.push(width + 'px Deep Dive search did not select the TXAppState source file');
+    if (!(await page.locator('.deep-symbol-list').innerText()).includes('start_transmission')) failures.push(width + 'px Deep Dive did not index TXAppState.start_transmission');
+    if (!(await page.locator('.deep-file-head a').getAttribute('href')).includes('/blob/411f183a')) failures.push(width + 'px Deep Dive full-source link is not pinned to the audited commit');
+    const deepScroll = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (deepScroll > width + 1) failures.push(width + 'px Deep Dive horizontal overflow: ' + deepScroll);
+    if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/deepdive-' + width + '.png', fullPage: true });
+
+    if (width <= 720) await page.locator('.mobile-menu').click();
     await page.getByRole('button', { name: 'APP ATLAS', exact: true }).click();
     await page.waitForSelector('.app-atlas-section');
     await page.getByRole('tab', { name: 'RX APPLICATION' }).click();
