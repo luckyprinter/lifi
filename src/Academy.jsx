@@ -1,0 +1,382 @@
+import React, { useMemo, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  Activity, ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, BookOpen,
+  Cable, Check, ChevronDown, ChevronRight, CircuitBoard, Code2, Cpu,
+  FileCode2, Github, Lightbulb, Menu, Radio, RotateCcw, Search,
+  ShieldCheck, Sparkles, Waves, X, Zap
+} from 'lucide-react';
+import './academy.css';
+
+const FW = '411f183a8592d8285118f613bb4909c5bbd9d3cc';
+const APP = '80ef4afa63a3fe571ffd5026560bf7d7d90fbecc';
+const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
+const link = (path, ref = FW, lines = '') => REPO + '/blob/' + ref + '/' + path + (lines ? '#L' + lines.replace('-', '-L') : '');
+
+const stages = [
+  {id:'file',label:'Choose a file',kind:'file',eyebrow:'01 · APPLICATION',title:'A file becomes a transfer job',copy:'The transmitter application reads the selected file, records its size and name, and prepares the transfer settings. It does not send light itself: it coordinates the physical transmitter over USB serial.',signal:'FILE BYTES',detail:'Desktop TX application → serial controller',code:'tx_app_state.py',codeLesson:'tx-state'},
+  {id:'usb',label:'USB serial',kind:'usb',eyebrow:'02 · HOST ↔ ESP32',title:'The host and board agree on a transfer',copy:'The desktop sends a STREAM_BEGIN command and waits for the firmware acknowledgement. File data is delivered in acknowledged blocks before the optical transmission starts.',signal:'STREAM_BEGIN → ACK → STREAM_DATA',detail:'Application serial controller → TX firmware command handler',code:'serial/controllers.py',codeLesson:'serial-start'},
+  {id:'coding',label:'4B5B coding',kind:'coding',eyebrow:'03 · LINE CODING',title:'Eight bits become ten',copy:'Each byte is split into a high and low nibble. The firmware maps each 4-bit value to a 5-bit codeword, producing a transition-friendly stream for clock recovery.',signal:'BYTE → TWO 5-BIT CODEWORDS',detail:'TX firmware → send4b5bEncodedByte()',code:'firmware/tx/tx.ino',codeLesson:'tx-encode'},
+  {id:'frame',label:'Frame building',kind:'frame',eyebrow:'04 · PROTOCOL',title:'Payload gets structure and checks',copy:'A frame carries identifiers, lengths, chunk information, filename metadata, payload bytes, and integrity fields. The receiver uses these fields to find boundaries and reject damaged data.',signal:'SYNC → SOF → HEADER → PAYLOAD → CRC',detail:'TX buildFrame() ↔ RX processCompleteFrame()',code:'firmware/specs/protocol_spec.md',codeLesson:'tx-frame'},
+  {id:'light',label:'Light transmission',kind:'light',eyebrow:'05 · OPTICAL TX',title:'GPIO timing drives the LED',copy:'The ESP32 switches the LED driver according to the encoded symbol stream. The LED is the physical transmitter: the information travels across the room as changes in visible light.',signal:'GPIO5 → DRIVER → 12 V LED',detail:'TX sendOpticalFrame() → send4b5bBit()',code:'firmware/tx/tx.ino',codeLesson:'tx-bit'},
+  {id:'detect',label:'Photodetection',kind:'detect',eyebrow:'06 · ANALOG RX',title:'Photons become an electrical signal',copy:'The BPW34 photodiode converts received light into photocurrent. The OPA2604 transimpedance amplifier produces a voltage, and the LM393 comparator converts the threshold crossing into a digital signal.',signal:'BPW34 → OPA2604 → LM393 → GPIO5',detail:'Physical receiver front end → RX ESP32',code:'firmware/rx/rx.ino',codeLesson:'rx-majority'},
+  {id:'decode',label:'Sampling & decode',kind:'decode',eyebrow:'07 · RX FIRMWARE',title:'The receiver recovers symbols and bytes',copy:'The receiver samples around the expected symbol centre, uses majority voting when enabled, acquires synchronization, aligns to the encoded start marker, and decodes valid 5-bit codewords.',signal:'SAMPLES → SYNC → 5B → NIBBLES → BYTE',detail:'RX sampleRawAt() → read4b5bByte()',code:'firmware/rx/rx.ino',codeLesson:'rx-decode'},
+  {id:'verify',label:'Verify & rebuild',kind:'verify',eyebrow:'08 · INTEGRITY',title:'Verified chunks become the original file',copy:'The receiver checks frame and chunk CRCs before accepting payload data. After all chunks arrive, whole-file CRC validation protects the reconstructed file. The desktop application can then save and compare it with the original reference.',signal:'FRAME CRC → CHUNK CRC → FILE CRC',detail:'RX firmware → RX desktop application',code:'firmware/rx/rx.ino',codeLesson:'rx-crc'}
+];
+
+const codeLessons = [
+ {id:'tx-state',level:'APPLICATION',name:'TX application state',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,range:'23-36',lang:'python',summary:'The state object holds the transmitter workspace values. Notice that the mode is initialized to physical: this is an application setting, not a live connection.',lines:[
+  ['    settings: AppSettings = field(default_factory=load_settings)','Create settings from the persisted configuration when a state object is made.'],
+  ['    mode: str = "physical"','Default the application to its real serial-hardware backend.'],
+  ['    filename: str = "No file"','Keep a clear empty state before the user chooses a file.'],
+  ['    filetype: str = ""','Store the selected file type separately from its filename.'],
+  ['    file_size_bytes: int = 0','Store the selected file size in bytes.'],
+  ['    total_chunks: int = 0','Track how many protocol chunks are needed.'],
+  ['    chunk_size: int = 256','Set the current default chunk payload size.'],
+  ['    encoding: str = "4B5B"','Expose the line-coding choice used by this application state.'],
+  ['    modulation: str = "NRZ / OOK"','Describe the optical modulation configuration.'],
+  ['    symbol_rate: str = "15,000 sym/s"','Represent the configured symbol rate.'],
+  ['    led_pin: int = 5','Record the transmitter GPIO assignment.'],
+  ['    tx_power: str = "100 %"','Store the configured TX power label.'],
+  ['    pre_emphasis: str = "Disabled"','Store whether pre-emphasis is enabled.'],
+  ['    status_text: str = "Offline — no hardware"','Start honestly: a default state does not mean a board is connected.']
+ ],concept:'A dataclass field declaration gives the state object a named piece of data and, often, an initial value. These fields are not the transmission itself; UI actions and controller methods consume them.'},
+ {id:'serial-start',level:'APPLICATION',name:'Begin a serial transfer',path:'application-source/gui_dev_v3/serial/controllers.py',ref:APP,range:'460-478',lang:'python',summary:'This exact excerpt constructs STREAM_BEGIN, updates the transfer status, clears old firmware state, sends the command, and waits for the TX firmware acknowledgement.',lines:[
+  ['        begin = (','Start a parenthesized multi-line command string.'],
+  ['            f"STREAM_BEGIN:{tid}:1:{len(data)}:{chunk_size}"','Build the first command segment. The f-string inserts the transfer ID, file length, and chunk size.'],
+  ['            f":{file_crc:04X}:1:{name_bytes.hex().upper()}"','Append the file CRC as hexadecimal and the filename bytes as uppercase hex.'],
+  ['        )','Finish assembling the command.'],
+  ['        tot_c = max(1, (len(data) + chunk_size - 1) // chunk_size)','Compute the number of chunks using integer ceiling division, with at least one chunk.'],
+  ['        self.status(','Begin a UI/status update.'],
+  ['            "Preparing", path.name,','Set the status label and selected filename.'],
+  ['            percent=0, state="active",','Report zero percent and an active transfer state.'],
+  ['            file_name=path.name, size=len(data), tid=tid,','Attach filename, byte size, and transfer ID to the status event.'],
+  ['            chunk=0, total_chunks=tot_c,','Initialize progress at chunk zero and include the total chunk count.'],
+  ['        )','Finish the status call.'],
+  ['        self.send_line("STREAM_CLEAR")','Ask the transmitter firmware to clear any previous stream state.'],
+  ['','Blank line separates preparation from the handshake.'],
+  ['        si = self.line_counter','Remember the current received-line counter before waiting for a new acknowledgement.'],
+  ['        if not self.send_line(begin):','Write STREAM_BEGIN to the serial connection; test whether the write succeeded.'],
+  ['            return False','Stop immediately if the command could not be sent.'],
+  ['        if not self.wait_for_line_containing("TX_STREAM_BEGIN_OK", 5.0, si):','Wait up to five seconds for the expected firmware acknowledgement after the saved line index.'],
+  ['            self.status("Send failed", "TX did not acknowledge STREAM_BEGIN", state="error")','Publish a clear failure state if the firmware does not acknowledge.'],
+  ['            return False','Do not continue into data transmission after a failed handshake.']
+ ],concept:'The host and firmware use a small command protocol over USB serial. This is the control-plane handshake that prepares the physical transmitter; it is not the optical data transmission itself.'},
+ {id:'tx-encode',level:'FIRMWARE · TX',name:'Encode one byte as 4B5B',path:'firmware/tx/tx.ino',ref:FW,range:'160-163',lang:'cpp',summary:'This tiny function is a good first example of bit manipulation. It separates a byte into two nibbles and looks up the 5-bit representation of each.',lines:[
+  ['void send4b5bEncodedByte(uint8_t value) {','Define a function that receives one unsigned 8-bit value and returns no value.'],
+  ['  send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);','Shift the high nibble down, mask to four bits, look up its codeword, then send five bits.'],
+  ['  send4b5bCode(CODE_4B5B[value & 0x0F]);','Mask the low nibble, look up its codeword, then send five bits.'],
+  ['}','End the function.']
+ ],concept:'For 0xA5, the high nibble is 0xA and the low nibble is 0x5. In this firmware table they map to 10110 and 01011. The result is ten transmitted bits for one original byte.'},
+ {id:'tx-bit',level:'FIRMWARE · TX',name:'Put one bit on the LED driver',path:'firmware/tx/tx.ino',ref:FW,range:'147-150',lang:'cpp',summary:'This is the boundary between a logical bit and a physical GPIO level. The helper applies the configured line polarity, then waits for the symbol boundary.',lines:[
+  ['void send4b5bBit(bool bitValue) {','Accept one logical bit as true or false.'],
+  ['  digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());','Choose the electrical output level for logical one or zero, including active-low configuration.'],
+  ['  waitSymbolBoundary();','Hold the symbol for its configured timing interval.'],
+  ['}','End the helper.']
+ ],concept:'Logical 1 does not universally mean GPIO HIGH. The driver can be active-low. Keeping logical bit meaning separate from electrical pin polarity prevents the encoder from needing to know the transistor circuit details.'},
+ {id:'tx-frame',level:'FIRMWARE · TX',name:'Build a protocol frame',path:'firmware/tx/tx.ino',ref:FW,range:'182-201',lang:'cpp',summary:'This is the exact 20-line frame builder. Select each line to see how metadata and payload bytes are placed in the buffer and how the CRC is appended.',lines:[
+  ['size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {','Define a function returning the number of bytes written. It receives frame metadata and a pointer to the payload.'],
+  ['  uint16_t chunkCrc = crc16_ccitt(payload, payloadLen);','Calculate a CRC for this payload chunk before assembling the frame.'],
+  ['  size_t pos = 0;','Start writing at offset zero in the frame buffer.'],
+  ['  frameBuf[pos++] = SOF_BYTE;','Write the start-of-frame marker, then increment pos.'],
+  ['  frameBuf[pos++] = VERSION_BYTE;','Write the protocol version.'],
+  ['  frameBuf[pos++] = frameType;','Write the frame type, such as notice or data.'],
+  ['  putU16(frameBuf, pos, streamTid);','Serialize the transfer ID as a 16-bit field.'],
+  ['  putU32(frameBuf, pos, streamTotalSize);','Serialize the complete file size as a 32-bit field.'],
+  ['  putU16(frameBuf, pos, streamTotalChunks);','Write how many chunks belong to this transfer.'],
+  ['  putU16(frameBuf, pos, chunkIndex);','Write this frame’s chunk index.'],
+  ['  putU16(frameBuf, pos, payloadLen);','Write the number of payload bytes carried in this frame.'],
+  ['  putU16(frameBuf, pos, streamFileCrc);','Include the CRC expected for the complete original file.'],
+  ['  putU16(frameBuf, pos, chunkCrc);','Include the CRC calculated for this individual chunk.'],
+  ['  frameBuf[pos++] = streamNameLen;','Write the filename length before the filename bytes.'],
+  ['  for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];','Copy the filename into the frame one byte at a time.'],
+  ['  for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];','Copy the payload bytes after the filename.'],
+  ['  uint16_t frameCrc = crc16_ccitt(frameBuf, pos);','Calculate a CRC over all frame bytes written so far.'],
+  ['  putU16(frameBuf, pos, frameCrc);','Append the frame CRC after the payload.'],
+  ['  return pos;','Return the total number of bytes in the completed frame.'],
+  ['}','End the function.']
+ ],concept:'The sender and receiver must agree on the exact field order and sizes. Frame CRC protects the assembled frame; chunk CRC protects the payload; file CRC later checks the reconstructed file.'},
+ {id:'rx-majority',level:'FIRMWARE · RX',name:'Read a symbol with majority voting',path:'firmware/rx/rx.ino',ref:FW,range:'761-771',lang:'cpp',summary:'Instead of trusting one digital read, this helper can take three readings around the expected symbol centre and choose the majority value.',lines:[
+  ['bool sampleRawAt(uint32_t sampleTimeUs) {','Return one recovered raw bit for a target time in microseconds.'],
+  ['  if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }','Use a single read if majority mode is off or the symbol is too short for this sampling pattern.'],
+  ['  uint32_t delta = symbolUs / 6;','Place the outer samples one-sixth of a symbol period before and after the centre.'],
+  ['  waitUntil(sampleTimeUs - delta);','Wait until the first sample instant.'],
+  ['  bool a = digitalRead(RX_PIN);','Read the comparator output.'],
+  ['  waitUntil(sampleTimeUs);','Wait for the centre sample.'],
+  ['  bool b = digitalRead(RX_PIN);','Read the second sample.'],
+  ['  waitUntil(sampleTimeUs + delta);','Wait for the third sample instant.'],
+  ['  bool c = digitalRead(RX_PIN);','Read the third sample.'],
+  ['  return (a + b + c) >= 2;','Return true when at least two of the three readings are HIGH.'],
+  ['}','End the function.']
+ ],concept:'At 15 ksymbols/s, one symbol lasts about 66.7 microseconds. The three samples are close together around the centre, where the receiver expects the symbol to be stable.'},
+ {id:'rx-decode',level:'FIRMWARE · RX',name:'Decode two codewords into one byte',path:'firmware/rx/rx.ino',ref:FW,range:'840-854',lang:'cpp',summary:'This exact excerpt checks synchronization and frame alignment, reads two 5-bit codewords, rejects invalid values, and combines two nibbles into a byte.',lines:[
+  ['bool read4b5bByte(uint8_t &value) {','Return true or false, and write the decoded byte through the reference parameter value.'],
+  ['  if (!lineSynced && !acquire4b5bSync()) return false;','If the line is not synchronized, try to acquire sync. Stop if acquisition fails.'],
+  ['  if (!frameAligned) return alignToEncodedSof(value);','Before payload decoding, align the stream to the encoded start-of-frame marker.'],
+  ['  uint8_t highCode = 0, lowCode = 0;','Create storage for the high-nibble and low-nibble 5-bit codewords.'],
+  ['  if (!read5b(highCode) || !read5b(lowCode)) return false;','Read both 5-bit groups. The logical OR short-circuits if the first read fails.'],
+  ['  int8_t highNibble = DECODE_4B5B[highCode & 0x1F];','Mask to five bits and use the reverse lookup table to decode the high nibble.'],
+  ['  int8_t lowNibble = DECODE_4B5B[lowCode & 0x1F];','Decode the low nibble with the same lookup table.'],
+  ['  if (highNibble < 0 || lowNibble < 0) {','A negative lookup result means at least one codeword is invalid.'],
+  ['    invalidCodeCount++;','Increment the diagnostic counter for invalid codewords.'],
+  ['    resetLineDecoder();','Reset line-decoder state because the stream can no longer be trusted as aligned.'],
+  ['    return false;','Report that no valid byte was produced.'],
+  ['  }','Close the invalid-codeword condition.'],
+  ['  value = (uint8_t)((highNibble << 4) | lowNibble);','Shift the high nibble into the upper four bits and combine it with the low nibble using bitwise OR.'],
+  ['  return true;','Report successful decoding of one byte.'],
+  ['}','End the function.']
+ ],concept:'For the input byte 0xA5, the high nibble 0xA maps to 10110 and the low nibble 0x5 maps to 01011. The receiver reverses those two lookups and combines them.'},
+ {id:'rx-crc',level:'FIRMWARE · RX',name:'Validate a complete frame',path:'firmware/rx/rx.ino',ref:FW,range:'907-942',lang:'cpp',summary:'A 36-line excerpt of the receiver validation path. It checks minimum size, frame CRC, metadata, payload boundaries, chunk CRC, and only then accepts the verified chunk.',lines:[
+  ['void processCompleteFrame() {','Process a frame after the line decoder has assembled its bytes.'],
+  ['  if (framePos < 1 + 19 + 2) { resetLineDecoder(); return; }','Reject a frame too short to contain the minimum fields and trailing CRC.'],
+  ['  uint16_t rxFrameCrc = getU16(frameBuf, framePos - 2);','Read the received frame CRC from the final two bytes.'],
+  ['  uint16_t calcFrameCrc = crc16_ccitt(frameBuf, framePos - 2);','Recalculate the CRC over all preceding frame bytes.'],
+  ['  if (rxFrameCrc != calcFrameCrc) { crcFailCount++; resetLineDecoder(); return; }','Reject the frame and count a CRC failure if the received and calculated values differ.'],
+  ['',''],
+  ['  uint8_t version = frameBuf[1];','Read the protocol version field.'],
+  ['  uint8_t frameType = frameBuf[2];','Read the frame type.'],
+  ['  uint16_t tid = getU16(frameBuf, 3);','Decode the transfer ID.'],
+  ['  uint32_t totalSize = getU32(frameBuf, 5);','Decode the complete file size.'],
+  ['  uint16_t totalChunks = getU16(frameBuf, 9);','Decode the expected number of chunks.'],
+  ['  uint16_t chunkIndex = getU16(frameBuf, 11);','Decode this chunk’s index.'],
+  ['  uint16_t chunkLen = getU16(frameBuf, 13);','Decode the payload length for this frame.'],
+  ['  uint16_t fileCrc = getU16(frameBuf, 15);','Read the expected whole-file CRC carried in the header.'],
+  ['  uint16_t rxChunkCrc = getU16(frameBuf, 17);','Read the received chunk CRC.'],
+  ['  uint8_t nameLen = frameBuf[19];','Read the filename length.'],
+  ['  if (version != VERSION_BYTE || nameLen > MAX_NAME_BYTES || chunkLen > MAX_PAYLOAD_BYTES || chunkIndex >= totalChunks) { resetLineDecoder(); return; }','Reject unsupported versions and metadata outside allowed bounds.'],
+  ['  size_t nameStart = 20;','The filename starts immediately after the fixed header.'],
+  ['  size_t payloadStart = nameStart + nameLen;','The payload begins after the variable-length filename.'],
+  ['  if (payloadStart + chunkLen + 2 != framePos) { resetLineDecoder(); return; }','Check that filename, payload, and trailing CRC exactly match the assembled frame length.'],
+  ['  uint16_t calcChunkCrc = crc16_ccitt(frameBuf + payloadStart, chunkLen);','Calculate a CRC over the payload bytes only.'],
+  ['  if (rxChunkCrc != calcChunkCrc) { crcFailCount++; resetLineDecoder(); return; }','Reject the chunk if its payload CRC does not match.'],
+  ['  crcOkCount++;','Count a frame/chunk that passed the preceding integrity checks.'],
+  ['  if (isRecentlyCompletedTransfer(tid, frameType, totalSize, totalChunks, fileCrc, nameLen, frameBuf + nameStart)) {','Detect a duplicate frame belonging to a recently completed transfer.'],
+  ['    if (reportChunks) { Serial.print("RX_DUPLICATE_FRAME_SKIP:"); Serial.println(tid); }','Optionally report that the duplicate is being skipped.'],
+  ['    resetLineDecoder();','Reset per-frame decoder state.'],
+  ['    return;','Do not process a duplicate again.'],
+  ['  }','Close the duplicate-transfer condition.'],
+  ['  if (frameType == FRAME_TYPE_NOTICE) {','Handle a transfer-notice frame separately from payload data.'],
+  ['    Serial.print("RX_TRANSFER_NOTICE:"); Serial.print(tid); Serial.print(":"); Serial.print(totalSize); Serial.print(":"); Serial.print(totalChunks); Serial.print(":"); Serial.print(fileCrc, HEX); Serial.print(":"); printHexBytes(frameBuf + nameStart, nameLen); Serial.println();','Send the transfer metadata to the desktop over serial.'],
+  ['    resetLineDecoder();','Reset the frame decoder after processing the notice.'],
+  ['    return;','A notice contains metadata, not a data chunk to buffer.'],
+  ['  }','Close the notice-frame condition.'],
+  ['  bufferVerifiedChunk(tid, frameType, totalSize, totalChunks, chunkIndex, chunkLen, fileCrc, nameLen, frameBuf + nameStart, frameBuf + payloadStart);','Pass verified metadata and payload bytes to the chunk reassembly buffer.'],
+  ['  resetLineDecoder();','Reset decoder state so the next frame can be acquired.'],
+  ['}','End the function.']
+ ],concept:'The validation order matters: first trust the frame boundary and frame CRC, then validate metadata and payload length, then check the chunk CRC. Only verified data reaches bufferVerifiedChunk().'},
+
+];
+
+const paths = [
+ {id:'start',number:'01',title:'Understand the prototype',desc:'Start with the real device, its purpose, and the experiment.',duration:'20 min',items:['What visible-light communication means','The physical TX and RX assemblies','The room-scale optical link','What the experiment measured']},
+ {id:'hardware',number:'02',title:'Explore the hardware',desc:'Follow the electrical and optical signal through every component.',duration:'35 min',items:['ESP32 transmitter and LED driver','12 V LED and optical path','BPW34 photodiode and OPA2604 TIA','LM393 comparator and receiver GPIO']},
+ {id:'protocol',number:'03',title:'Understand the protocol',desc:'Learn how bytes become symbols, frames, and verified chunks.',duration:'45 min',items:['Binary, bits, bytes, and nibbles','4B5B line coding','NRZ/OOK modulation','Synchronization, frame fields, and CRC']},
+ {id:'software',number:'04',title:'Explore the software',desc:'Understand the desktop applications and firmware responsibilities.',duration:'45 min',items:['TX application state and serial controller','TX firmware command and stream path','RX sampling and decoder pipeline','RX application and file reconstruction']},
+ {id:'code',number:'05',title:'Learn to read the code',desc:'Build programming confidence by tracing real functions line by line.',duration:'60 min',items:['Variables, types, arrays, and pointers','Conditions, loops, and bitwise operators','Function calls and data flow','Debugging and safe code changes']},
+ {id:'practice',number:'06',title:'Practice and check understanding',desc:'Use small challenges to test whether the concepts really make sense.',duration:'25 min',items:['Predict the encoded bits','Trace a received byte','Find a CRC validation bug','Complete the final knowledge check']}
+];
+
+function Brand(){return <a className="academy-brand" href="#home" aria-label="OpenVLC Academy home"><span className="brand-mark"><Waves size={19}/></span><span>OPENVLC <b>ACADEMY</b></span></a>}
+
+function HeroModel(){
+ return <div className="hero-model" aria-label="Animated illustration of a visible light communication link">
+  <div className="model-grid"/><div className="model-orbit orbit-a"/><div className="model-orbit orbit-b"/>
+  <div className="model-device tx-device"><Cpu size={25}/><b>TX</b><small>ESP32</small></div>
+  <div className="model-device rx-device"><CircuitBoard size={25}/><b>RX</b><small>ESP32</small></div>
+  <div className="model-lamp"><Lightbulb size={31}/></div>
+  <div className="light-beam"/>{Array.from({length:7},(_,i)=><i className="hero-photon" style={{'--i':i}} key={i}/>)}
+  <span className="model-label label-tx">TRANSMITTER</span><span className="model-label label-link">VISIBLE LIGHT · LOS</span><span className="model-label label-rx">RECEIVER</span>
+  <div className="model-readout"><span><i/> OPTICAL LINK MODEL</span><b>DATA → LIGHT → DATA</b></div>
+ </div>
+}
+
+function StageVisual({stage}){
+ const base = <div className="stage-visual-top"><span>INTERACTIVE SIGNAL MODEL</span><span>STAGE {String(stages.findIndex(s=>s.id===stage.id)+1).padStart(2,'0')} / 08</span></div>;
+ return <div className={'stage-visual visual-'+stage.kind}>{base}
+  <AnimatePresence mode="wait">
+   <motion.div key={stage.id} className="stage-scene" initial={{opacity:0,y:12,scale:.98}} animate={{opacity:1,y:0,scale:1}} exit={{opacity:0,y:-8}} transition={{duration:.28}}>
+    {stage.kind==='file'&&<><div className="file-sheet"><FileCode2 size={34}/><b>sample.bin</b><small>FILE · 4,096 BYTES</small><div className="file-lines"><i/><i/><i/><i/></div></div><motion.div className="scene-arrow" animate={{x:[0,16,0]}} transition={{repeat:Infinity,duration:2}}><ArrowRight/></motion.div><div className="scene-chip"><Cpu/><b>TX APP</b><small>TRANSFER JOB</small></div></>}
+    {stage.kind==='usb'&&<><div className="scene-chip"><LaptopGlyph/><b>DESKTOP</b><small>TX APPLICATION</small></div><motion.div className="usb-cable" animate={{opacity:[.55,1,.55]}} transition={{repeat:Infinity,duration:1.8}}/><div className="scene-chip"><Cpu/><b>ESP32</b><small>TX FIRMWARE</small></div><div className="serial-packets">{['BEGIN','ACK','DATA'].map((x,i)=><motion.i key={x} animate={{x:[-18,18,-18],opacity:[.25,1,.25]}} transition={{repeat:Infinity,duration:2.2,delay:i*.35}}>{x}</motion.i>)}</div></>}
+    {stage.kind==='coding'&&<><div className="bit-group"><small>INPUT BYTE</small><b>1010 0101</b></div><motion.div className="encode-arrow" animate={{scale:[1,1.12,1]}} transition={{repeat:Infinity,duration:2}}><Zap/></motion.div><div className="codeword-groups"><small>ENCODED · 4B5B</small><b>10110 <em>01011</em></b><span>5 bits + 5 bits</span></div><div className="moving-bits">{'1011001011'.split('').map((b,i)=><motion.i key={i} animate={{y:[0,-5,0],opacity:[.5,1,.5]}} transition={{repeat:Infinity,duration:1.4,delay:i*.08}}>{b}</motion.i>)}</div></>}
+    {stage.kind==='frame'&&<><div className="frame-stack"><span>SOF</span><span>HEADER</span><span>NAME</span><span>PAYLOAD</span><span>CRC</span></div><motion.div className="frame-scan" animate={{x:['-5%','105%']}} transition={{repeat:Infinity,duration:3,ease:'linear'}}/><div className="frame-check"><ShieldCheck/><b>INTEGRITY FIELDS</b><small>FRAME + CHUNK</small></div></>}
+    {stage.kind==='light'&&<><div className="mini-board"><Cpu/><b>ESP32</b><small>GPIO 5</small></div><div className="driver-block"><CircuitBoard/><b>LED DRIVER</b><small>SWITCHING STAGE</small></div><div className="mini-led"><Lightbulb/><span/></div><div className="beam-particles">{Array.from({length:8},(_,i)=><motion.i key={i} animate={{x:[0,230],opacity:[0,1,0],scale:[.6,1,.6]}} transition={{repeat:Infinity,duration:2.3,delay:i*.25,ease:'linear'}}/>)}</div><span className="scene-caption">SYMBOL TIMING CONTROLS LIGHT OUTPUT</span></>}
+    {stage.kind==='detect'&&<><div className="detector-chain"><div><Radio/><b>BPW34</b><small>PHOTOCURRENT</small></div><ArrowRight/><div><Activity/><b>OPA2604</b><small>VOLTAGE</small></div><ArrowRight/><div><Zap/><b>LM393</b><small>DIGITAL EDGE</small></div></div><div className="analog-trace"><svg viewBox="0 0 520 100" role="img" aria-label="Conceptual analog signal"><path d="M0 68 C35 68 35 20 75 20 S110 75 150 75 S190 30 230 30 S270 65 310 65 S350 18 390 18 S430 72 470 72 S495 42 520 42" fill="none" stroke="#ffbd70" strokeWidth="3"/><path d="M0 78H520" stroke="#526c76" strokeDasharray="5 7"/></svg></div><small className="scene-caption">CONCEPTUAL SIGNAL SHAPE · NOT A MEASURED TRACE</small></>}
+    {stage.kind==='decode'&&<><div className="sample-wave"><div className="wave-label">COMPARATOR OUTPUT</div><svg viewBox="0 0 520 130" role="img" aria-label="Conceptual digital waveform with three sample markers"><path d="M0 94H55V28H130V94H205V28H280V94H355V28H430V94H520" fill="none" stroke="#7dd7c7" strokeWidth="3"/>{[72,91,110,222,241,260,372,391,410].map((x,i)=><circle key={i} cx={x} cy={i%3===0?28:94} r="5" fill="#ffbd70"/>)}</svg><div className="sample-legend"><span><i/> SAMPLE POINTS</span><span>3-READ MAJORITY</span></div></div><div className="decode-result"><b>10110</b><ArrowRight/><b>1010</b><small>VALID NIBBLE</small></div></>}
+    {stage.kind==='verify'&&<><div className="verify-stack"><div><Check/><span>FRAME CRC</span><b>PASS</b></div><div><Check/><span>CHUNK CRC</span><b>PASS</b></div><div><Check/><span>FILE CRC</span><b>PASS</b></div></div><motion.div className="rebuild-file" animate={{y:[0,-5,0]}} transition={{repeat:Infinity,duration:2}}><FileCode2 size={30}/><b>original-file.bin</b><small>REASSEMBLED</small></motion.div></>}
+   </motion.div>
+  </AnimatePresence>
+  <div className="stage-visual-bottom"><span>{stage.signal}</span><span>MODEL · NOT LIVE TELEMETRY</span></div>
+ </div>
+}
+function LaptopGlyph(){return <Cable size={24}/>}
+
+function SignalJourney({onOpenCode}){
+ const [index,setIndex]=useState(0); const [playing,setPlaying]=useState(false); const stage=stages[index];
+ React.useEffect(()=>{if(!playing)return;const id=setInterval(()=>setIndex(v=>(v+1)%stages.length),3800);return()=>clearInterval(id)},[playing]);
+ return <section className="journey-section" id="journey"><div className="section-kicker">THE COMPLETE TRANSMISSION <span>08 STAGES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM A FILE TO LIGHT AND BACK</p><h2>Follow one transfer.<br/><i>All the way through.</i></h2></div><p className="section-intro">Move through the physical prototype one stage at a time. Each step changes the model, explains what is happening, and points to the responsible code.</p></div>
+  <div className="journey-layout"><aside className="stage-rail">{stages.map((s,i)=><button key={s.id+i} className={index===i?'active':''} onClick={()=>{setIndex(i);setPlaying(false)}}><span>{String(i+1).padStart(2,'0')}</span><b>{s.label}</b><i/></button>)}</aside><div className="journey-content"><StageVisual stage={stage}/><div className="journey-explain"><div className="eyebrow">{stage.eyebrow}</div><h3>{stage.title}</h3><p>{stage.copy}</p><div className="stage-connection"><Cable size={15}/><span>{stage.detail}</span></div><div className="stage-actions"><button onClick={()=>setIndex(v=>Math.max(0,v-1))} disabled={index===0}><ArrowLeft size={15}/> PREVIOUS</button><button className="journey-play" onClick={()=>setPlaying(v=>!v)}>{playing?'PAUSE':'AUTO PLAY'} <Activity size={14}/></button><button className="open-code-stage" onClick={()=>onOpenCode(stage.codeLesson)}><Code2 size={14}/> OPEN RELATED CODE</button><button className="next-stage" onClick={()=>{setIndex(v=>(v+1)%stages.length);setPlaying(false)}}>NEXT STAGE <ArrowRight size={15}/></button></div></div></div></div>
+ </section>
+}
+
+function PathCards({onOpen}){return <section className="paths-section" id="learn"><div className="section-kicker">YOUR LEARNING ROUTE <span>01—06</span></div><div className="section-title-row"><div><p className="eyebrow">BUILT FOR CURIOUS BEGINNERS</p><h2>Learn it in layers.<br/><i>Build real understanding.</i></h2></div><p className="section-intro">Short lessons, clear prerequisites, interactive models, and practical checks. Take your time—each path prepares you for the next.</p></div><div className="path-grid">{paths.map((p,i)=><motion.button key={p.id} className={'path-card path-'+p.id} onClick={()=>onOpen(p.id)} whileHover={{y:-6}} whileTap={{scale:.99}}><div className="path-card-top"><span>{p.number} / 06</span><span>{p.duration}</span></div><div className="path-icon">{[<Lightbulb/>,<CircuitBoard/>,<Radio/>,<Cpu/>,<Code2/>,<ShieldCheck/>][i]}</div><h3>{p.title}</h3><p>{p.desc}</p><div className="path-card-bottom"><span>{p.items.length} LESSONS</span><ArrowUpRight size={18}/></div></motion.button>)}</div></section>}
+
+function highlightLine(source){
+ const pattern=/(\/\/.*|#.*|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\b|\b\d+(?:\.\d+)?\b)/g;
+ return source.split(pattern).filter(Boolean).map((part,i)=>{
+  let type='plain';
+  if(/^(\/\/|#)/.test(part))type='comment';
+  else if(/^("|')/.test(part))type='string';
+  else if(/^\d/.test(part))type='number';
+  else if(/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part))type='keyword';
+  else if(/^[A-Za-z_][A-Za-z0-9_]*(?=\()/.test(part))type='function';
+  return <span className={'token-'+type} key={i}>{part}</span>;
+ });
+}
+
+function CodeLesson({lesson,selected,onSelect}){
+ const [line,setLine]=useState(0); const [showAll,setShowAll]=useState(false);
+ React.useEffect(()=>{setLine(0);setShowAll(false)},[lesson.id]);
+ const source=link(lesson.path,lesson.ref,lesson.range);
+ return <article className="code-lesson">
+  <div className="code-lesson-head"><div><span className="eyebrow">{lesson.level}</span><h3>{lesson.name}</h3><p>{lesson.summary}</p></div><a href={source} target="_blank" rel="noreferrer">SOURCE LINES <ArrowUpRight size={14}/></a></div>
+  <div className="code-editor"><div className="editor-bar"><span><i/> {lesson.path.split('/').slice(-1)[0]}</span><span>{lesson.lang.toUpperCase()} · L{lesson.range.replace('-', '–')}</span></div><div className="editor-code">{lesson.lines.map(([code,explain],i)=><button key={i} className={'editor-line '+(line===i?'chosen':'')} onClick={()=>setLine(i)}><span className="line-no">{Number(lesson.range.split('-')[0])+i}</span><code>{highlightLine(code)}</code></button>)}</div><div className="editor-explain"><span>LINE EXPLAINER · {line+1}/{lesson.lines.length}</span><p>{lesson.lines[line][1]}</p><div><button disabled={line===0} onClick={()=>setLine(v=>v-1)}><ArrowLeft size={13}/> PREVIOUS LINE</button><button disabled={line===lesson.lines.length-1} onClick={()=>setLine(v=>v+1)}>NEXT LINE <ArrowRight size={13}/></button></div></div></div>
+  <div className="code-concept"><Sparkles size={17}/><div><b>THE BIG IDEA</b><p>{lesson.concept}</p></div></div>
+ </article>
+}
+
+const sourceFiles = [
+ {group:'FIRMWARE',name:'tx/tx.ino',path:'firmware/tx/tx.ino',ref:FW,role:'Transmitter firmware',desc:'Serial command handling, stream validation, frame construction, 4B5B encoding, symbol timing, and GPIO5 optical output.'},
+ {group:'FIRMWARE',name:'rx/rx.ino',path:'firmware/rx/rx.ino',ref:FW,role:'Receiver firmware',desc:'Comparator sampling, symbol timing, preamble/sync acquisition, 4B5B decoding, frame parsing, CRC checks, chunk storage, and file output.'},
+ {group:'FIRMWARE',name:'specs/protocol_spec.md',path:'firmware/specs/protocol_spec.md',ref:FW,role:'Shared protocol contract',desc:'Defines the frame fields, transfer identifiers, chunk structure, CRC coverage, and transmission sequence shared by both endpoints.'},
+ {group:'TX APPLICATION',name:'tx_app_state.py',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,role:'TX application state',desc:'Holds the transmitter console state, selected file information, and physical transfer configuration.'},
+ {group:'TX APPLICATION',name:'tx/backends/physical.py',path:'application-source/gui_dev_v3/tx/backends/physical.py',ref:APP,role:'Physical TX backend',desc:'Connects the desktop transmitter workspace to real TX firmware over USB serial and publishes physical-backend snapshots.'},
+ {group:'TX APPLICATION',name:'tx/shell.py',path:'application-source/gui_dev_v3/tx/shell.py',ref:APP,role:'TX workspace shell',desc:'Builds the transmitter window navigation and coordinates its pages and refresh cycle.'},
+ {group:'TX APPLICATION',name:'tx/dashboard.py',path:'application-source/gui_dev_v3/tx/dashboard.py',ref:APP,role:'TX dashboard',desc:'Presents selected-file information, link settings, start controls, progress, and transmitter status.'},
+ {group:'SHARED APPLICATION',name:'app.py',path:'application-source/gui_dev_v3/app.py',ref:APP,role:'Desktop application entry',desc:'Creates the Qt application and launches the transmitter or receiver console.'},
+ {group:'SHARED APPLICATION',name:'serial/controllers.py',path:'application-source/gui_dev_v3/serial/controllers.py',ref:APP,role:'Serial transfer controller',desc:'Builds firmware commands, performs the STREAM handshake, preloads data blocks, and interprets serial acknowledgements.'},
+ {group:'SHARED APPLICATION',name:'serial/session.py',path:'application-source/gui_dev_v3/serial/session.py',ref:APP,role:'Serial session foundation',desc:'Owns the serial connection lifecycle, reader thread, line handling, command writes, and response waiting.'},
+ {group:'SHARED APPLICATION',name:'serial/detection.py',path:'application-source/gui_dev_v3/serial/detection.py',ref:APP,role:'Hardware discovery',desc:'Enumerates serial ports and identifies compatible TX or RX firmware before a physical connection is opened.'},
+ {group:'SHARED APPLICATION',name:'models.py',path:'application-source/gui_dev_v3/models.py',ref:APP,role:'Shared data models',desc:'Defines typed records and snapshots exchanged between application state, backends, and UI pages.'},
+ {group:'RX APPLICATION',name:'rx/backends/physical.py',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP,role:'Physical RX backend',desc:'Communicates with real RX firmware, reads status and signal telemetry, receives transfer output, and exposes receiver snapshots.'},
+ {group:'RX APPLICATION',name:'rx/shell.py',path:'application-source/gui_dev_v3/rx/shell.py',ref:APP,role:'RX workspace shell',desc:'Builds the receiver workspace and routes navigation between receiver pages.'},
+ {group:'RX APPLICATION',name:'rx/receive_page.py',path:'application-source/gui_dev_v3/rx/receive_page.py',ref:APP,role:'Receive workspace',desc:'Presents receiver transfer activity and the files emitted by the physical receiver backend.'},
+ {group:'RX APPLICATION',name:'logic/ber_bridge.py',path:'application-source/gui_dev_v3/logic/ber_bridge.py',ref:APP,role:'BER integration',desc:'Connects transfer data to the application’s BER analysis path. Method 2 compares the reconstructed file with its original reference.'}
+];
+const sourceGroups=['FIRMWARE','TX APPLICATION','RX APPLICATION','SHARED APPLICATION'];
+function SourceMap(){
+ const [group,setGroup]=useState('FIRMWARE');
+ const visible=sourceFiles.filter(f=>f.group===group);
+ return <section className="source-map-section"><div className="source-map-heading"><div><span className="eyebrow">EXPLORE THE REPOSITORY</span><h3>Know where each responsibility lives.</h3><p>These are the core files in the pinned firmware baseline and application development snapshot. Open any file at its exact commit.</p></div><a href={REPO} target="_blank" rel="noreferrer">FULL REPOSITORY <ArrowUpRight size={14}/></a></div>
+  <div className="source-map-tabs">{sourceGroups.map(g=><button key={g} className={group===g?'active':''} onClick={()=>setGroup(g)}>{g}</button>)}</div>
+  <div className="source-file-grid"><AnimatePresence mode="wait"><motion.div key={group} className="source-file-grid-inner" initial={{opacity:0,y:8}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-5}} transition={{duration:.18}}>{visible.map(file=><a className="source-file-card" key={file.path} href={link(file.path,file.ref)} target="_blank" rel="noreferrer"><div><FileCode2 size={16}/><span>{file.group}</span><ArrowUpRight size={13}/></div><code>{file.name}</code><b>{file.role}</b><p>{file.desc}</p></a>)}</motion.div></AnimatePresence></div>
+  <div className="call-sequence"><div className="eyebrow">HOW THE RESPONSIBILITIES CONNECT</div><div className="call-sequence-row"><span>TX desktop app</span><ChevronRight/><span>Physical TX backend</span><ChevronRight/><span>USB serial controller</span><ChevronRight/><span>TX firmware</span></div><div className="call-sequence-row optical"><span>Frame builder</span><ChevronRight/><span>4B5B encoder</span><ChevronRight/><span>GPIO symbol output</span><ChevronRight/><span>LED driver + light</span></div><div className="call-sequence-row receive"><span>Photodiode + comparator</span><ChevronRight/><span>RX firmware decoder</span><ChevronRight/><span>Physical RX backend</span><ChevronRight/><span>RX desktop app</span></div><p>This is the system responsibility flow. The detailed lessons will progressively document exact direct function-call edges, arguments, return values, and state changes.</p></div>
+ </section>
+}
+
+function CodeStudio({initialLesson}){
+ const [active,setActive]=useState(initialLesson||'tx-encode');
+ React.useEffect(()=>{if(initialLesson)setActive(initialLesson)},[initialLesson]); const [query,setQuery]=useState(''); const selected=codeLessons.find(x=>x.id===active)||codeLessons[0];
+ const groups=['APPLICATION','FIRMWARE · TX','FIRMWARE · RX'];
+ const filtered=useMemo(()=>codeLessons.filter(x=>(x.name+' '+x.path+' '+x.level).toLowerCase().includes(query.toLowerCase())),[query]);
+ return <section className="code-studio" id="code"><div className="section-kicker">SOURCE CODE STUDIO <span>REAL FILES · PINNED LINES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM SURFACE KNOWLEDGE TO CODE CONFIDENCE</p><h2>Understand the code.<br/><i>One line at a time.</i></h2></div><p className="section-intro">Select a source lesson, tap any line, and read what it does. Each example is pinned to a commit so the code and line numbers stay traceable.</p></div>
+ <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div><SourceMap/>
+ </section>
+}
+
+const topicNotes = {
+ start:[
+  {title:'What visible-light communication means',body:'Visible-light communication sends information by changing the intensity of a light source quickly enough for a receiver to detect the changes. The LED is both an illumination source and a communication transmitter; the receiver turns the changing light into an electrical signal.',focus:'Keep the distinction clear: the light carries the encoded data, while the desktop application prepares and interprets the file.',try:'Explain why a normal room light can look steady to a person while still changing quickly enough to carry data.'},
+  {title:'The physical TX and RX assemblies',body:'The transmitter side uses an ESP32 to control an LED driver and a 12 V commercial LED bulb. The receiver side uses a BPW34 photodiode, an OPA2604 transimpedance amplifier, an LM393 comparator, and a second ESP32.',focus:'Think in two halves: TX converts digital data into controlled light; RX converts received light back into digital logic.',try:'Trace the chain out loud from TX GPIO5 to the RX ESP32 GPIO5.'},
+  {title:'The room-scale optical link',body:'The experiment uses a line-of-sight optical path between the ceiling-mounted LED and the receiver assembly. The received optical level depends on geometry and alignment, so distance and horizontal offset are part of the physical setup—not merely software settings.',focus:'A diagram is a model of the geometry. It is not a substitute for measured experiment results.',try:'If the vertical separation is h and the horizontal offset is x, write the straight-line distance as d = √(h² + x²).'},
+  {title:'What the experiment measured',body:'The project evaluates a working physical prototype. Transfer outcomes, integrity checks, transmission time, and test conditions must be read from the thesis results and original logs. The Academy must never turn an illustrative animation into a claimed measurement.',focus:'CRC pass/fail, reference-file BER, and optical-link performance are different observations. Keep each metric tied to its measurement method.',try:'Find one result table in the thesis and identify the original file, received file, and metric used to judge the transfer.'}
+ ],
+ hardware:[
+  {title:'ESP32 transmitter and LED driver',body:'The TX ESP32 generates the timed digital symbol stream. GPIO5 controls the active-low driver stage using a 2N3904 and IRF540N arrangement, which switches the 12 V LED load.',focus:'The firmware expresses logical bits; the transistor stage converts the GPIO control into the electrical switching needed by the LED.',try:'Explain why an active-low driver can make a logical one correspond to a LOW GPIO level.'},
+  {title:'12 V LED and optical path',body:'The commercial LED bulb is the optical transmitter. The firmware changes its output using intensity modulation, with the idle state configured so the lamp remains illuminated between transmissions.',focus:'The LED is not connected directly to the ESP32 GPIO. The driver stage handles the lamp load.',try:'Draw the path from ESP32 pin to transistor driver to 12 V LED, then draw the light path to the receiver.'},
+  {title:'BPW34 and OPA2604 transimpedance amplifier',body:'The BPW34 photodiode produces photocurrent when light reaches its active area. The OPA2604 transimpedance amplifier converts that small current into a voltage that can be conditioned by the receiver circuit.',focus:'A photodiode front end is analog circuitry. It does not directly output the decoded file or a clean digital bitstream.',try:'Describe the difference between photocurrent and the voltage produced by a transimpedance amplifier.'},
+  {title:'LM393 comparator and receiver GPIO',body:'The LM393 compares the conditioned signal against an adjustable reference. Its output provides a digital transition that the RX ESP32 samples on GPIO5. Separate analog monitoring inputs observe PVo and Vref.',focus:'The comparator threshold determines how the analog waveform becomes a digital HIGH/LOW signal. The firmware then performs timing and decoding.',try:'Explain what may happen if the comparator threshold is set too high or too low.'}
+ ],
+ protocol:[
+  {title:'Binary, bits, bytes, and nibbles',body:'A bit is one binary digit. Eight bits form a byte. A nibble is four bits, so every byte can be separated into a high nibble and a low nibble. The encoder and decoder use this split to apply the 4B5B lookup table.',focus:'The high nibble is extracted with a right shift; the low nibble is isolated with a bit mask.',try:'Split 0xA5 into its two nibbles and write each nibble in binary.'},
+  {title:'4B5B line coding',body:'4B5B maps each 4-bit nibble to a defined 5-bit codeword. One source byte therefore becomes two codewords, or ten encoded bits. The mapping is a lookup table—not arithmetic encryption.',focus:'The RX table is the inverse of the TX table. Invalid 5-bit patterns are rejected rather than guessed.',try:'For 0xA5, look up nibble A and nibble 5 in the actual firmware table. Confirm the output is 10110 01011.'},
+  {title:'NRZ/OOK modulation',body:'The encoded bitstream controls on/off keying of the LED using a non-return-to-zero symbol representation. The physical driver polarity can be active-low even though the protocol still reasons about logical zero and one.',focus:'Do not confuse a logical bit, a GPIO voltage level, and whether the LED is illuminated. The driver configuration connects those layers.',try:'Explain why changing activeLowDriver should not require changing the 4B5B lookup table.'},
+  {title:'Synchronization, frame fields, and CRC',body:'A receiver needs a recognizable preamble and synchronization word before it can trust byte boundaries. Frames then carry metadata and payload. Frame CRC checks the frame, chunk CRC checks a payload chunk, and whole-file CRC checks the reconstructed file.',focus:'These checks protect different scopes. A CRC is an integrity check, not a correction mechanism and not the same as BER.',try:'Predict which CRC should fail if one payload byte changes but the frame header stays intact.'}
+ ],
+ software:[
+  {title:'TX application state and serial controller',body:'The desktop TX application stores the selected file, transfer settings, and UI state. Its serial controller performs the host-to-board command handshake and sends data blocks over USB serial.',focus:'The GUI coordinates the transfer; the ESP32 firmware performs the timed optical output.',try:'Find the STREAM_BEGIN command builder in the serial controller and identify the transfer ID, file length, and chunk size fields.'},
+  {title:'TX firmware command and stream path',body:'The TX firmware receives serial commands, validates the loaded stream, builds protocol frames, and passes each frame to the optical transmission functions. The stream loop calls buildFrame() and sendOpticalFrame().',focus:'Follow the call chain from the serial command handler into handleStreamStart(), then down to frame construction and bit output.',try:'Open the TX firmware and find where handleStreamStart() calls sendOpticalFrame().' },
+  {title:'RX sampling and decoder pipeline',body:'The RX firmware waits for a stable idle state, acquires the preamble and sync word, samples the comparator output, decodes 4B5B bytes, aligns to frames, and validates received data.',focus:'Each function has a narrow responsibility. Sampling recovers raw bits; decoding turns codewords into bytes; frame processing checks structured data.',try:'Compare sampleRawAt() with read4b5bByte(). What does each function return, and what kind of input does it consume?'},
+  {title:'RX application and file reconstruction',body:'The desktop RX application reads serial status and received-file output from the receiver ESP32. It handles completed transfers, stores the received file, and supports reference-file comparison for Method 2 BER.',focus:'The firmware validates optical frames and chunks; the desktop application manages the received file and comparison workflow.',try:'Explain why a successful chunk CRC alone does not prove the entire reconstructed file matches the original.'}
+ ],
+ code:[
+  {title:'Variables, types, arrays, and pointers',body:'A variable stores a value with a type. The firmware uses fixed-width integer types such as uint8_t and uint16_t because protocol fields have defined bit widths. Arrays hold bytes; pointers refer to memory locations; references let a function write a result back to its caller.',focus:'In buildFrame(), payload is a pointer to bytes and payloadLen tells the function how many bytes may be read.',try:'In the buildFrame() signature, identify the return type, the pointer parameter, and the payload length parameter.'},
+  {title:'Conditions, loops, and bitwise operators',body:'Conditions choose which path runs. Loops repeat operations over bits or bytes. Bitwise operators work on individual bits: >> shifts, & masks, and | combines bit fields. Logical operators such as && and || combine true/false expressions.',focus:'The expression (value >> 4) & 0x0F extracts the high nibble. The expression value & 0x0F extracts the low nibble.',try:'Calculate 0xA5 >> 4, then apply & 0x0F. Repeat using 0xA5 & 0x0F.'},
+  {title:'Function calls and data flow',body:'A function receives arguments, performs one job, and may return a value or update an output parameter. To understand a program, trace who calls a function, what values it passes, what the function changes, and who consumes the result.',focus:'read4b5bByte() calls read5b() twice, looks up two nibbles, and writes the combined byte through uint8_t &value.',try:'Trace one byte from send4b5bEncodedByte() on TX to read4b5bByte() on RX. List each conversion.'},
+  {title:'Debugging and safe code changes',body:'A useful debugging change begins with a hypothesis, a small controlled edit, and a test that can fail if the behavior is wrong. Preserve protocol compatibility: changing field order, timing, or encoding on only one endpoint can break communication.',focus:'Use logs and counters to distinguish serial setup failures, synchronization failures, invalid codewords, CRC failures, and file reconstruction failures.',try:'Imagine changing the TX codeword for nibble A but leaving the RX decode table unchanged. Predict the result and explain why.'}
+ ],
+ practice:[
+  {title:'Predict the encoded bits',body:'Take a byte, split it into nibbles, look up both 5-bit codewords, and join them in transmission order. The goal is to predict the output before looking at the encoder result.',focus:'Use the actual CODE_4B5B table from the pinned TX firmware, not a generic example table.',try:'Encode 0xA5 and write the ten-bit result.'},
+  {title:'Trace a received byte',body:'Start at the comparator output and follow the RX functions: sample the signal, recover raw bits, acquire synchronization, read two 5-bit groups, validate each lookup, and combine the nibbles.',focus:'A raw comparator sample is not yet a byte. The receiver must know symbol timing and alignment first.',try:'Explain what the receiver does when one of the 5-bit values maps to a negative DECODE_4B5B entry.'},
+  {title:'Find a CRC validation bug',body:'Read the frame validation order and ask what data is trusted at each point. A safe receiver checks frame boundaries and integrity before accepting metadata and payload bytes.',focus:'Never pass unverified payload into the chunk reassembly buffer.',try:'What would be unsafe about calling bufferVerifiedChunk() before checking rxChunkCrc?'},
+  {title:'Complete the knowledge check',body:'Use the small quizzes to test concepts from the earlier paths. A good answer should include not just the correct choice, but the reason the other choices are wrong.',focus:'Explain the behavior in your own words. Memorizing a label is not the same as understanding the implementation.',try:'Try the sampling question below, then revisit the code lesson if the reasoning is unclear.'}
+ ]
+};
+
+function PathDetail({id,onBack}){
+ const path=paths.find(x=>x.id===id)||paths[0];
+ const topics=topicNotes[id]||topicNotes.start;
+ const [active,setActive]=useState(0);
+ const [done,setDone]=useState([]);
+ const topic=topics[active];
+ return <section className="path-detail">
+  <button className="back-link" onClick={onBack}><ArrowLeft size={15}/> ALL LEARNING PATHS</button>
+  <div className="path-detail-hero"><span className="eyebrow">LEARNING PATH {path.number} · {path.duration}</span><h2>{path.title}</h2><p>{path.desc}</p><div className="path-progress"><span style={{width:(done.length/topics.length*100)+'%'}}/></div><small>{done.length} OF {topics.length} LESSONS COMPLETED</small></div>
+  <div className="path-learning-layout">
+   <aside className="path-detail-list">{path.items.map((item,i)=><button key={item} onClick={()=>setActive(i)} className={active===i?'selected':''}><span>{done.includes(i)?<Check size={15}/>:String(i+1).padStart(2,'0')}</span><b>{item}</b><ChevronRight size={15}/></button>)}</aside>
+   <article className="focused-lesson"><div className="eyebrow">LESSON {String(active+1).padStart(2,'0')} / {String(topics.length).padStart(2,'0')}</div><h3>{topic.title}</h3><p>{topic.body}</p><div className="lesson-focus"><Lightbulb size={17}/><div><b>WHAT TO REMEMBER</b><p>{topic.focus}</p></div></div><div className="lesson-try"><span>TRY IT YOURSELF</span><p>{topic.try}</p></div><div className="focused-actions"><button onClick={()=>setActive(v=>Math.max(0,v-1))} disabled={active===0}><ArrowLeft size={14}/> PREVIOUS</button><button className="mark-done" onClick={()=>setDone(v=>v.includes(active)?v.filter(x=>x!==active):[...v,active])}>{done.includes(active)?'MARK AS UNFINISHED':'MARK LESSON COMPLETE'} <Check size={14}/></button><button onClick={()=>setActive(v=>Math.min(topics.length-1,v+1))} disabled={active===topics.length-1}>NEXT <ArrowRight size={14}/></button></div></article>
+  </div>
+ </section>
+}
+
+function QuizPreview(){const [answer,setAnswer]=useState('');const [checked,setChecked]=useState(false);return <div className="quiz-card"><div className="eyebrow">QUICK KNOWLEDGE CHECK</div><h3>Why does the receiver take three samples?</h3><div className="quiz-options">{[{v:'a',t:'To triple the data rate'},{v:'b',t:'To reduce the effect of a noisy or unstable single reading'},{v:'c',t:'To calculate the file CRC'}].map(o=><button key={o.v} className={answer===o.v?'selected':''} onClick={()=>{setAnswer(o.v);setChecked(false)}}><i>{o.v.toUpperCase()}</i>{o.t}</button>)}</div><button className="quiz-submit" disabled={!answer} onClick={()=>setChecked(true)}>CHECK ANSWER <ArrowRight size={14}/></button>{checked&&<p className={answer==='b'?'correct':'incorrect'}>{answer==='b'?'Correct. Majority voting accepts the value seen by at least two of the three samples.':'Not quite. Think about what can happen when one sample lands near a noisy edge.'}</p>}</div>}
+
+function HomePage({navigate}){
+ return <>
+  <section className="academy-hero" id="home"><div className="hero-copy"><div className="hero-eyebrow"><i/> AN INTERACTIVE ENGINEERING COURSE</div><h1>Data carried<br/>by <em>light.</em></h1><p>Learn how a real ESP32 visible-light communication prototype works—from the LED driver and photodiode to the firmware and desktop code that make it communicate.</p><div className="hero-buttons"><button className="hero-primary" onClick={()=>navigate('paths')}>START LEARNING <ArrowRight size={16}/></button><button className="hero-secondary" onClick={()=>navigate('journey')}>EXPLORE THE SIGNAL <Waves size={16}/></button></div><div className="hero-stats"><div><b>06</b><span>LEARNING PATHS</span></div><div><b>08</b><span>TRANSMISSION STAGES</span></div><div><b>REAL</b><span>HARDWARE SOURCE</span></div></div></div><HeroModel/></section>
+  <div className="academy-ticker"><span>ESP32 TRANSMITTER</span><i/><span>4B5B + NRZ/OOK</span><i/><span>VISIBLE LIGHT</span><i/><span>BPW34 RECEIVER</span><i/><span>CRC VERIFIED FILE</span></div>
+  <section className="home-start"><div><span className="eyebrow">PICK UP THE THREAD THAT INTERESTS YOU</span><h2>A clear route from<br/><i>concept to code.</i></h2><p>Explore the physical device, follow a complete transmission, or open the real source code. Each area is its own focused learning space.</p></div><div className="home-start-grid"><button onClick={()=>navigate('paths')}><Lightbulb/><b>Learning paths</b><span>Build knowledge step by step</span><ArrowUpRight/></button><button onClick={()=>navigate('journey')}><Waves/><b>Signal journey</b><span>Watch data travel through the prototype</span><ArrowUpRight/></button><button onClick={()=>navigate('code')}><Code2/><b>Code studio</b><span>Read real files and understand each line</span><ArrowUpRight/></button></div></section>
+ </>
+}
+
+function PracticePage({openPath}){
+ return <section className="practice-section practice-page"><div><div className="section-kicker">LEARN BY DOING <span>CHECK YOUR UNDERSTANDING</span></div><p className="eyebrow">A LITTLE PRACTICE GOES A LONG WAY</p><h2>Don't just read it.<br/><i>Trace it yourself.</i></h2><p className="section-intro">Move from recognizing a concept to predicting what the program will do. Practice with real encoding rules, receiver logic, CRC validation, and debugging scenarios.</p><button className="practice-cta" onClick={()=>openPath('practice')}>OPEN THE PRACTICE PATH <ArrowRight size={15}/></button></div><QuizPreview/></section>
+}
+
+export default function Academy(){
+ const initialHash=window.location.hash.replace(/^#/,'');
+ const initialPath=initialHash.startsWith('path/')?initialHash.slice(5):'start';
+ const [view,setView]=useState(()=>initialHash.startsWith('path/')?'path':['journey','paths','code','practice'].includes(initialHash)?initialHash:'home');
+ const [path,setPath]=useState(initialPath);
+ const [codeSelection,setCodeSelection]=useState('tx-encode');
+ const [menu,setMenu]=useState(false);
+ const navigate=page=>{setView(page);setMenu(false);window.location.hash=page==='home'?'home':page};
+ const openPath=id=>{setPath(id);setView('path');setMenu(false);window.location.hash='path/'+id};
+ const openCode=id=>{setCodeSelection(id||'tx-encode');navigate('code')};
+ const backToPaths=()=>navigate('paths');
+ React.useEffect(()=>{
+  const onHash=()=>{const h=window.location.hash.replace(/^#/,'');if(h.startsWith('path/')){setPath(h.slice(5));setView('path')}else if(['journey','paths','code','practice'].includes(h)){setView(h)}else{setView('home')}};
+  window.addEventListener('hashchange',onHash);return()=>window.removeEventListener('hashchange',onHash);
+ },[]);
+ return <div className="academy-shell">
+  <header className="academy-header"><Brand/><nav className={menu?'open':''}><button className={view==='paths'||view==='path'?'active':''} onClick={()=>navigate('paths')}>LEARNING PATHS</button><button className={view==='journey'?'active':''} onClick={()=>navigate('journey')}>SIGNAL JOURNEY</button><button className={view==='code'?'active':''} onClick={()=>navigate('code')}>CODE STUDIO</button><button className={view==='practice'?'active':''} onClick={()=>navigate('practice')}>PRACTICE</button><a href={REPO} target="_blank" rel="noreferrer">SOURCE REPO <ArrowUpRight size={12}/></a></nav><button className="mobile-menu" onClick={()=>setMenu(v=>!v)} aria-label="Toggle navigation">{menu?<X/>:<Menu/>}</button></header>
+  <main>
+   {view==='home'&&<HomePage navigate={navigate}/>}
+   {view==='journey'&&<SignalJourney onOpenCode={openCode}/>}
+   {view==='paths'&&<PathCards onOpen={openPath}/>}
+   {view==='code'&&<CodeStudio initialLesson={codeSelection}/>}
+   {view==='practice'&&<PracticePage openPath={openPath}/>}
+   {view==='path'&&<PathDetail key={path} id={path} onBack={backToPaths}/>}
+  </main>
+  <footer className="academy-footer"><div><Brand/><p>An interactive guide to the physical OpenVLC visible-light communication prototype.</p></div><div className="footer-links"><a href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> SOURCE CODE <ArrowUpRight size={13}/></a><a href="https://github.com/luckyprinter/lifi" target="_blank" rel="noreferrer">ACADEMY WEBSITE REPO <ArrowUpRight size={13}/></a></div><div className="footer-bottom"><span>FIRMWARE BASELINE · {FW.slice(0,8)}</span><span>APPLICATION SNAPSHOT · {APP.slice(0,8)} · DRAFT DEVELOPMENT</span><span>CONCEPTUAL MODELS ARE NOT LIVE HARDWARE TELEMETRY</span></div></footer>
+ </div>
+}
