@@ -96,6 +96,17 @@ try {
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/atlas-' + width + '.png', fullPage: true });
 
     if (width <= 720) await page.locator('.mobile-menu').click();
+    await page.getByRole('button', { name: 'PRACTICE', exact: true }).click();
+    await page.waitForSelector('.code-practice-lab');
+    await page.locator('.practice-answer-options button').nth(1).click();
+    await page.getByRole('button', { name: /CHECK ANSWER/ }).click();
+    if (!(await page.locator('.practice-feedback').innerText()).includes('CORRECT')) failures.push(width + 'px code practice did not validate the correct TX selection answer');
+    if (!(await page.locator('.practice-feedback-actions').innerText()).includes('OPEN CODE LESSON')) failures.push(width + 'px code practice did not offer its source lesson');
+    const practiceScroll = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (practiceScroll > width + 1) failures.push(width + 'px code practice horizontal overflow: ' + practiceScroll);
+    if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/practice-' + width + '.png', fullPage: true });
+
+    if (width <= 720) await page.locator('.mobile-menu').click();
     await page.getByRole('button', { name: 'LEARNING PATHS', exact: true }).click();
     await page.locator('.path-card').first().click();
     await page.waitForSelector('.focused-lesson');
