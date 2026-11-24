@@ -3909,7 +3909,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/tx/backends.",
-    "lineCount": null,
+    "lineCount": 1,
     "symbols": [],
     "headings": []
   },
@@ -3933,8 +3933,159 @@
     "status": "active",
     "kind": "python",
     "summary": "Physical TX serial connection, device configuration, and background file-send worker.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 567,
+    "symbols": [
+      {
+        "name": "_resolve_beta_dir",
+        "kind": "function",
+        "line": 20
+      },
+      {
+        "name": "STATUS_FRESHNESS_SEC",
+        "kind": "constant",
+        "line": 30
+      },
+      {
+        "name": "TXPhysicalSnapshot",
+        "kind": "class",
+        "line": 34
+      },
+      {
+        "name": "TXPhysicalBackend",
+        "kind": "class",
+        "line": 61
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 64
+      },
+      {
+        "name": "_controller_log",
+        "kind": "function",
+        "line": 80
+      },
+      {
+        "name": "log",
+        "kind": "function",
+        "line": 83
+      },
+      {
+        "name": "scan_ports",
+        "kind": "function",
+        "line": 95
+      },
+      {
+        "name": "detect_firmware",
+        "kind": "function",
+        "line": 98
+      },
+      {
+        "name": "auto_connect",
+        "kind": "function",
+        "line": 104
+      },
+      {
+        "name": "connect",
+        "kind": "function",
+        "line": 124
+      },
+      {
+        "name": "_open_serial",
+        "kind": "function",
+        "line": 153
+      },
+      {
+        "name": "_close_serial",
+        "kind": "function",
+        "line": 159
+      },
+      {
+        "name": "disconnect",
+        "kind": "function",
+        "line": 162
+      },
+      {
+        "name": "send_command",
+        "kind": "function",
+        "line": 169
+      },
+      {
+        "name": "_on_serial_status",
+        "kind": "function",
+        "line": 175
+      },
+      {
+        "name": "start_transmission",
+        "kind": "function",
+        "line": 194
+      },
+      {
+        "name": "apply_link_settings",
+        "kind": "function",
+        "line": 209
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 242
+      },
+      {
+        "name": "is_connected",
+        "kind": "function",
+        "line": 247
+      },
+      {
+        "name": "port",
+        "kind": "function",
+        "line": 251
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 254
+      },
+      {
+        "name": "_empty_snapshot",
+        "kind": "function",
+        "line": 346
+      },
+      {
+        "name": "_is_status_fresh",
+        "kind": "function",
+        "line": 376
+      },
+      {
+        "name": "_read_tx_status",
+        "kind": "function",
+        "line": 385
+      },
+      {
+        "name": "_read_latest_tx_record",
+        "kind": "function",
+        "line": 396
+      },
+      {
+        "name": "_parse_tx_record",
+        "kind": "function",
+        "line": 407
+      },
+      {
+        "name": "_guess_filetype",
+        "kind": "function",
+        "line": 463
+      },
+      {
+        "name": "_list_usb_serial_ports",
+        "kind": "function",
+        "line": 477
+      },
+      {
+        "name": "_send_identify",
+        "kind": "function",
+        "line": 517
+      }
+    ],
     "headings": []
   },
   {
@@ -3945,8 +4096,89 @@
     "status": "alternate/test",
     "kind": "python",
     "summary": "Alternate TX simulation backend; not the physical prototype transmission path.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 248,
+    "symbols": [
+      {
+        "name": "TXSimulationSnapshot",
+        "kind": "class",
+        "line": 21
+      },
+      {
+        "name": "VirtualChannelParams",
+        "kind": "class",
+        "line": 49
+      },
+      {
+        "name": "TXSimulationBackend",
+        "kind": "class",
+        "line": 70
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 76
+      },
+      {
+        "name": "stop",
+        "kind": "function",
+        "line": 104
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 119
+      },
+      {
+        "name": "_log_append",
+        "kind": "function",
+        "line": 122
+      },
+      {
+        "name": "_send_heartbeat",
+        "kind": "function",
+        "line": 127
+      },
+      {
+        "name": "_on_ready_read",
+        "kind": "function",
+        "line": 132
+      },
+      {
+        "name": "start_transmission",
+        "kind": "function",
+        "line": 145
+      },
+      {
+        "name": "_send_next_chunk",
+        "kind": "function",
+        "line": 170
+      },
+      {
+        "name": "params",
+        "kind": "function",
+        "line": 198
+      },
+      {
+        "name": "set_params",
+        "kind": "function",
+        "line": 201
+      },
+      {
+        "name": "_compute_channel",
+        "kind": "function",
+        "line": 206
+      },
+      {
+        "name": "_build_log",
+        "kind": "function",
+        "line": 212
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 223
+      }
+    ],
     "headings": []
   },
   {
@@ -3969,8 +4201,209 @@
     "status": "active",
     "kind": "python",
     "summary": "TX Dashboard widgets, direct file selection, Start/Cancel actions, and live status.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 783,
+    "symbols": [
+      {
+        "name": "_SectionHeader",
+        "kind": "class",
+        "line": 42
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 43
+      },
+      {
+        "name": "_DetailRow",
+        "kind": "class",
+        "line": 48
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 49
+      },
+      {
+        "name": "setLabel",
+        "kind": "function",
+        "line": 68
+      },
+      {
+        "name": "setValue",
+        "kind": "function",
+        "line": 71
+      },
+      {
+        "name": "_StatusColumn",
+        "kind": "class",
+        "line": 84
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 85
+      },
+      {
+        "name": "setValue",
+        "kind": "function",
+        "line": 104
+      },
+      {
+        "name": "DeviceStatusWidget",
+        "kind": "class",
+        "line": 112
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 113
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 139
+      },
+      {
+        "name": "_PipelineStage",
+        "kind": "class",
+        "line": 169
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 170
+      },
+      {
+        "name": "setActive",
+        "kind": "function",
+        "line": 196
+      },
+      {
+        "name": "TransmissionPipelineWidget",
+        "kind": "class",
+        "line": 212
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 213
+      },
+      {
+        "name": "_arrow",
+        "kind": "function",
+        "line": 241
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 247
+      },
+      {
+        "name": "CurrentSessionWidget",
+        "kind": "class",
+        "line": 269
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 270
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 284
+      },
+      {
+        "name": "FileDetailsWidget",
+        "kind": "class",
+        "line": 332
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 333
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 380
+      },
+      {
+        "name": "DigitalBitstreamWidget",
+        "kind": "class",
+        "line": 420
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 423
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 436
+      },
+      {
+        "name": "_paint_canvas",
+        "kind": "function",
+        "line": 467
+      },
+      {
+        "name": "_LogEntryWidget",
+        "kind": "class",
+        "line": 565
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 568
+      },
+      {
+        "name": "_TXLogPanel",
+        "kind": "class",
+        "line": 612
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 615
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 644
+      },
+      {
+        "name": "TXDashboardPage",
+        "kind": "class",
+        "line": 672
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 675
+      },
+      {
+        "name": "_on_select_file_clicked",
+        "kind": "function",
+        "line": 719
+      },
+      {
+        "name": "_on_start_clicked",
+        "kind": "function",
+        "line": 754
+      },
+      {
+        "name": "_on_cancel_clicked",
+        "kind": "function",
+        "line": 768
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 773
+      }
+    ],
     "headings": []
   },
   {
@@ -3981,8 +4414,119 @@
     "status": "active",
     "kind": "python",
     "summary": "TX file browser, file metadata, CRC calculation, compression, and transmit-queue insertion.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 295,
+    "symbols": [
+      {
+        "name": "_detail_row",
+        "kind": "function",
+        "line": 17
+      },
+      {
+        "name": "SYMBOL_RATE",
+        "kind": "constant",
+        "line": 33
+      },
+      {
+        "name": "PROTOCOL_OVERHEAD",
+        "kind": "constant",
+        "line": 34
+      },
+      {
+        "name": "PACKET_SIZE",
+        "kind": "constant",
+        "line": 35
+      },
+      {
+        "name": "PACKET_OVERHEAD",
+        "kind": "constant",
+        "line": 36
+      },
+      {
+        "name": "DragDropTable",
+        "kind": "class",
+        "line": 38
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 41
+      },
+      {
+        "name": "dragEnterEvent",
+        "kind": "function",
+        "line": 45
+      },
+      {
+        "name": "dragMoveEvent",
+        "kind": "function",
+        "line": 51
+      },
+      {
+        "name": "dropEvent",
+        "kind": "function",
+        "line": 57
+      },
+      {
+        "name": "FileManagerPage",
+        "kind": "class",
+        "line": 66
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 67
+      },
+      {
+        "name": "_format_size",
+        "kind": "function",
+        "line": 146
+      },
+      {
+        "name": "_estimate_time",
+        "kind": "function",
+        "line": 154
+      },
+      {
+        "name": "_compute_crc16",
+        "kind": "function",
+        "line": 173
+      },
+      {
+        "name": "_on_browse_clicked",
+        "kind": "function",
+        "line": 183
+      },
+      {
+        "name": "_on_files_added",
+        "kind": "function",
+        "line": 188
+      },
+      {
+        "name": "_refresh_table",
+        "kind": "function",
+        "line": 209
+      },
+      {
+        "name": "_on_selection_changed",
+        "kind": "function",
+        "line": 225
+      },
+      {
+        "name": "_update_details_pane",
+        "kind": "function",
+        "line": 242
+      },
+      {
+        "name": "_on_compress_clicked",
+        "kind": "function",
+        "line": 254
+      },
+      {
+        "name": "_on_add_to_queue",
+        "kind": "function",
+        "line": 274
+      }
+    ],
     "headings": []
   },
   {
@@ -3993,8 +4537,14 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/tx.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 9,
+    "symbols": [
+      {
+        "name": "TX_SIDEBAR_TABS",
+        "kind": "constant",
+        "line": 2
+      }
+    ],
     "headings": []
   },
   {
@@ -4005,8 +4555,79 @@
     "status": "active",
     "kind": "python",
     "summary": "TX batch queue workflow and transmitter session-history/logs pages.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 513,
+    "symbols": [
+      {
+        "name": "TransmitPage",
+        "kind": "class",
+        "line": 34
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 35
+      },
+      {
+        "name": "_on_start_batch",
+        "kind": "function",
+        "line": 118
+      },
+      {
+        "name": "_on_clear_queue",
+        "kind": "function",
+        "line": 155
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 165
+      },
+      {
+        "name": "LogsPage",
+        "kind": "class",
+        "line": 262
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 263
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 342
+      },
+      {
+        "name": "_on_filter_changed",
+        "kind": "function",
+        "line": 400
+      },
+      {
+        "name": "_on_export_clicked",
+        "kind": "function",
+        "line": 411
+      },
+      {
+        "name": "AboutPage",
+        "kind": "class",
+        "line": 435
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 436
+      },
+      {
+        "name": "_detail_row",
+        "kind": "function",
+        "line": 491
+      },
+      {
+        "name": "_set_row_value",
+        "kind": "function",
+        "line": 507
+      }
+    ],
     "headings": []
   },
   {
@@ -4017,8 +4638,134 @@
     "status": "active",
     "kind": "python",
     "summary": "TX settings UI, persistence bindings, connection controls, and hardware Apply action.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 536,
+    "symbols": [
+      {
+        "name": "GeneralDisplayPage",
+        "kind": "class",
+        "line": 35
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 36
+      },
+      {
+        "name": "_get_window",
+        "kind": "function",
+        "line": 90
+      },
+      {
+        "name": "_on_reset_clicked",
+        "kind": "function",
+        "line": 100
+      },
+      {
+        "name": "_on_switch_mode_clicked",
+        "kind": "function",
+        "line": 105
+      },
+      {
+        "name": "showEvent",
+        "kind": "function",
+        "line": 110
+      },
+      {
+        "name": "_on_fullscreen_toggled",
+        "kind": "function",
+        "line": 125
+      },
+      {
+        "name": "_on_fullscreen_changed",
+        "kind": "function",
+        "line": 129
+      },
+      {
+        "name": "_on_borderless_toggled",
+        "kind": "function",
+        "line": 135
+      },
+      {
+        "name": "HardwareConnectionPage",
+        "kind": "class",
+        "line": 145
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 146
+      },
+      {
+        "name": "_refresh_ports",
+        "kind": "function",
+        "line": 166
+      },
+      {
+        "name": "_on_force_connect",
+        "kind": "function",
+        "line": 203
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 245
+      },
+      {
+        "name": "_show_toast",
+        "kind": "function",
+        "line": 255
+      },
+      {
+        "name": "TXSettingsPage",
+        "kind": "class",
+        "line": 275
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 276
+      },
+      {
+        "name": "_on_apply_settings",
+        "kind": "function",
+        "line": 368
+      },
+      {
+        "name": "_update_visibility",
+        "kind": "function",
+        "line": 409
+      },
+      {
+        "name": "_update_link_param",
+        "kind": "function",
+        "line": 412
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 437
+      },
+      {
+        "name": "DiagnosticsLogsPage",
+        "kind": "class",
+        "line": 446
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 447
+      },
+      {
+        "name": "_show_toast",
+        "kind": "function",
+        "line": 453
+      },
+      {
+        "name": "build_tx_settings",
+        "kind": "function",
+        "line": 522
+      }
+    ],
     "headings": []
   },
   {
@@ -4029,8 +4776,94 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/tx.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 398,
+    "symbols": [
+      {
+        "name": "PulsingDot",
+        "kind": "class",
+        "line": 25
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 34
+      },
+      {
+        "name": "set_state",
+        "kind": "function",
+        "line": 47
+      },
+      {
+        "name": "_tick",
+        "kind": "function",
+        "line": 52
+      },
+      {
+        "name": "paintEvent",
+        "kind": "function",
+        "line": 60
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 77
+      },
+      {
+        "name": "TXShell",
+        "kind": "class",
+        "line": 81
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 84
+      },
+      {
+        "name": "_build_footer",
+        "kind": "function",
+        "line": 195
+      },
+      {
+        "name": "_update_footer_time",
+        "kind": "function",
+        "line": 243
+      },
+      {
+        "name": "_update_status_indicators",
+        "kind": "function",
+        "line": 248
+      },
+      {
+        "name": "_on_mode_changed",
+        "kind": "function",
+        "line": 310
+      },
+      {
+        "name": "_refresh_current_page",
+        "kind": "function",
+        "line": 317
+      },
+      {
+        "name": "_on_poll_timer",
+        "kind": "function",
+        "line": 331
+      },
+      {
+        "name": "_build_pages",
+        "kind": "function",
+        "line": 337
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 371
+      },
+      {
+        "name": "_on_nav_changed",
+        "kind": "function",
+        "line": 382
+      }
+    ],
     "headings": []
   },
   {
@@ -4041,8 +4874,114 @@
     "status": "active",
     "kind": "python",
     "summary": "Observable transmitter state, event delegation, and physical/simulation backend selection.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 317,
+    "symbols": [
+      {
+        "name": "POLL_INTERVAL_MS",
+        "kind": "constant",
+        "line": 20
+      },
+      {
+        "name": "TXAppState",
+        "kind": "class",
+        "line": 26
+      },
+      {
+        "name": "__post_init__",
+        "kind": "function",
+        "line": 63
+      },
+      {
+        "name": "subscribe",
+        "kind": "function",
+        "line": 67
+      },
+      {
+        "name": "unsubscribe",
+        "kind": "function",
+        "line": 72
+      },
+      {
+        "name": "notify",
+        "kind": "function",
+        "line": 77
+      },
+      {
+        "name": "set_mode",
+        "kind": "function",
+        "line": 83
+      },
+      {
+        "name": "_refresh",
+        "kind": "function",
+        "line": 95
+      },
+      {
+        "name": "_apply_phy_snapshot",
+        "kind": "function",
+        "line": 128
+      },
+      {
+        "name": "_apply_sim_snapshot",
+        "kind": "function",
+        "line": 166
+      },
+      {
+        "name": "_load_empty",
+        "kind": "function",
+        "line": 191
+      },
+      {
+        "name": "update_simulation_params",
+        "kind": "function",
+        "line": 214
+      },
+      {
+        "name": "start_transmission",
+        "kind": "function",
+        "line": 225
+      },
+      {
+        "name": "send_firmware_command",
+        "kind": "function",
+        "line": 240
+      },
+      {
+        "name": "is_dma_capable",
+        "kind": "function",
+        "line": 249
+      },
+      {
+        "name": "apply_link_settings_from_ui",
+        "kind": "function",
+        "line": 257
+      },
+      {
+        "name": "force_connect_serial",
+        "kind": "function",
+        "line": 270
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 284
+      },
+      {
+        "name": "rebuild_backends",
+        "kind": "function",
+        "line": 294
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 298
+      },
+      {
+        "name": "build_default_tx_state",
+        "kind": "function",
+        "line": 315
+      }
+    ],
     "headings": []
   },
   {
