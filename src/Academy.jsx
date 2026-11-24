@@ -29,6 +29,7 @@ const codeLessons = [
   ['    settings: AppSettings = field(default_factory=load_settings)','Create settings from the persisted configuration when a state object is made.'],
   ['    mode: str = "physical"','Default the application to its real serial-hardware backend.'],
   ['    filename: str = "No file"','Keep a clear empty state before the user chooses a file.'],
+  ['    filetype: str = ""','Store the selected file type separately from its filename.'],
   ['    file_size_bytes: int = 0','Store the selected file size in bytes.'],
   ['    total_chunks: int = 0','Track how many protocol chunks are needed.'],
   ['    chunk_size: int = 256','Set the current default chunk payload size.'],
