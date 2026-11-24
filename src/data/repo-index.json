@@ -6244,9 +6244,34 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 20,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "firmware/tx/",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 9
+      },
+      {
+        "title": "Integration",
+        "line": 12
+      },
+      {
+        "title": "Thesis Reference",
+        "line": 18
+      }
+    ]
   },
   {
     "path": "firmware/tx/tx.ino",
