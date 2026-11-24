@@ -91,9 +91,114 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 316,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "OpenVLC System Suite",
+        "line": 1
+      },
+      {
+        "title": "Low-Cost ESP32-Based Visible Light Communication Prototype",
+        "line": 6
+      },
+      {
+        "title": "1. Relationship to the Thesis",
+        "line": 18
+      },
+      {
+        "title": "2. System Overview",
+        "line": 34
+      },
+      {
+        "title": "3. System Architecture",
+        "line": 53
+      },
+      {
+        "title": "4. Baseline Experimental Configuration",
+        "line": 95
+      },
+      {
+        "title": "5. Repository Structure",
+        "line": 123
+      },
+      {
+        "title": "6. Desktop Application",
+        "line": 142
+      },
+      {
+        "title": "Running from Source",
+        "line": 148
+      },
+      {
+        "title": "Building from Source",
+        "line": 174
+      },
+      {
+        "title": "7. Firmware",
+        "line": 188
+      },
+      {
+        "title": "Receiver",
+        "line": 192
+      },
+      {
+        "title": "Transmitter",
+        "line": 198
+      },
+      {
+        "title": "8. Firmware Pin Reference",
+        "line": 208
+      },
+      {
+        "title": "Transmitter",
+        "line": 210
+      },
+      {
+        "title": "Receiver",
+        "line": 216
+      },
+      {
+        "title": "9. Communication Protocol",
+        "line": 229
+      },
+      {
+        "title": "10. BER Evaluation",
+        "line": 237
+      },
+      {
+        "title": "11. Automated Verification and Releases",
+        "line": 245
+      },
+      {
+        "title": "Firmware verification",
+        "line": 249
+      },
+      {
+        "title": "Application builds",
+        "line": 258
+      },
+      {
+        "title": "12. Thesis Artifact Release",
+        "line": 273
+      },
+      {
+        "title": "13. Research Artifact Scope and Limitations",
+        "line": 285
+      },
+      {
+        "title": "14. Citation",
+        "line": 295
+      },
+      {
+        "title": "15. License",
+        "line": 303
+      },
+      {
+        "title": "16. Author",
+        "line": 311
+      }
+    ]
   },
   {
     "path": "application-source/OpenVLC-v3.spec",
@@ -103,9 +208,26 @@
     "status": "documentation",
     "kind": "spec",
     "summary": "Project metadata, license, citation, or configuration file.",
-    "lineCount": null,
+    "lineCount": 61,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "-*- mode: python ; coding: utf-8 -*-",
+        "line": 1
+      },
+      {
+        "title": "NumPy uses internal modules that are not all visible to PyInstaller's",
+        "line": 6
+      },
+      {
+        "title": "normal import analysis. Collect only NumPy's submodules explicitly; do not",
+        "line": 7
+      },
+      {
+        "title": "recursively collect unrelated GUI/OpenGL/example packages.",
+        "line": 8
+      }
+    ]
   },
   {
     "path": "application-source/README.md",
@@ -115,9 +237,90 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 168,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "OpenVLC System Suite — Application Source Code",
+        "line": 1
+      },
+      {
+        "title": "Overview",
+        "line": 7
+      },
+      {
+        "title": "Relationship to the Thesis",
+        "line": 15
+      },
+      {
+        "title": "Structure",
+        "line": 27
+      },
+      {
+        "title": "Installation & Running from Source",
+        "line": 68
+      },
+      {
+        "title": "Prerequisites",
+        "line": 70
+      },
+      {
+        "title": "Install Dependencies",
+        "line": 74
+      },
+      {
+        "title": "Run the Application",
+        "line": 81
+      },
+      {
+        "title": "Run Smoke Tests",
+        "line": 89
+      },
+      {
+        "title": "Building Standalone Executables",
+        "line": 95
+      },
+      {
+        "title": "Using PyInstaller",
+        "line": 97
+      },
+      {
+        "title": "Linux-specific Build Dependencies",
+        "line": 105
+      },
+      {
+        "title": "Architecture",
+        "line": 115
+      },
+      {
+        "title": "State Management",
+        "line": 117
+      },
+      {
+        "title": "Backends",
+        "line": 122
+      },
+      {
+        "title": "UI Shells",
+        "line": 126
+      },
+      {
+        "title": "Key Features",
+        "line": 130
+      },
+      {
+        "title": "Development Guidelines",
+        "line": 139
+      },
+      {
+        "title": "Debugging",
+        "line": 147
+      },
+      {
+        "title": "License",
+        "line": 157
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/__init__.py",
@@ -485,9 +688,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 30,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "gui_dev_v3 — Root Application Module",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 4
+      },
+      {
+        "title": "Design",
+        "line": 7
+      },
+      {
+        "title": "Flow",
+        "line": 15
+      },
+      {
+        "title": "Integration",
+        "line": 26
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/data/__init__.py",
@@ -509,9 +733,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 26,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "data/ — Data Layer",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 12
+      },
+      {
+        "title": "Integration",
+        "line": 22
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/data/experiments.db",
@@ -780,9 +1025,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 31,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "logic/ — Business Logic Layer",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 18
+      },
+      {
+        "title": "Integration",
+        "line": 27
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/mock_data.py",
@@ -993,9 +1259,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 36,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "rx/backends/ — RX Backend Implementations",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 20
+      },
+      {
+        "title": "Integration",
+        "line": 32
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/rx/backends/physical.py",
@@ -1424,9 +1711,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 29,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "rx/ — Receiver (RX) Module",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 14
+      },
+      {
+        "title": "Integration",
+        "line": 25
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/rx/dashboard.py",
