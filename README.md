@@ -1,40 +1,32 @@
 # OpenVLC Academy
 
-An interactive, mobile-first engineering course for understanding the physical ESP32 visible-light communication prototype, from the optical hardware and protocol to the firmware and desktop application code.
+An interactive engineering course for the ESP32 visible-light communication prototype. Readers can follow the physical signal journey, model a file transfer, trace desktop settings across software and firmware, and inspect the actual implementation.
+
+## Learning experience
+
+- **Learning paths** build from the real prototype through hardware, protocol, software, and source-code reasoning. Completion is saved in the browser.
+- **Signal Journey** traces eight stages across user actions, the desktop application, USB serial, firmware, and hardware.
+- **Transfer Lab** models a file transfer in the browser, including frame inspection, optical symbols, dropped or corrupt frames, carousel repeats, CRC checks, and file reconstruction.
+- **App Atlas** identifies which controls reach firmware and which plots use snapshots or synthetic data.
+- **Code Studio**, **Deep Dive**, and **Practice** provide guided line explanations, an indexed full-repository reference, and code-reading exercises.
 
 ## Source provenance
 
-- **Firmware and protocol baseline:** `luckyprinter/OpenVLC-Public` commit `411f183a8592d8285118f613bb4909c5bbd9d3cc` (the current `main` branch head as checked on 2026-11-24).
-- **Desktop application snapshot:** `luckyprinter/OpenVLC-Public` draft PR #18 head `80ef4afa63a3fe571ffd5026560bf7d7d90fbecc`. This is unfinished development work and is explicitly labelled as such.
-- The application snapshot is not represented as part of the thesis-tested firmware baseline. PR #18 is still a draft and its hardware-dependent behavior has not been physically validated by this site.
-- The physical architecture is the teaching focus. Conceptual animations explain the signal path; they are not live hardware telemetry or measured oscilloscope captures.
+The Academy pins the app and firmware to [OpenVLC-Public at 411f183](https://github.com/luckyprinter/OpenVLC-Public/tree/411f183a8592d8285118f613bb4909c5bbd9d3cc). The course follows the physical execution path. Alternate modules appear in the repository index so the inventory accurately reflects the snapshot. The protocol lab is an educational model with local file processing. Its waveforms and injected failures are synthetic. The thesis is the reference for experimental methodology and measurements.
 
-## Learning experiences
+## Development
 
-- Six progressive learning paths from project orientation to coding practice.
-- An eight-stage animated physical signal journey.
-- Responsive, stage-specific visual models rather than one cropped desktop diagram.
-- Source code studio with pinned commit links, exact line ranges, syntax highlighting, and selectable line-by-line explanations.
-- Initial guided examples for TX application state, USB serial handshake, 4B5B encoding, GPIO symbol output, frame construction, RX majority sampling, byte decoding, and frame validation.
-- A short knowledge-check interaction.
-- Playwright responsive smoke tests covering the home, signal journey, code studio, and focused lessons at 320, 360, 390, 430, 768, 1024, and 1366 CSS-pixel widths; CI stores screenshots as workflow artifacts.
-
-## Accuracy and teaching policy
-
-The website distinguishes the physical prototype from explanatory models. It does not present a simulation backend as the experimental system, invent live optical telemetry, or imply that CI proves ESP32/USB/optical performance. Source excerpts must match the pinned repository commit and displayed line numbers. The thesis remains authoritative for experimental methodology and measured results.
-
-## Local development
-
-Requirements: Node.js 20+ and npm.
+Use Node.js 20 or newer.
 
 ```bash
-npm install
+npm ci
 npm run dev
+npm test
 npm run build
+npx playwright install --with-deps chromium
+npm run test:visual
 ```
 
-The visual test command expects Chromium installed through `npx playwright install --with-deps chromium`.
+Run `npm run test:source -- ../OpenVLC-Public` with a checkout containing the pinned source commit. The visual suite saves screenshots to `artifacts/`. Set `ACADEMY_TEST_URL` to test an already-running preview, or `ACADEMY_CHROMIUM` to select a system Chromium for the test runner.
 
-## Deployment
-
-The static Vite application is deployed through GitHub Pages. Vercel deployment remains deferred and is not configured by this work.
+Pull requests build and run the checks in GitHub Actions. Pushes to `main` publish to [GitHub Pages](https://luckyprinter.github.io/lifi/). See [the development handoff](docs/ACADEMY-HANDOFF.md) for validation and limitations.

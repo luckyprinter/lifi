@@ -6,17 +6,23 @@ const widths = [320, 360, 390, 430, 768, 1024, 1366];
 const output = 'artifacts';
 await mkdir(output, { recursive: true });
 
-const server = await preview({
+const externalUrl = process.env.ACADEMY_TEST_URL;
+const server = externalUrl ? null : await preview({
   preview: { host: '127.0.0.1', port: 4173, strictPort: true },
 });
-const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+const baseUrl = externalUrl || 'http://127.0.0.1:4173/';
+const browser = await chromium.launch({
+  headless: true,
+  executablePath: process.env.ACADEMY_CHROMIUM,
+  args: ['--no-sandbox'],
+});
 const failures = [];
 
 try {
   for (const width of widths) {
     const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 1 });
     page.on('pageerror', error => failures.push(width + 'px JavaScript error: ' + error.message));
-    await page.goto('http://127.0.0.1:4173/', { waitUntil: 'domcontentloaded' });
+    await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
     await page.waitForSelector('.academy-header');
     await page.waitForTimeout(180);
 
@@ -123,11 +129,43 @@ try {
     if (pathScroll > width + 1) failures.push(width + 'px focused lesson horizontal overflow: ' + pathScroll);
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/lesson-' + width + '.png', fullPage: true });
 
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('.focused-lesson');
+    if (!(await page.locator('.path-detail-hero').innerText()).includes('1 OF 4')) failures.push(width + 'px lesson progress was not restored after reload');
+
+    if (width <= 720) await page.locator('.mobile-menu').click();
+    await page.getByRole('button', { name: 'TRANSFER LAB', exact: true }).click();
+    await page.getByRole('heading', { name: 'File transfer lab' }).waitFor();
+    await page.getByLabel('First-round condition').selectOption('corrupt');
+    await page.getByRole('button', { name: 'Send rest of round' }).click();
+    const downloadButton = page.getByRole('button', { name: 'Download received file' });
+    if (!(await downloadButton.isDisabled())) failures.push(width + 'px lab enabled download with a corrupt frame');
+    await page.getByRole('button', { name: 'Repeat full round' }).click();
+    await page.getByRole('button', { name: 'Send rest of round' }).click();
+    if (!(await downloadButton.isEnabled())) failures.push(width + 'px lab did not recover on the second round');
+    const labScroll = await page.evaluate(() => document.documentElement.scrollWidth);
+    if (labScroll > width + 1) failures.push(width + 'px transfer lab horizontal overflow: ' + labScroll);
+    if ([390, 1366].includes(width)) {
+      await page.screenshot({ path: output + '/lab-' + width + '.png', fullPage: true });
+      const bytes = Buffer.from('OpenVLC browser round-trip test\n'.repeat(24));
+      await page.locator('input[type=file]').setInputFiles({ name: 'fixture.txt', mimeType: 'text/plain', buffer: bytes });
+      await page.getByText('fixture.txt', { exact: true }).waitFor();
+      await page.getByLabel('First-round condition').selectOption('clean');
+      await page.getByRole('button', { name: 'Send rest of round' }).click();
+      const download = page.waitForEvent('download');
+      await downloadButton.click();
+      const emitted = await download;
+      const stream = await emitted.createReadStream();
+      const chunks = [];
+      for await (const chunk of stream) chunks.push(chunk);
+      if (!bytes.equals(Buffer.concat(chunks))) failures.push(width + 'px reconstructed download differed from the uploaded file');
+    }
+
     await page.close();
   }
 } finally {
   await browser.close();
-  await new Promise(resolve => server.httpServer.close(resolve));
+  if (server) await new Promise(resolve => server.httpServer.close(resolve));
 }
 
 if (failures.length) {

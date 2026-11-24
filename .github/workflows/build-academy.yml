@@ -7,6 +7,7 @@ on:
     branches: [main]
     paths:
       - 'package.json'
+      - 'package-lock.json'
       - 'index.html'
       - 'src/**'
       - 'scripts/**'
@@ -19,7 +20,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pages
+  group: academy-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -31,9 +32,22 @@ jobs:
         with:
           node-version: 20
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+      - name: Check out pinned OpenVLC implementation
+        uses: actions/checkout@v4
+        with:
+          repository: luckyprinter/OpenVLC-Public
+          ref: 411f183a8592d8285118f613bb4909c5bbd9d3cc
+          path: .upstream
+          persist-credentials: false
+      - name: Verify source references and index
+        run: |
+          npm run test:source -- .upstream
+          python3 scripts/verify-repo-index.py .upstream
       - name: Install Chromium for responsive checks
-        run: npx playwright install chromium
+        run: npx playwright install --with-deps chromium
+      - name: Run unit tests
+        run: npm test
       - name: Build production site
         run: npm run build
       - name: Verify generated entry point
