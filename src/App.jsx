@@ -171,11 +171,23 @@ const codeExamples = {
 }` }
 };
 
+function highlightSourceLine(line, language) {
+  const pattern = /(\\/\\/.*|#.*|"(?:\\\\.|[^"\\\\])*"|'(?:\\\\.|[^'\\\\])*'|\\b(?:const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)\\b|\\b(?:Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)\\b|\\b\\d+(?:\\.\\d+)?\\b)/g;
+  return line.split(pattern).filter(Boolean).map((part,index) => {
+    let kind = 'plain';
+    if (/^(\\/\\/|#)/.test(part)) kind = 'comment';
+    else if (/^(\"|')/.test(part)) kind = 'string';
+    else if (/^\\d/.test(part)) kind = 'number';
+    else if (/^(const|let|var|return|if|else|for|while|switch|case|break|continue|class|def|async|await|import|from|as|try|except|with|True|False|None|true|false|null|static|void|bool|int|uint8_t|uint16_t|uint32_t|size_t|auto|struct|enum|namespace|using|new|delete|this|self)$/.test(part)) kind = 'keyword';
+    else if (/^(Serial|memcpy|memset|crc16_ccitt|digitalWrite|pinMode|readRawBit|sampleRawAt|resetLineDecoder|buildFrame|sendOpticalFrame)$/.test(part)) kind = 'function';
+    return <span className={'syntax-' + kind} key={index}>{part}</span>;
+  });
+}
 function SourceCodePanel({ lessonId }) {
   const [open, setOpen] = useState(false);
   const example = codeExamples[lessonId];
   if (!example) return null;
-  const url = SOURCE(example.path, example.ref) + `#L\${example.start}-L\${example.end}`;
+  const url = SOURCE(example.path, example.ref) + `#L${example.start}-L${example.end}`;
   return <div className="source-code-panel">
     <div className="source-code-heading">
       <div><span className="eyebrow">IMPLEMENTATION · EXACT SOURCE LINES</span><b>{example.title}</b></div>
@@ -183,8 +195,8 @@ function SourceCodePanel({ lessonId }) {
     </div>
     <AnimatePresence initial={false}>
       {open && <motion.div className="source-code-body" initial={{height:0,opacity:0}} animate={{height:'auto',opacity:1}} exit={{height:0,opacity:0}} transition={{duration:.24}}>
-        <div className="source-code-meta"><span>{example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
-        <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{line || ' '}</span></span>)}</code></pre>
+        <div className="source-code-meta"><span><b>{example.language.toUpperCase()}</b> · {example.path}</span><a href={url} target="_blank" rel="noreferrer">OPEN LINES {example.start}–{example.end} <ExternalLink size={12}/></a></div>
+        <pre className="source-code"><code>{example.code.split('\n').map((line,i)=><span className="source-code-line" key={i}><i>{example.start+i}</i><span>{highlightSourceLine(line || ' ', example.language)}</span></span>)}</code></pre>
         <div className="source-related">{(example.related || []).map(item=><a key={item.title} href={SOURCE(item.path,item.ref)+`#L${item.start}-L${item.end}`} target="_blank" rel="noreferrer">RELATED: {item.title} · L{item.start}–L{item.end} <ExternalLink size={11}/></a>)}</div><p>Excerpt from the referenced commit. Open the linked lines for surrounding context and the complete function.</p>
       </motion.div>}
     </AnimatePresence>
