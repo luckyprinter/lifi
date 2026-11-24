@@ -17,6 +17,7 @@ An interactive, mobile-first engineering course for understanding the physical E
 - Source code studio with pinned commit links, exact line ranges, syntax highlighting, and selectable line-by-line explanations.
 - Initial guided examples for TX application state, USB serial handshake, 4B5B encoding, GPIO symbol output, frame construction, RX majority sampling, byte decoding, and frame validation.
 - A short knowledge-check interaction.
+- Playwright responsive smoke tests covering the home, signal journey, code studio, and focused lessons at 320, 360, 390, 430, 768, 1024, and 1366 CSS-pixel widths; CI stores screenshots as workflow artifacts.
 
 ## Accuracy and teaching policy
 
@@ -31,6 +32,8 @@ npm install
 npm run dev
 npm run build
 ```
+
+The visual test command expects Chromium installed through `npx playwright install --with-deps chromium`.
 
 ## Deployment
 
