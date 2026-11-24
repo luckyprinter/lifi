@@ -1560,232 +1560,348 @@
       {
         "name": "_resolve_beta_state_dir",
         "kind": "function",
-        "line": 32
+        "line": 32,
+        "endLine": 38,
+        "signature": "def _resolve_beta_state_dir() -> Path:"
       },
       {
         "name": "BETA_STATE_DIR",
         "kind": "constant",
-        "line": 39
+        "line": 39,
+        "endLine": 39,
+        "signature": "BETA_STATE_DIR = _resolve_beta_state_dir()"
       },
       {
         "name": "STATUS_FRESHNESS_SEC",
         "kind": "constant",
-        "line": 40
+        "line": 40,
+        "endLine": 41,
+        "signature": "STATUS_FRESHNESS_SEC = 30.0"
       },
       {
         "name": "BAUD_RATES",
         "kind": "constant",
-        "line": 43
+        "line": 43,
+        "endLine": 43,
+        "signature": "BAUD_RATES = (460800, 115200)"
       },
       {
         "name": "RX_BAUD",
         "kind": "constant",
-        "line": 44
+        "line": 44,
+        "endLine": 44,
+        "signature": "RX_BAUD = 460800"
       },
       {
         "name": "LQ_POLL_CMD",
         "kind": "constant",
-        "line": 45
+        "line": 45,
+        "endLine": 47,
+        "signature": "LQ_POLL_CMD = b\"LQ?\\n\""
       },
       {
         "name": "crc16_ccitt",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "endLine": 55,
+        "signature": "def crc16_ccitt(data: bytes, crc: int = 0xFFFF) -> int:"
       },
       {
         "name": "RXPhysicalSnapshot",
         "kind": "class",
-        "line": 57
+        "line": 57,
+        "endLine": 69,
+        "signature": "class RXPhysicalSnapshot:"
       },
       {
         "name": "RXPhysicalBackend",
         "kind": "class",
-        "line": 70
+        "line": 70,
+        "endLine": 1123,
+        "signature": "class RXPhysicalBackend:"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 80
+        "line": 80,
+        "endLine": 114,
+        "signature": "def __init__(self) -> None:"
       },
       {
         "name": "log",
         "kind": "function",
-        "line": 115
+        "line": 115,
+        "endLine": 126,
+        "signature": "def log(self, event: str, details: str) -> None:"
       },
       {
         "name": "scan_ports",
         "kind": "function",
-        "line": 127
+        "line": 127,
+        "endLine": 129,
+        "signature": "def scan_ports(self) -> list[str]:"
       },
       {
         "name": "detect_firmware",
         "kind": "function",
-        "line": 130
+        "line": 130,
+        "doc": "Try IDENTIFY at all known baud rates.",
+        "endLine": 140,
+        "signature": "def detect_firmware(self, port: str) -> dict[str, str] | None:"
       },
       {
         "name": "auto_connect",
         "kind": "function",
-        "line": 141
+        "line": 141,
+        "doc": "Auto-detect: scan → IDENTIFY → open persistent serial.",
+        "endLine": 159,
+        "signature": "def auto_connect(self) -> bool:"
       },
       {
         "name": "connect",
         "kind": "function",
-        "line": 160
+        "line": 160,
+        "doc": "Connect to a specific port after firmware detection.",
+        "endLine": 182,
+        "signature": "def connect(self, port: str, force: bool = False) -> bool:"
       },
       {
         "name": "disconnect",
         "kind": "function",
-        "line": 183
+        "line": 183,
+        "endLine": 188,
+        "signature": "def disconnect(self) -> None:"
       },
       {
         "name": "is_connected",
         "kind": "function",
-        "line": 190
+        "line": 190,
+        "endLine": 192,
+        "signature": "def is_connected(self) -> bool:"
       },
       {
         "name": "port",
         "kind": "function",
-        "line": 194
+        "line": 194,
+        "endLine": 196,
+        "signature": "def port(self) -> str | None:"
       },
       {
         "name": "firmware_version",
         "kind": "function",
-        "line": 198
+        "line": 198,
+        "endLine": 200,
+        "signature": "def firmware_version(self) -> str:"
       },
       {
         "name": "board_type",
         "kind": "function",
-        "line": 202
+        "line": 202,
+        "endLine": 204,
+        "signature": "def board_type(self) -> str:"
       },
       {
         "name": "_open_serial",
         "kind": "function",
-        "line": 205
+        "line": 205,
+        "doc": "Open persistent serial connection at RX baud rate and start reader thread.",
+        "endLine": 229,
+        "signature": "def _open_serial(self) -> None:"
       },
       {
         "name": "_serial_reader_loop",
         "kind": "function",
-        "line": 230
+        "line": 230,
+        "doc": "Background thread: read every line from serial and put into _line_queue.  This is the equivalent of vlc_beta's poll_serial() — it drains the UART buffer continuously so no async firmware messages (RX_FILE_HEX, SYNC events, transfer notices)",
+        "endLine": 251,
+        "signature": "def _serial_reader_loop(self) -> None:"
       },
       {
         "name": "_dispatch_line",
         "kind": "function",
-        "line": 252
+        "line": 252,
+        "doc": "Dispatch a firmware line to the appropriate handler.  LQ lines are cached for _poll_lq(). File-data lines are handled immediately. All lines are also pushed to _line_queue for the refresh() caller.",
+        "endLine": 298,
+        "signature": "def _dispatch_line(self, line: str) -> None:"
       },
       {
         "name": "_handle_transfer_notice",
         "kind": "function",
-        "line": 299
+        "line": 299,
+        "doc": "Parse RX_TRANSFER_NOTICE and update active transfer state.",
+        "endLine": 336,
+        "signature": "def _handle_transfer_notice(self, line: str) -> None:"
       },
       {
         "name": "_handle_ram_store",
         "kind": "function",
-        "line": 337
+        "line": 337,
+        "doc": "Parse RX_RAM_STORE and update progress.",
+        "endLine": 355,
+        "signature": "def _handle_ram_store(self, line: str) -> None:"
       },
       {
         "name": "_handle_file_hex",
         "kind": "function",
-        "line": 356
+        "line": 356,
+        "doc": "Decode and save a completed file from RX_FILE_HEX line.  Format: RX_FILE_HEX:<tid>:<frame_type>:<total_size>:<total_chunks>:<crc_hex>:<name_hex>:<data_hex>",
+        "endLine": 489,
+        "signature": "def _handle_file_hex(self, line: str) -> None:"
       },
       {
         "name": "_handle_file_crc_fail",
         "kind": "function",
-        "line": 490
+        "line": 490,
+        "doc": "Handle RX_FILE_CRC_FAIL from firmware (firmware detected CRC mismatch).",
+        "endLine": 534,
+        "signature": "def _handle_file_crc_fail(self, line: str) -> None:"
       },
       {
         "name": "_close_serial",
         "kind": "function",
-        "line": 535
+        "line": 535,
+        "endLine": 547,
+        "signature": "def _close_serial(self) -> None:"
       },
       {
         "name": "send_command",
         "kind": "function",
-        "line": 548
+        "line": 548,
+        "doc": "Write cmd string over serial.",
+        "endLine": 558,
+        "signature": "def send_command(self, cmd: str) -> bool:"
       },
       {
         "name": "apply_link_settings",
         "kind": "function",
-        "line": 559
+        "line": 559,
+        "doc": "Apply saved settings to physical RX firmware.",
+        "endLine": 595,
+        "signature": "def apply_link_settings(self) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 596
+        "line": 596,
+        "doc": "Close serial connection and release port.",
+        "endLine": 601,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "_poll_lq",
         "kind": "function",
-        "line": 602
+        "line": 602,
+        "doc": "Return the most recent LQ data from the background reader thread.  The reader thread captures LQ lines continuously without needing to send LQ? commands or call reset_input_buffer() (which would destroy async firmware messages like RX_FILE_",
+        "endLine": 635,
+        "signature": "def _poll_lq(self) -> dict[str, float] | None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 636
+        "line": 636,
+        "doc": "Read current state from live serial or vlc_beta bridge.  Priority: 1. Live serial: send LQ?, parse signal data 2. vlc_beta bridge: fresh status files (serial not available) 3. Empty offline state",
+        "endLine": 817,
+        "signature": "def refresh(self) -> RXPhysicalSnapshot:"
       },
       {
         "name": "_bg_connect",
         "kind": "function",
-        "line": 664
+        "line": 664,
+        "endLine": 672,
+        "signature": "def _bg_connect():"
       },
       {
         "name": "_run_vref_pwm_autocal",
         "kind": "function",
-        "line": 818
+        "line": 818,
+        "doc": "PWM auto-calibrator: nudge PWM duty ±1 until measured Vref reaches user target.  Logic: - Only runs in MANUAL vref mode and when 'link/vref_pwm_autocal' is enabled. - Reads target from settings, compares to measured VREF from LQ data. - Ste",
+        "endLine": 908,
+        "signature": "def _run_vref_pwm_autocal(self, lq_data: dict) -> None:"
       },
       {
         "name": "_build_from_lq",
         "kind": "function",
-        "line": 909
+        "line": 909,
+        "doc": "Build a snapshot from live LQ poll data (pins 34, 35, 5).",
+        "endLine": 1020,
+        "signature": "def _build_from_lq(self, lq: dict[str, float]) -> RXPhysicalSnapshot:"
       },
       {
         "name": "_build_from_status",
         "kind": "function",
-        "line": 1021
+        "line": 1021,
+        "doc": "Build state from vlc_beta bridge files.",
+        "endLine": 1057,
+        "signature": "def _build_from_status(self, rx_status: dict | None, sig_status: dict | None) -> tuple[SessionState, list[TransferRecord]]:"
       },
       {
         "name": "_build_stale",
         "kind": "function",
-        "line": 1058
+        "line": 1058,
+        "doc": "Serial open but no fresh data yet.",
+        "endLine": 1080,
+        "signature": "def _build_stale(self) -> RXPhysicalSnapshot:"
       },
       {
         "name": "_empty_snapshot",
         "kind": "function",
-        "line": 1081
+        "line": 1081,
+        "endLine": 1099,
+        "signature": "def _empty_snapshot(self, extra_log: list[dict[str, str]] | None = None) -> RXPhysicalSnapshot:"
       },
       {
         "name": "_build_log",
         "kind": "function",
-        "line": 1100
+        "line": 1100,
+        "endLine": 1125,
+        "signature": "def _build_log(self, rx_status: dict | None, sig_status: dict | None) -> list[dict[str, str]]:"
       },
       {
         "name": "_is_fresh",
         "kind": "function",
-        "line": 1126
+        "line": 1126,
+        "endLine": 1134,
+        "signature": "def _is_fresh(status: dict | None, max_age: float = STATUS_FRESHNESS_SEC) -> bool:"
       },
       {
         "name": "_list_usb_serial_ports",
         "kind": "function",
-        "line": 1135
+        "line": 1135,
+        "doc": "Return serial ports, prioritising true USB/ACM adapters (ESP32) first.  Port priority order: 1. ttyUSB* / ttyACM* — real USB-serial adapters (CP2102, CH340, FTDI) 2. COM* — Windows virtual COM ports 3. Everything else with USB VID/PID",
+        "endLine": 1175,
+        "signature": "def _list_usb_serial_ports() -> list[str]:"
       },
       {
         "name": "_send_identify",
         "kind": "function",
-        "line": 1176
+        "line": 1176,
+        "doc": "Send empty string ping at a specific baud rate, fallback to JSON response.",
+        "endLine": 1228,
+        "signature": "def _send_identify(port: str, expected_device: str, baud: int = 115200) -> dict[str, str] | None:"
       },
       {
         "name": "_parse_lq_response",
         "kind": "function",
-        "line": 1229
+        "line": 1229,
+        "doc": "Parse LQ telemetry line from RX firmware.  Handles formats: LQ, SIGNAL=2.846, VREF=2.481, MARGIN=0.365, SWING=0.120, STATUS=... LQ snapshot: SIGNAL=2.846, VREF=2.481, MARGIN=0.365, ... CAL_LQ: SIGNAL=...",
+        "endLine": 1281,
+        "signature": "def _parse_lq_response(line: str) -> dict[str, float] | None:"
       },
       {
         "name": "_ensure_serial",
         "kind": "function",
-        "line": 1282
+        "line": 1282,
+        "doc": "Check serial is still open. Raises if not.",
+        "endLine": 1287,
+        "signature": "def _ensure_serial(ser: Any) -> None:"
       },
       {
         "name": "_empty_transfer",
         "kind": "function",
-        "line": 1288
+        "line": 1288,
+        "doc": "Build an empty TransferRecord for offline state.",
+        "endLine": 1303,
+        "signature": "def _empty_transfer() -> TransferRecord:"
       }
     ],
     "headings": []
@@ -1803,127 +1919,188 @@
       {
         "name": "_encode_4b5b",
         "kind": "function",
-        "line": 51
+        "line": 51,
+        "doc": "Encode data bytes using 4B5B. Returns a flat list of 0/1 bits.",
+        "endLine": 68,
+        "signature": "def _encode_4b5b(data: bytes | None) -> list[int]:"
       },
       {
         "name": "RXSimulationSnapshot",
         "kind": "class",
-        "line": 70
+        "line": 70,
+        "endLine": 77,
+        "signature": "class RXSimulationSnapshot:"
       },
       {
         "name": "VirtualChannelParams",
         "kind": "class",
-        "line": 79
+        "line": 79,
+        "endLine": 104,
+        "signature": "class VirtualChannelParams:"
       },
       {
         "name": "RXSimulationBackend",
         "kind": "class",
-        "line": 107
+        "line": 107,
+        "endLine": 785,
+        "signature": "class RXSimulationBackend:"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 114
+        "line": 114,
+        "endLine": 170,
+        "signature": "def __init__(self, params: VirtualChannelParams | None = None) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 171
+        "line": 171,
+        "doc": "Close socket and stop simulation backend gracefully.",
+        "endLine": 189,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "set_expected_file",
         "kind": "function",
-        "line": 190
+        "line": 190,
+        "doc": "Set or clear the reference expected file data and update chunk statuses.",
+        "endLine": 217,
+        "signature": "def set_expected_file(self, data: bytes | None, filepath: str | None) -> None:"
       },
       {
         "name": "_log_append",
         "kind": "function",
-        "line": 218
+        "line": 218,
+        "doc": "Append log entry and cap size to prevent memory leak.",
+        "endLine": 223,
+        "signature": "def _log_append(self, entry: dict[str, str]) -> None:"
       },
       {
         "name": "_on_ready_read",
         "kind": "function",
-        "line": 224
+        "line": 224,
+        "endLine": 235,
+        "signature": "def _on_ready_read(self) -> None:"
       },
       {
         "name": "_handle_udp_msg",
         "kind": "function",
-        "line": 236
+        "line": 236,
+        "endLine": 427,
+        "signature": "def _handle_udp_msg(self, msg: dict[str, Any], host: QHostAddress, port: int) -> None:"
       },
       {
         "name": "_save_received_file",
         "kind": "function",
-        "line": 428
+        "line": 428,
+        "endLine": 450,
+        "signature": "def _save_received_file(self) -> None:"
       },
       {
         "name": "params",
         "kind": "function",
-        "line": 452
+        "line": 452,
+        "endLine": 454,
+        "signature": "def params(self) -> VirtualChannelParams:"
       },
       {
         "name": "set_params",
         "kind": "function",
-        "line": 455
+        "line": 455,
+        "endLine": 459,
+        "signature": "def set_params(self, **kwargs: Any) -> None:"
       },
       {
         "name": "update_distance",
         "kind": "function",
-        "line": 460
+        "line": 460,
+        "endLine": 462,
+        "signature": "def update_distance(self, meters: float) -> None:"
       },
       {
         "name": "update_noise",
         "kind": "function",
-        "line": 463
+        "line": 463,
+        "endLine": 465,
+        "signature": "def update_noise(self, mv: float) -> None:"
       },
       {
         "name": "update_lux",
         "kind": "function",
-        "line": 466
+        "line": 466,
+        "endLine": 468,
+        "signature": "def update_lux(self, lx: int) -> None:"
       },
       {
         "name": "update_led_wattage",
         "kind": "function",
-        "line": 469
+        "line": 469,
+        "endLine": 471,
+        "signature": "def update_led_wattage(self, w: float) -> None:"
       },
       {
         "name": "update_packet_loss",
         "kind": "function",
-        "line": 472
+        "line": 472,
+        "endLine": 476,
+        "signature": "def update_packet_loss(self, pct: float) -> None:"
       },
       {
         "name": "_compute_channel",
         "kind": "function",
-        "line": 477
+        "line": 477,
+        "doc": "Compute derived channel parameters from the virtual model.  Models realistic VLC channel with sensible voltage levels. Base reference: 2.5V PVo at 1m with 10W LED.",
+        "endLine": 515,
+        "signature": "def _compute_channel(self) -> None:"
       },
       {
         "name": "_build_transfer",
         "kind": "function",
-        "line": 516
+        "line": 516,
+        "doc": "Build a TransferRecord from generated chunks.",
+        "endLine": 606,
+        "signature": "def _build_transfer(self) -> TransferRecord:"
       },
       {
         "name": "_build_signal",
         "kind": "function",
-        "line": 607
+        "line": 607,
+        "doc": "Build SignalState from virtual channel parameters.",
+        "endLine": 659,
+        "signature": "def _build_signal(self) -> SignalState:"
       },
       {
         "name": "_build_log",
         "kind": "function",
-        "line": 660
+        "line": 660,
+        "doc": "Build activity log from recent simulation events.",
+        "endLine": 673,
+        "signature": "def _build_log(self) -> list[dict[str, str]]:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 674
+        "line": 674,
+        "doc": "Generate a new data snapshot from the virtual channel model.",
+        "endLine": 699,
+        "signature": "def refresh(self) -> RXSimulationSnapshot:"
       },
       {
         "name": "_generate_sim_sample",
         "kind": "function",
-        "line": 700
+        "line": 700,
+        "doc": "Periodic timer task (100 ms) generating simulated physical signals.",
+        "endLine": 772,
+        "signature": "def _generate_sim_sample(self) -> None:"
       },
       {
         "name": "get_new_samples",
         "kind": "function",
-        "line": 773
+        "line": 773,
+        "doc": "Retrieve samples generated since last_idx.",
+        "endLine": 785,
+        "signature": "def get_new_samples(self, last_idx: int) -> list[tuple[float, float, float, int]]:"
       }
     ],
     "headings": []
@@ -1941,27 +2118,37 @@
       {
         "name": "BERAnalyzerPage",
         "kind": "class",
-        "line": 22
+        "line": 22,
+        "endLine": 181,
+        "signature": "class BERAnalyzerPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 25
+        "line": 25,
+        "endLine": 88,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "add_stat_row",
         "kind": "function",
-        "line": 61
+        "line": 61,
+        "endLine": 66,
+        "signature": "def add_stat_row(grid: QGridLayout, row: int, col: int, title: str, val_lbl: QLabel) -> None:"
       },
       {
         "name": "_get_state",
         "kind": "function",
-        "line": 89
+        "line": 89,
+        "endLine": 96,
+        "signature": "def _get_state(self) -> RXAppState | None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 97
+        "line": 97,
+        "endLine": 181,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       }
     ],
     "headings": []
@@ -2012,182 +2199,256 @@
       {
         "name": "MetricRow",
         "kind": "class",
-        "line": 44
+        "line": 44,
+        "endLine": 64,
+        "signature": "class MetricRow(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 47
+        "line": 47,
+        "endLine": 59,
+        "signature": "def __init__(self, label: str, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "setValue",
         "kind": "function",
-        "line": 60
+        "line": 60,
+        "endLine": 64,
+        "signature": "def setValue(self, value: str) -> None:"
       },
       {
         "name": "StatusRow",
         "kind": "class",
-        "line": 65
+        "line": 65,
+        "endLine": 85,
+        "signature": "class StatusRow(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 68
+        "line": 68,
+        "endLine": 79,
+        "signature": "def __init__(self, label: str, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "setStatus",
         "kind": "function",
-        "line": 80
+        "line": 80,
+        "endLine": 85,
+        "signature": "def setStatus(self, value: str, color: str) -> None:"
       },
       {
         "name": "_ReceptionStatusPanel",
         "kind": "class",
-        "line": 86
+        "line": 86,
+        "endLine": 136,
+        "signature": "class _ReceptionStatusPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 89
+        "line": 89,
+        "endLine": 114,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_on_cancel",
         "kind": "function",
-        "line": 115
+        "line": 115,
+        "endLine": 119,
+        "signature": "def _on_cancel(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 120
+        "line": 120,
+        "endLine": 136,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_PerformanceMetricsPanel",
         "kind": "class",
-        "line": 137
+        "line": 137,
+        "endLine": 162,
+        "signature": "class _PerformanceMetricsPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 140
+        "line": 140,
+        "endLine": 153,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 154
+        "line": 154,
+        "endLine": 162,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_SignalMonitorPanel",
         "kind": "class",
-        "line": 163
+        "line": 163,
+        "endLine": 193,
+        "signature": "class _SignalMonitorPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 166
+        "line": 166,
+        "endLine": 180,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 181
+        "line": 181,
+        "endLine": 193,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_SignalWaveformPanel",
         "kind": "class",
-        "line": 194
+        "line": 194,
+        "endLine": 236,
+        "signature": "class _SignalWaveformPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 197
+        "line": 197,
+        "endLine": 205,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 206
+        "line": 206,
+        "endLine": 209,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "refresh_telemetry",
         "kind": "function",
-        "line": 210
+        "line": 210,
+        "doc": "Fetch new high-frequency samples and feed OOK widget.",
+        "endLine": 236,
+        "signature": "def refresh_telemetry(self, state: RXAppState, last_sample_index: int) -> int:"
       },
       {
         "name": "_BitDecodePanel",
         "kind": "class",
-        "line": 237
+        "line": 237,
+        "endLine": 265,
+        "signature": "class _BitDecodePanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 240
+        "line": 240,
+        "endLine": 250,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 251
+        "line": 251,
+        "endLine": 265,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_FileInfoPanel",
         "kind": "class",
-        "line": 266
+        "line": 266,
+        "endLine": 295,
+        "signature": "class _FileInfoPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 269
+        "line": 269,
+        "endLine": 282,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 283
+        "line": 283,
+        "endLine": 295,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_ActivityLogPanel",
         "kind": "class",
-        "line": 296
+        "line": 296,
+        "endLine": 308,
+        "signature": "class _ActivityLogPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 299
+        "line": 299,
+        "endLine": 303,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 304
+        "line": 304,
+        "endLine": 308,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "RXDashboardPage",
         "kind": "class",
-        "line": 309
+        "line": 309,
+        "endLine": 406,
+        "signature": "class RXDashboardPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 312
+        "line": 312,
+        "endLine": 370,
+        "signature": "def __init__(self, state: RXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "showEvent",
         "kind": "function",
-        "line": 371
+        "line": 371,
+        "endLine": 377,
+        "signature": "def showEvent(self, event) -> None:"
       },
       {
         "name": "hideEvent",
         "kind": "function",
-        "line": 378
+        "line": 378,
+        "endLine": 382,
+        "signature": "def hideEvent(self, event) -> None:"
       },
       {
         "name": "shutdown",
         "kind": "function",
-        "line": 383
+        "line": 383,
+        "endLine": 390,
+        "signature": "def shutdown(self) -> None:"
       },
       {
         "name": "_sample_waveform",
         "kind": "function",
-        "line": 391
+        "line": 391,
+        "endLine": 394,
+        "signature": "def _sample_waveform(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 395
+        "line": 395,
+        "doc": "Refresh all dashboard panels from current state. Called by shell timer.",
+        "endLine": 406,
+        "signature": "def refresh(self, state: RXAppState | None = None) -> None:"
       }
     ],
     "headings": []
@@ -2205,67 +2466,94 @@
       {
         "name": "STORE_DIR",
         "kind": "constant",
-        "line": 11
+        "line": 11,
+        "endLine": 11,
+        "signature": "STORE_DIR = Path.home() / \".vlc_rx\""
       },
       {
         "name": "STORE_PATH",
         "kind": "constant",
-        "line": 12
+        "line": 12,
+        "endLine": 14,
+        "signature": "STORE_PATH = STORE_DIR / \"experiments.json\""
       },
       {
         "name": "Experiment",
         "kind": "class",
-        "line": 16
+        "line": 16,
+        "endLine": 25,
+        "signature": "class Experiment:"
       },
       {
         "name": "_default_experiments",
         "kind": "function",
-        "line": 26
+        "line": 26,
+        "doc": "Seed data matching the design image.",
+        "endLine": 41,
+        "signature": "def _default_experiments() -> list[dict[str, Any]]:"
       },
       {
         "name": "_load_all",
         "kind": "function",
-        "line": 42
+        "line": 42,
+        "endLine": 55,
+        "signature": "def _load_all() -> list[dict[str, Any]]:"
       },
       {
         "name": "_save_all",
         "kind": "function",
-        "line": 56
+        "line": 56,
+        "endLine": 60,
+        "signature": "def _save_all(items: list[dict[str, Any]]) -> None:"
       },
       {
         "name": "list_experiments",
         "kind": "function",
-        "line": 61
+        "line": 61,
+        "endLine": 64,
+        "signature": "def list_experiments() -> list[Experiment]:"
       },
       {
         "name": "get_experiment",
         "kind": "function",
-        "line": 65
+        "line": 65,
+        "endLine": 71,
+        "signature": "def get_experiment(exp_id: int) -> Experiment | None:"
       },
       {
         "name": "create_experiment",
         "kind": "function",
-        "line": 72
+        "line": 72,
+        "endLine": 82,
+        "signature": "def create_experiment(name: str, exp_type: str, notes: str) -> Experiment:"
       },
       {
         "name": "update_experiment",
         "kind": "function",
-        "line": 83
+        "line": 83,
+        "endLine": 94,
+        "signature": "def update_experiment(exp_id: int, **kwargs: Any) -> Experiment | None:"
       },
       {
         "name": "delete_experiment",
         "kind": "function",
-        "line": 95
+        "line": 95,
+        "endLine": 105,
+        "signature": "def delete_experiment(exp_id: int) -> bool:"
       },
       {
         "name": "AVAILABLE_CATEGORIES",
         "kind": "constant",
-        "line": 106
+        "line": 106,
+        "endLine": 133,
+        "signature": "AVAILABLE_CATEGORIES = ["
       },
       {
         "name": "MANUAL_COLUMNS",
         "kind": "constant",
-        "line": 136
+        "line": 136,
+        "endLine": 152,
+        "signature": "MANUAL_COLUMNS = ["
       }
     ],
     "headings": []
@@ -2283,72 +2571,101 @@
       {
         "name": "EXPERIMENT_TYPES",
         "kind": "constant",
-        "line": 34
+        "line": 34,
+        "endLine": 41,
+        "signature": "EXPERIMENT_TYPES = ["
       },
       {
         "name": "ExperimentsPage",
         "kind": "class",
-        "line": 45
+        "line": 45,
+        "endLine": 290,
+        "signature": "class ExperimentsPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 48
+        "line": 48,
+        "endLine": 168,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_reload_table",
         "kind": "function",
-        "line": 169
+        "line": 169,
+        "endLine": 188,
+        "signature": "def _reload_table(self, filter_text: str = \"\") -> None:"
       },
       {
         "name": "_on_create",
         "kind": "function",
-        "line": 189
+        "line": 189,
+        "endLine": 203,
+        "signature": "def _on_create(self) -> None:"
       },
       {
         "name": "_on_selection_changed",
         "kind": "function",
-        "line": 204
+        "line": 204,
+        "endLine": 215,
+        "signature": "def _on_selection_changed(self) -> None:"
       },
       {
         "name": "_on_view",
         "kind": "function",
-        "line": 216
+        "line": 216,
+        "endLine": 223,
+        "signature": "def _on_view(self) -> None:"
       },
       {
         "name": "_show_detail_card",
         "kind": "function",
-        "line": 224
+        "line": 224,
+        "doc": "Show experiment details in a floating overlay.",
+        "endLine": 251,
+        "signature": "def _show_detail_card(self, exp) -> None:"
       },
       {
         "name": "_remove_overlay",
         "kind": "function",
-        "line": 252
+        "line": 252,
+        "endLine": 257,
+        "signature": "def _remove_overlay(self, _card=None) -> None:"
       },
       {
         "name": "_on_edit",
         "kind": "function",
-        "line": 258
+        "line": 258,
+        "endLine": 275,
+        "signature": "def _on_edit(self) -> None:"
       },
       {
         "name": "_on_delete",
         "kind": "function",
-        "line": 276
+        "line": 276,
+        "endLine": 281,
+        "signature": "def _on_delete(self) -> None:"
       },
       {
         "name": "_on_search",
         "kind": "function",
-        "line": 282
+        "line": 282,
+        "endLine": 284,
+        "signature": "def _on_search(self, text: str) -> None:"
       },
       {
         "name": "resizeEvent",
         "kind": "function",
-        "line": 285
+        "line": 285,
+        "endLine": 290,
+        "signature": "def resizeEvent(self, event) -> None:"
       },
       {
         "name": "_add_form_row",
         "kind": "function",
-        "line": 291
+        "line": 291,
+        "endLine": 296,
+        "signature": "def _add_form_row(layout, label: str, widget) -> None:"
       }
     ],
     "headings": []
@@ -2366,132 +2683,186 @@
       {
         "name": "HISTORY_DIR",
         "kind": "constant",
-        "line": 38
+        "line": 38,
+        "endLine": 38,
+        "signature": "HISTORY_DIR = Path.home() / \".vlc_rx\""
       },
       {
         "name": "HISTORY_PATH",
         "kind": "constant",
-        "line": 39
+        "line": 39,
+        "endLine": 41,
+        "signature": "HISTORY_PATH = HISTORY_DIR / \"transfer_history.json\""
       },
       {
         "name": "_default_history",
         "kind": "function",
-        "line": 42
+        "line": 42,
+        "doc": "Default seeds matching typical VLC transfers.",
+        "endLine": 87,
+        "signature": "def _default_history() -> list[dict]:"
       },
       {
         "name": "SessionInspectorCard",
         "kind": "class",
-        "line": 88
+        "line": 88,
+        "endLine": 294,
+        "signature": "class SessionInspectorCard(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 91
+        "line": 91,
+        "endLine": 221,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "show_empty",
         "kind": "function",
-        "line": 222
+        "line": 222,
+        "endLine": 224,
+        "signature": "def show_empty(self) -> None:"
       },
       {
         "name": "show_capture",
         "kind": "function",
-        "line": 225
+        "line": 225,
+        "endLine": 294,
+        "signature": "def show_capture(self, capture: SessionCapture, entry: dict, is_mock: bool = False) -> None:"
       },
       {
         "name": "ExportPage",
         "kind": "class",
-        "line": 295
+        "line": 295,
+        "endLine": 846,
+        "signature": "class ExportPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 298
+        "line": 298,
+        "endLine": 448,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_ghost_btn",
         "kind": "function",
-        "line": 449
+        "line": 449,
+        "endLine": 469,
+        "signature": "def _ghost_btn(self, text: str, icon_name: str) -> QPushButton:"
       },
       {
         "name": "_load_history",
         "kind": "function",
-        "line": 470
+        "line": 470,
+        "endLine": 482,
+        "signature": "def _load_history(self) -> None:"
       },
       {
         "name": "_save_history",
         "kind": "function",
-        "line": 483
+        "line": 483,
+        "endLine": 489,
+        "signature": "def _save_history(self) -> None:"
       },
       {
         "name": "_populate_table",
         "kind": "function",
-        "line": 490
+        "line": 490,
+        "endLine": 547,
+        "signature": "def _populate_table(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 548
+        "line": 548,
+        "doc": "Called periodically on dashboard refresh timer. Syncs new completed transfers.",
+        "endLine": 569,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_on_selection_changed",
         "kind": "function",
-        "line": 570
+        "line": 570,
+        "endLine": 591,
+        "signature": "def _on_selection_changed(self) -> None:"
       },
       {
         "name": "_generate_mock_capture",
         "kind": "function",
-        "line": 592
+        "line": 592,
+        "endLine": 688,
+        "signature": "def _generate_mock_capture(self, entry: dict) -> SessionCapture:"
       },
       {
         "name": "_on_browse_folder",
         "kind": "function",
-        "line": 689
+        "line": 689,
+        "endLine": 693,
+        "signature": "def _on_browse_folder(self) -> None:"
       },
       {
         "name": "_on_open_folder",
         "kind": "function",
-        "line": 694
+        "line": 694,
+        "endLine": 705,
+        "signature": "def _on_open_folder(self) -> None:"
       },
       {
         "name": "_on_refresh_history",
         "kind": "function",
-        "line": 706
+        "line": 706,
+        "endLine": 709,
+        "signature": "def _on_refresh_history(self) -> None:"
       },
       {
         "name": "_on_clear_logs",
         "kind": "function",
-        "line": 710
+        "line": 710,
+        "endLine": 719,
+        "signature": "def _on_clear_logs(self) -> None:"
       },
       {
         "name": "_get_selected_entry",
         "kind": "function",
-        "line": 720
+        "line": 720,
+        "endLine": 728,
+        "signature": "def _get_selected_entry(self) -> dict | None:"
       },
       {
         "name": "_on_open_file",
         "kind": "function",
-        "line": 729
+        "line": 729,
+        "endLine": 744,
+        "signature": "def _on_open_file(self) -> None:"
       },
       {
         "name": "_on_save_as",
         "kind": "function",
-        "line": 745
+        "line": 745,
+        "endLine": 759,
+        "signature": "def _on_save_as(self) -> None:"
       },
       {
         "name": "_on_backup_db",
         "kind": "function",
-        "line": 760
+        "line": 760,
+        "endLine": 787,
+        "signature": "def _on_backup_db(self) -> None:"
       },
       {
         "name": "_on_restore_db",
         "kind": "function",
-        "line": 788
+        "line": 788,
+        "endLine": 819,
+        "signature": "def _on_restore_db(self) -> None:"
       },
       {
         "name": "_on_export_csv",
         "kind": "function",
-        "line": 820
+        "line": 820,
+        "endLine": 846,
+        "signature": "def _on_export_csv(self) -> None:"
       }
     ],
     "headings": []
@@ -2509,127 +2880,181 @@
       {
         "name": "ChunkHealthMap",
         "kind": "class",
-        "line": 45
+        "line": 45,
+        "endLine": 208,
+        "signature": "class ChunkHealthMap(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 55
+        "line": 55,
+        "endLine": 63,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_chunks",
         "kind": "function",
-        "line": 64
+        "line": 64,
+        "endLine": 69,
+        "signature": "def set_chunks(self, chunks: list[ChunkRecord]) -> None:"
       },
       {
         "name": "select_chunk",
         "kind": "function",
-        "line": 70
+        "line": 70,
+        "endLine": 76,
+        "signature": "def select_chunk(self, index: int) -> None:"
       },
       {
         "name": "_cols",
         "kind": "function",
-        "line": 77
+        "line": 77,
+        "endLine": 82,
+        "signature": "def _cols(self) -> int:"
       },
       {
         "name": "_update_height",
         "kind": "function",
-        "line": 83
+        "line": 83,
+        "endLine": 93,
+        "signature": "def _update_height(self) -> None:"
       },
       {
         "name": "resizeEvent",
         "kind": "function",
-        "line": 94
+        "line": 94,
+        "endLine": 97,
+        "signature": "def resizeEvent(self, event) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 98
+        "line": 98,
+        "endLine": 161,
+        "signature": "def paintEvent(self, event) -> None:"
       },
       {
         "name": "_cell_at",
         "kind": "function",
-        "line": 162
+        "line": 162,
+        "endLine": 174,
+        "signature": "def _cell_at(self, pos) -> int:"
       },
       {
         "name": "mouseMoveEvent",
         "kind": "function",
-        "line": 175
+        "line": 175,
+        "endLine": 191,
+        "signature": "def mouseMoveEvent(self, event) -> None:"
       },
       {
         "name": "mousePressEvent",
         "kind": "function",
-        "line": 192
+        "line": 192,
+        "endLine": 202,
+        "signature": "def mousePressEvent(self, event) -> None:"
       },
       {
         "name": "mouseDoubleClickEvent",
         "kind": "function",
-        "line": 203
+        "line": 203,
+        "endLine": 208,
+        "signature": "def mouseDoubleClickEvent(self, event) -> None:"
       },
       {
         "name": "ByteComparisonDialog",
         "kind": "class",
-        "line": 209
+        "line": 209,
+        "endLine": 328,
+        "signature": "class ByteComparisonDialog(QDialog):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 212
+        "line": 212,
+        "endLine": 328,
+        "signature": "def __init__(self, chunk: ChunkRecord, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "InspectPage",
         "kind": "class",
-        "line": 329
+        "line": 329,
+        "endLine": 654,
+        "signature": "class InspectPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 332
+        "line": 332,
+        "endLine": 434,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_on_inspect_load_ref",
         "kind": "function",
-        "line": 435
+        "line": 435,
+        "endLine": 441,
+        "signature": "def _on_inspect_load_ref(self) -> None:"
       },
       {
         "name": "_on_inspect_clear_ref",
         "kind": "function",
-        "line": 442
+        "line": 442,
+        "endLine": 446,
+        "signature": "def _on_inspect_clear_ref(self) -> None:"
       },
       {
         "name": "_get_state",
         "kind": "function",
-        "line": 447
+        "line": 447,
+        "endLine": 454,
+        "signature": "def _get_state(self) -> RXAppState | None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 455
+        "line": 455,
+        "doc": "Refresh page metrics, health map, and explorers from state.",
+        "endLine": 559,
+        "signature": "def refresh(self, state: RXAppState) -> None:"
       },
       {
         "name": "_on_map_selection",
         "kind": "function",
-        "line": 560
+        "line": 560,
+        "doc": "Triggered when user clicks a square in the health map grid.",
+        "endLine": 573,
+        "signature": "def _on_map_selection(self, index: int) -> None:"
       },
       {
         "name": "_on_table_selection",
         "kind": "function",
-        "line": 574
+        "line": 574,
+        "doc": "Triggered when user clicks a row in the chunk details table.",
+        "endLine": 585,
+        "signature": "def _on_table_selection(self) -> None:"
       },
       {
         "name": "_populate_byte_explorer",
         "kind": "function",
-        "line": 586
+        "line": 586,
+        "doc": "Populate the byte explorer table for the selected chunk.",
+        "endLine": 642,
+        "signature": "def _populate_byte_explorer(self, index: int) -> None:"
       },
       {
         "name": "_on_map_double_click",
         "kind": "function",
-        "line": 643
+        "line": 643,
+        "endLine": 648,
+        "signature": "def _on_map_double_click(self, index: int) -> None:"
       },
       {
         "name": "_on_table_double_click",
         "kind": "function",
-        "line": 649
+        "line": 649,
+        "endLine": 654,
+        "signature": "def _on_table_double_click(self, row: int, column: int) -> None:"
       }
     ],
     "headings": []
