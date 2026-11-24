@@ -7788,8 +7788,9 @@
         "name": "setVrefMilliVolts",
         "kind": "function",
         "line": 132,
-        "endLine": 141,
-        "signature": "void setVrefMilliVolts(int mv, bool report);"
+        "endLine": 132,
+        "signature": "void setVrefMilliVolts(int mv, bool report);",
+        "declaration": true
       },
       {
         "name": "setupVrefPwmOutput",
