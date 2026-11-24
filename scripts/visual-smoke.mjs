@@ -161,6 +161,31 @@ try {
       if (!bytes.equals(Buffer.concat(chunks))) failures.push(width + 'px reconstructed download differed from the uploaded file');
     }
 
+    if ([390, 1366].includes(width)) {
+      await page.goto(baseUrl, { waitUntil: 'domcontentloaded' });
+      await page.getByRole('button', { name: 'Send 0', exact: true }).click();
+      await page.getByText('LED off · symbol 0', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Follow a file through light' }).click();
+      await page.getByRole('heading', { name: 'How can an LED carry a byte?' }).waitFor();
+      await page.getByLabel('Change the low nibble').selectOption('0');
+      await page.getByText('0100 0000', { exact: true }).waitFor();
+      if (await page.evaluate(() => document.documentElement.scrollWidth) > width + 1) failures.push(width + 'px Foundations horizontal overflow');
+      await page.screenshot({ path: output + '/foundations-' + width + '.png', fullPage: true });
+      await page.getByRole('button', { name: 'Next stage' }).click();
+      await page.getByLabel('Reference threshold').fill('0.75');
+      await page.getByText('0 · 0 · 0', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Next stage' }).click();
+      await page.getByRole('button', { name: 'Send with one corrupt frame' }).click();
+      await page.getByText('Rejected by CRC', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Repeat the full round' }).click();
+      await page.getByText('Whole-file CRC passed.', { exact: true }).waitFor();
+      await page.getByRole('button', { name: 'Try the guided transfer' }).click();
+      await page.getByRole('complementary', { name: 'Guided transfer' }).waitFor();
+      if (await page.getByLabel('First-round condition').inputValue() !== 'corrupt') failures.push(width + 'px guided Lab did not preload the corrupt frame exercise');
+      await page.getByRole('button', { name: 'Open receiver validation code' }).click();
+      await page.getByRole('heading', { name: 'Validate a complete frame' }).waitFor();
+    }
+
     await page.close();
   }
 } finally {

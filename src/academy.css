@@ -395,3 +395,9 @@
     scroll-behavior: auto !important;
   }
 }
+
+@media (max-width: 720px) {
+  .stage-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stage-rail button { min-height: 48px; padding: .35rem; }
+  .stage-rail button b { font-size: .8125rem; }
+}

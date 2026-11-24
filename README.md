@@ -4,6 +4,8 @@ An interactive engineering course for the ESP32 visible-light communication prot
 
 ## Learning experience
 
+- **Foundations** follows the first byte of the Transfer Lab sample through 4B5B, optical on-off keying, comparator sampling, and file reconstruction. Its guided Lab route starts with one corrupted frame.
+
 - **Learning paths** build from the real prototype through hardware, protocol, software, and source-code reasoning. Completion is saved in the browser.
 - **Signal Journey** traces eight stages across user actions, the desktop application, USB serial, firmware, and hardware.
 - **Transfer Lab** models a file transfer in the browser, including frame inspection, optical symbols, dropped or corrupt frames, carousel repeats, CRC checks, and file reconstruction.

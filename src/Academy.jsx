@@ -7,6 +7,7 @@ import {
   ShieldCheck, Sparkles, Waves, X, Zap, RefreshCw
 } from 'lucide-react';
 import './academy.css';
+import Foundations, { OpticalIntro } from './Foundations.jsx';
 const TransferLab = React.lazy(() => import('./TransferLab.jsx'));
 const DeepDive = React.lazy(() => import('./DeepDive.jsx'));
 
@@ -541,18 +542,6 @@ const paths = [
 
 function Brand(){return <a className="academy-brand" href="#home" aria-label="OpenVLC Academy home"><span className="brand-mark"><Waves size={19}/></span><span>OPENVLC <b>ACADEMY</b></span></a>}
 
-function HeroModel(){
- return <div className="hero-model" aria-label="Animated illustration of a visible light communication link">
-  <div className="model-grid"/><div className="model-orbit orbit-a"/><div className="model-orbit orbit-b"/>
-  <div className="model-device tx-device"><Cpu size={25}/><b>TX</b><small>ESP32</small></div>
-  <div className="model-device rx-device"><CircuitBoard size={25}/><b>RX</b><small>ESP32</small></div>
-  <div className="model-lamp"><Lightbulb size={31}/></div>
-  <div className="light-beam"/>{Array.from({length:7},(_,i)=><i className="hero-photon" style={{'--i':i}} key={i}/>)}
-  <span className="model-label label-tx">TRANSMITTER</span><span className="model-label label-link">VISIBLE LIGHT · LOS</span><span className="model-label label-rx">RECEIVER</span>
-  <div className="model-readout"><span><i/> OPTICAL LINK MODEL</span><b>DATA → LIGHT → DATA</b></div>
- </div>
-}
-
 function StageVisual({stage}){
  const base = <div className="stage-visual-top"><span>INTERACTIVE SIGNAL MODEL</span><span>STAGE {String(stages.findIndex(s=>s.id===stage.id)+1).padStart(2,'0')} / 08</span></div>;
  return <div className={'stage-visual visual-'+stage.kind}>{base}
@@ -858,11 +847,25 @@ function CodePracticeLab({onOpenCode}){
 }
 
 function HomePage({navigate}){
- return <>
-  <section className="academy-hero" id="home"><div className="hero-copy"><div className="hero-eyebrow"><i/> AN INTERACTIVE ENGINEERING COURSE</div><h1>Data carried<br/>by <em>light.</em></h1><p>Learn how a real ESP32 visible-light communication prototype works—from the LED driver and photodiode to the firmware and desktop code that make it communicate.</p><div className="hero-buttons"><button className="hero-primary" onClick={()=>navigate('paths')}>START LEARNING <ArrowRight size={16}/></button><button className="hero-secondary" onClick={()=>navigate('lab')}>OPEN TRANSFER LAB <Activity size={16}/></button></div><div className="hero-stats"><div><b>06</b><span>LEARNING PATHS</span></div><div><b>08</b><span>TRANSMISSION STAGES</span></div><div><b>REAL</b><span>HARDWARE SOURCE</span></div></div></div><HeroModel/></section>
-  <div className="academy-ticker"><span>ESP32 TRANSMITTER</span><i/><span>4B5B + NRZ/OOK</span><i/><span>VISIBLE LIGHT</span><i/><span>BPW34 RECEIVER</span><i/><span>CRC VERIFIED FILE</span></div>
-  <section className="home-start"><div><span className="eyebrow">PICK UP THE THREAD THAT INTERESTS YOU</span><h2>A clear route from<br/><i>concept to code.</i></h2><p>Explore the physical device, follow a complete transmission, or open the real source code. Each area is its own focused learning space.</p></div><div className="home-start-grid"><button onClick={()=>navigate('paths')}><Lightbulb/><b>Learning paths</b><span>Build knowledge step by step</span><ArrowUpRight/></button><button onClick={()=>navigate('journey')}><Waves/><b>Signal journey</b><span>Watch data travel through the prototype</span><ArrowUpRight/></button><button onClick={()=>navigate('lab')}><Activity/><b>Transfer lab</b><span>Send a file and inspect its optical frames</span><ArrowUpRight/></button><button onClick={()=>navigate('code')}><Code2/><b>Code studio</b><span>Read real files and understand each line</span><ArrowUpRight/></button><button onClick={()=>navigate('atlas')}><Activity/><b>App atlas</b><span>Explore screens, settings and signal viewers</span><ArrowUpRight/></button><button onClick={()=>navigate('deepdive')}><FileCode2/><b>Deep Dive</b><span>Search every tracked file and source symbol</span><ArrowUpRight/></button><button onClick={()=>navigate('practice')}><Check/><b>Practice lab</b><span>Test your understanding with real code scenarios</span><ArrowUpRight/></button></div></section>
- </>
+ return <div className="reading-surface academy-reading-home">
+  <section className="reading-hero" id="home">
+   <div>
+    <p className="reading-kicker">OpenVLC Academy</p>
+    <h1>Data carried<br/>by <em>light.</em></h1>
+    <p>Two ESP32 boards send a file across a room using an LED and a photodiode. Follow the signal from the first byte to the recovered file.</p>
+    <div className="foundation-next">
+     <button className="reading-primary" onClick={()=>navigate('foundations')}>Follow a file through light</button>
+     <button className="reading-secondary" onClick={()=>navigate('code')}>Open Code Studio</button>
+    </div>
+   </div>
+   <OpticalIntro/>
+  </section>
+  <section className="reading-links" aria-label="Explore the Academy">
+   <button onClick={()=>navigate('paths')}><Lightbulb aria-hidden="true"/><b>Learning paths</b><span>Explore the hardware, protocol, and software in depth.</span></button>
+   <button onClick={()=>navigate('journey')}><Waves aria-hidden="true"/><b>Signal Journey</b><span>Trace the physical prototype from desktop to desktop.</span></button>
+   <button onClick={()=>navigate('lab')}><Activity aria-hidden="true"/><b>Transfer Lab</b><span>Send a file and inspect what the receiver sees.</span></button>
+  </section>
+ </div>
 }
 
 function PracticePage({openPath,onOpenCode}){
@@ -876,6 +879,8 @@ const navigation = [
 
 function readRoute(){
  const [page,selection]=window.location.hash.slice(1).split('/');
+ if(page==='foundations') return {view:page};
+ if(page==='lab') return {view:page,selection:selection==='guided'?'guided':undefined};
  if(page==='path') return {view:page,selection:paths.some(p=>p.id===selection)?selection:'start'};
  if(page==='code') return {view:page,selection:codeLessons.some(l=>l.id===selection)?selection:'tx-encode'};
  return {view:navigation.some(([id])=>id===page)?page:'home'};
@@ -914,7 +919,7 @@ export default function Academy(){
    <Brand/>
    <nav id="academy-nav" aria-label="Academy" className={menu?'open':''}>
     {navigation.map(([id,label])=>{
-     const active=view===id||(id==='paths'&&view==='path');
+     const active=view===id||(id==='paths'&&(view==='path'||view==='foundations'));
      return <button key={id} className={active?'active':''} aria-current={active?'page':undefined} onClick={()=>navigate(id)}>{label}</button>;
     })}
    </nav>
@@ -922,11 +927,12 @@ export default function Academy(){
   </header>
   <main ref={main} tabIndex={-1} className="academy-main"><AnimatePresence mode="wait" initial={false}><motion.div key={view+':'+(selection||'')} className="academy-page-transition" initial={{opacity:0,y:reduceMotion?0:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:reduceMotion?0:-8}} transition={{duration:reduceMotion?0:.2,ease:'easeOut'}}>
    {view==='home'&&<HomePage navigate={navigate}/>}
+   {view==='foundations'&&<Foundations navigate={navigate} onOpenCode={openCode}/>}
    {view==='journey'&&<SignalJourney onOpenCode={openCode}/>}
    {view==='atlas'&&<AppAtlas onOpenCode={openCode}/>}
    {view==='paths'&&<PathCards onOpen={openPath}/>}
    {view==='code'&&<CodeStudio initialLesson={selection}/>}
-   {view==='lab'&&<React.Suspense fallback={<p className="deep-dive-loading" role="status">Loading transfer lab…</p>}><TransferLab /></React.Suspense>}
+   {view==='lab'&&<React.Suspense fallback={<p className="deep-dive-loading" role="status">Loading transfer lab…</p>}><TransferLab guided={selection==='guided'} onOpenCode={openCode}/></React.Suspense>}
    {view==='deepdive'&&<React.Suspense fallback={<div className="deep-dive-loading">Loading the complete repository index…</div>}><DeepDive onOpenCode={openCode} codeLessons={codeLessons}/></React.Suspense>}
    {view==='practice'&&<PracticePage openPath={openPath} onOpenCode={openCode}/>}
    {view==='path'&&<PathDetail key={selection} id={selection} onBack={backToPaths}/>}

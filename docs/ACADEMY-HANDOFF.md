@@ -17,3 +17,9 @@ The feature branch starts from `luckyprinter/lifi` main at `99f8fc6d1159101c3aa4
 ## Design references
 
 The uploaded clip was a development-tool roundup. Its architecture and UI audit resources informed linked source traces, responsive hierarchy, and keyboard and reduced-motion checks. The site uses the existing Academy design system and adds no runtime dependencies from those tools. The interactive course reference is [Designed to Scale](https://designed-to-scale.vercel.app/).
+
+## Beginner redesign milestone
+
+Home and Foundations use a warm reading surface, with dark instruments for interactive demonstrations. The beginner route connects a single-symbol demo, three Foundation stages, a guided corruption-and-recovery exercise, and the RX firmware validation lesson. It shares the sample and transfer model with Transfer Lab. The normalized comparator plot and OOK trace are teaching models.
+
+The other learning paths, Atlas, and reference sections retain their existing visual treatment. Expanding animated lessons and redesigning mobile reference navigation are follow-up milestones. The browser suite covers both viewport sizes on the beginner route. Participant usability testing is still open.

@@ -3,21 +3,10 @@ import { Activity, Cpu, Download, FileUp, Radio, RotateCcw } from 'lucide-react'
 import {
   buildTransfer, CHUNK_SIZES, deliverFrame, MAX_STREAM_BYTES, opticalSymbols, reassemble, scopePath,
 } from './transferModel.js';
+import { SAMPLE } from './learningSample.js';
 import './transfer-lab.css';
 
 const SOURCE = 'https://github.com/luckyprinter/OpenVLC-Public/blob/411f183a8592d8285118f613bb4909c5bbd9d3cc';
-const SAMPLE = {
-  name: 'light-notes.txt',
-  bytes: new TextEncoder().encode([
-    'OpenVLC transfers digital data through modulated light.',
-    'The desktop transmitter prepares a transfer ID and a file checksum before uploading the bytes to the ESP32.',
-    'The firmware sends an optical notice and then data frames. Each payload byte becomes two five-symbol codewords.',
-    'At the receiver, checksums reject damaged frames. Valid chunks are stored by index, so a repeated round can fill a missing slot.',
-    'A whole-file CRC check runs after all chunks arrive. The receiver uses the file size to exclude padding at the end.',
-    'This text is an example payload for the browser lab. It contains no measurements from the prototype.',
-  ].join('\n\n')),
-};
-
 const OUTCOMES = {
   notice: 'Notice received',
   stored: 'Chunk accepted',
@@ -150,11 +139,11 @@ function PacketInspector({ transfer, packet, selectPacket, state, rate }) {
   );
 }
 
-export default function TransferLab() {
+export default function TransferLab({ guided = false, onOpenCode }) {
   const [file, setFile] = useState(SAMPLE);
   const [chunkSize, setChunkSize] = useState(256);
   const [rate, setRate] = useState(15000);
-  const [scenario, setScenario] = useState('clean');
+  const [scenario, setScenario] = useState(guided ? 'corrupt' : 'clean');
   const [session, setSession] = useState(initialRound);
   const [packet, setPacket] = useState(0);
   const [fileError, setFileError] = useState('');
@@ -243,6 +232,11 @@ export default function TransferLab() {
         <p>Follow the prototype’s non-DMA STREAM path. Prepare a file, transmit its notice and data frames, then inspect what the receiver can reconstruct.</p>
         <p className="transfer-disclosure">This browser exercise uses the firmware’s frame layout and CRC. Loss and corruption are controlled examples. Files stay in your browser, and the lab has no serial connection or live optical measurements.</p>
       </header>
+      {guided && <aside className="transfer-guide" aria-label="Guided transfer">
+        <strong>Try recovering light-notes.txt</strong>
+        <p>{complete ? 'The recovered file matches the sample. Now trace how the receiver validates a frame.' : roundFinished ? 'One frame failed its check. Repeat the full round, then send the rest of that round.' : session.round > 1 ? 'Send the rest of the repeat round. Watch the receiver fill the missing slot.' : 'Send the rest of the first round. Look for a CRC rejection and a missing chunk.'}</p>
+        <button type="button" onClick={() => onOpenCode('rx-crc')}>Open receiver validation code</button>
+      </aside>}
       <div className="transfer-workbench">
         <section className="transfer-panel" aria-labelledby="transfer-tx-heading">
           <div className="transfer-panel-head"><div><Cpu size={20} aria-hidden="true" /><h2 id="transfer-tx-heading">Transmitter</h2></div></div>

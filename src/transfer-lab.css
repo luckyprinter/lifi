@@ -176,3 +176,12 @@
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
 }
 .transfer-settings > label > select { width: 100%; min-width: 0; text-overflow: ellipsis; }
+
+.transfer-guide {
+  margin-block: 0 1rem;
+  padding: 1rem;
+  background: #182a33;
+  border: 1px solid var(--transfer-rule);
+  border-radius: .75rem;
+}
+.transfer-guide p { color: var(--transfer-muted); line-height: 1.6; }
