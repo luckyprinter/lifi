@@ -41,3 +41,5 @@
 @media(max-width:760px){.lesson-source-link{gap:7px}.lesson-source-link code{font-size:8px}}
 
 .distinction code{display:inline-block;margin:8px 0 0;padding:6px 8px;background:#f2e9df;border:1px solid #d8cbbd;font:9px var(--mono);color:#8c5548}
+
+.skip-link{position:fixed;left:14px;top:10px;z-index:60;padding:10px 14px;background:var(--ink);color:var(--paper);transform:translateY(-160%);transition:transform .2s;font-size:12px}.skip-link:focus{transform:translateY(0)}a:focus-visible,button:focus-visible,input:focus-visible{outline:2px solid var(--coral);outline-offset:3px}@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
