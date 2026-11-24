@@ -646,3 +646,49 @@ These are references for learning interaction patterns, not templates to copy or
 - **3Blue1Brown — visual explanation craft:** introduce one idea at a time, build a model progressively, and use motion to expose relationships that are difficult to see in a static diagram. Apply this to 4B5B, OOK timing, sampling, CRC, and chunk reconstruction.
 
 The Academy should combine these principles into its own identity: editorial engineering documentation, interactive hardware models, synchronized code explanations, and realistic user scenarios. Do not reproduce another site's layout, artwork, copy, or private implementation.
+
+
+---
+
+## 14. Implementation progress — first workflow milestone
+
+**In progress on branch: feature/end-to-end-transfer-walkthrough.**
+
+The first implementation milestone expands the existing Signal Journey into an end-to-end user-to-hardware walkthrough with five selectable explanation layers:
+
+1. User action
+2. Application behavior
+3. USB serial messages
+4. Firmware / physical hardware
+5. What the reader sees in the GUI
+
+The eight stages now follow the actual order of the pinned STREAM firmware path:
+
+1. TX Dashboard file selection and Start
+2. TX application state, physical backend, and USB preload
+3. Firmware frame and chunk construction
+4. 4B5B line coding
+5. GPIO5 / LED driver / optical transmission
+6. Photodiode and analog receiver front end
+7. RX sampling, decoding, frame validation, and chunk storage
+8. RX_FILE_HEX handoff, desktop save, Inspect, reference-file selection, and BER
+
+The source baseline for application and firmware lessons is aligned to OpenVLC-Public main at 411f183a8592d8285118f613bb4909c5bbd9d3cc. The earlier experimental application snapshot is no longer used for the guided lessons.
+
+New guided code lessons cover:
+- TX Dashboard file selection
+- TX Dashboard Start handler
+- RX completed-file parsing and saving
+- Method 2 reference-file BER comparison
+
+The repository map is expanded with the TX File Manager, TX/RX settings, RX dashboard, signal monitor, Inspect, BER Analyzer, and export pages. Code typography has been moved to an Inter + JetBrains Mono system, and the page route has a short motion transition.
+
+**Accuracy details included:**
+- File Manager queueing is explicitly distinguished from Dashboard direct Start.
+- The default teaching story follows the physical backend; simulation is described only as alternate/test infrastructure.
+- DMA is described as a capability-gated alternate route; the walkthrough uses the STREAM path.
+- The TX Dashboard bitstream widget is labeled as illustrative, not a physical capture.
+- RX does not require a receive-file picker. The user chooses the original reference file later when performing BER comparison.
+- Firmware CRC validation and reference-file BER comparison are kept conceptually separate.
+
+**Still outstanding after this milestone:** the full TX/RX screen atlas, complete settings-to-firmware mapping, signal graph and viewer provenance lessons, repository-wide Deep Dive inventory and symbol explorer, more scenario labs, and expanded visual QA. These remain separate phases and are not claimed as complete.
