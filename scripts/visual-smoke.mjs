@@ -30,11 +30,11 @@ try {
       failures.push(width + 'px home horizontal overflow: document=' + initial.documentWidth + ', body=' + initial.bodyWidth);
     }
     if (width <= 720 && !(await page.locator('.mobile-menu').isVisible())) failures.push(width + 'px mobile menu is not visible');
-    if (width > 720 && !(await page.getByRole('button', { name: 'CODE STUDIO' }).isVisible())) failures.push(width + 'px desktop navigation is not visible');
+    if (width > 720 && !(await page.getByRole('button', { name: 'CODE STUDIO', exact: true }).isVisible())) failures.push(width + 'px desktop navigation is not visible');
     await page.screenshot({ path: output + '/home-' + width + '.png', fullPage: true });
 
     if (width <= 720) await page.locator('.mobile-menu').click();
-    await page.getByRole('button', { name: 'SIGNAL JOURNEY' }).click();
+    await page.getByRole('button', { name: 'SIGNAL JOURNEY', exact: true }).click();
     await page.waitForSelector('.stage-visual');
     if (await page.locator('.stage-rail button').count() !== 8) failures.push(width + 'px signal journey does not expose all eight stages');
     await page.locator('.stage-rail button').nth(7).click();
@@ -56,7 +56,7 @@ try {
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/code-' + width + '.png', fullPage: true });
 
     if (width <= 720) await page.locator('.mobile-menu').click();
-    await page.getByRole('button', { name: 'LEARNING PATHS' }).click();
+    await page.getByRole('button', { name: 'LEARNING PATHS', exact: true }).click();
     await page.locator('.path-card').first().click();
     await page.waitForSelector('.focused-lesson');
     await page.getByRole('button', { name: /MARK LESSON COMPLETE/ }).click();
