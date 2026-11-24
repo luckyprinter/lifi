@@ -792,8 +792,49 @@
     "status": "alternate/test",
     "kind": "python",
     "summary": "Seeded/demo data helpers for UI and development.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 145,
+    "symbols": [
+      {
+        "name": "build_mock_chunks",
+        "kind": "function",
+        "line": 18
+      },
+      {
+        "name": "build_mock_quality",
+        "kind": "function",
+        "line": 42
+      },
+      {
+        "name": "build_mock_transfer",
+        "kind": "function",
+        "line": 59
+      },
+      {
+        "name": "build_mock_signal",
+        "kind": "function",
+        "line": 76
+      },
+      {
+        "name": "build_mock_session",
+        "kind": "function",
+        "line": 94
+      },
+      {
+        "name": "build_transfer_history",
+        "kind": "function",
+        "line": 107
+      },
+      {
+        "name": "build_experiment_metadata",
+        "kind": "function",
+        "line": 111
+      },
+      {
+        "name": "build_activity_log",
+        "kind": "function",
+        "line": 121
+      }
+    ],
     "headings": []
   },
   {
@@ -804,8 +845,74 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 128,
+    "symbols": [
+      {
+        "name": "TransferStatus",
+        "kind": "class",
+        "line": 8
+      },
+      {
+        "name": "ChunkStatus",
+        "kind": "class",
+        "line": 16
+      },
+      {
+        "name": "ChunkRecord",
+        "kind": "class",
+        "line": 25
+      },
+      {
+        "name": "expected_size",
+        "kind": "function",
+        "line": 32
+      },
+      {
+        "name": "received_size",
+        "kind": "function",
+        "line": 36
+      },
+      {
+        "name": "missing_bytes",
+        "kind": "function",
+        "line": 40
+      },
+      {
+        "name": "different_bytes",
+        "kind": "function",
+        "line": 46
+      },
+      {
+        "name": "TransferQuality",
+        "kind": "class",
+        "line": 51
+      },
+      {
+        "name": "TransferRecord",
+        "kind": "class",
+        "line": 66
+      },
+      {
+        "name": "SignalState",
+        "kind": "class",
+        "line": 79
+      },
+      {
+        "name": "SessionState",
+        "kind": "class",
+        "line": 95
+      },
+      {
+        "name": "ExperimentMetadata",
+        "kind": "class",
+        "line": 105
+      },
+      {
+        "name": "SessionCapture",
+        "kind": "class",
+        "line": 114
+      }
+    ],
     "headings": []
   },
   {
@@ -816,8 +923,14 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 15,
+    "symbols": [
+      {
+        "name": "SIDEBAR_TABS",
+        "kind": "constant",
+        "line": 5
+      }
+    ],
     "headings": []
   },
   {
@@ -828,8 +941,24 @@
     "status": "active",
     "kind": "python",
     "summary": "Dashboard patch/compatibility helper; supporting rather than the primary application entry.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 164,
+    "symbols": [
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 20
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 33
+      },
+      {
+        "name": "_paint_canvas",
+        "kind": "function",
+        "line": 64
+      }
+    ],
     "headings": []
   },
   {
@@ -840,7 +969,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/rx.",
-    "lineCount": null,
+    "lineCount": 2,
     "symbols": [],
     "headings": []
   },
@@ -852,7 +981,7 @@
     "status": "active",
     "kind": "python",
     "summary": "Python application module under application-source/gui_dev_v3/rx/backends.",
-    "lineCount": null,
+    "lineCount": 1,
     "symbols": [],
     "headings": []
   },
@@ -876,8 +1005,239 @@
     "status": "active",
     "kind": "python",
     "summary": "Physical RX serial reader, firmware line dispatch, telemetry mapping, file saving, and Vref PWM control.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 1303,
+    "symbols": [
+      {
+        "name": "_resolve_beta_state_dir",
+        "kind": "function",
+        "line": 32
+      },
+      {
+        "name": "BETA_STATE_DIR",
+        "kind": "constant",
+        "line": 39
+      },
+      {
+        "name": "STATUS_FRESHNESS_SEC",
+        "kind": "constant",
+        "line": 40
+      },
+      {
+        "name": "BAUD_RATES",
+        "kind": "constant",
+        "line": 43
+      },
+      {
+        "name": "RX_BAUD",
+        "kind": "constant",
+        "line": 44
+      },
+      {
+        "name": "LQ_POLL_CMD",
+        "kind": "constant",
+        "line": 45
+      },
+      {
+        "name": "crc16_ccitt",
+        "kind": "function",
+        "line": 48
+      },
+      {
+        "name": "RXPhysicalSnapshot",
+        "kind": "class",
+        "line": 57
+      },
+      {
+        "name": "RXPhysicalBackend",
+        "kind": "class",
+        "line": 70
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 80
+      },
+      {
+        "name": "log",
+        "kind": "function",
+        "line": 115
+      },
+      {
+        "name": "scan_ports",
+        "kind": "function",
+        "line": 127
+      },
+      {
+        "name": "detect_firmware",
+        "kind": "function",
+        "line": 130
+      },
+      {
+        "name": "auto_connect",
+        "kind": "function",
+        "line": 141
+      },
+      {
+        "name": "connect",
+        "kind": "function",
+        "line": 160
+      },
+      {
+        "name": "disconnect",
+        "kind": "function",
+        "line": 183
+      },
+      {
+        "name": "is_connected",
+        "kind": "function",
+        "line": 190
+      },
+      {
+        "name": "port",
+        "kind": "function",
+        "line": 194
+      },
+      {
+        "name": "firmware_version",
+        "kind": "function",
+        "line": 198
+      },
+      {
+        "name": "board_type",
+        "kind": "function",
+        "line": 202
+      },
+      {
+        "name": "_open_serial",
+        "kind": "function",
+        "line": 205
+      },
+      {
+        "name": "_serial_reader_loop",
+        "kind": "function",
+        "line": 230
+      },
+      {
+        "name": "_dispatch_line",
+        "kind": "function",
+        "line": 252
+      },
+      {
+        "name": "_handle_transfer_notice",
+        "kind": "function",
+        "line": 299
+      },
+      {
+        "name": "_handle_ram_store",
+        "kind": "function",
+        "line": 337
+      },
+      {
+        "name": "_handle_file_hex",
+        "kind": "function",
+        "line": 356
+      },
+      {
+        "name": "_handle_file_crc_fail",
+        "kind": "function",
+        "line": 490
+      },
+      {
+        "name": "_close_serial",
+        "kind": "function",
+        "line": 535
+      },
+      {
+        "name": "send_command",
+        "kind": "function",
+        "line": 548
+      },
+      {
+        "name": "apply_link_settings",
+        "kind": "function",
+        "line": 559
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 596
+      },
+      {
+        "name": "_poll_lq",
+        "kind": "function",
+        "line": 602
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 636
+      },
+      {
+        "name": "_bg_connect",
+        "kind": "function",
+        "line": 664
+      },
+      {
+        "name": "_run_vref_pwm_autocal",
+        "kind": "function",
+        "line": 818
+      },
+      {
+        "name": "_build_from_lq",
+        "kind": "function",
+        "line": 909
+      },
+      {
+        "name": "_build_from_status",
+        "kind": "function",
+        "line": 1021
+      },
+      {
+        "name": "_build_stale",
+        "kind": "function",
+        "line": 1058
+      },
+      {
+        "name": "_empty_snapshot",
+        "kind": "function",
+        "line": 1081
+      },
+      {
+        "name": "_build_log",
+        "kind": "function",
+        "line": 1100
+      },
+      {
+        "name": "_is_fresh",
+        "kind": "function",
+        "line": 1126
+      },
+      {
+        "name": "_list_usb_serial_ports",
+        "kind": "function",
+        "line": 1135
+      },
+      {
+        "name": "_send_identify",
+        "kind": "function",
+        "line": 1176
+      },
+      {
+        "name": "_parse_lq_response",
+        "kind": "function",
+        "line": 1229
+      },
+      {
+        "name": "_ensure_serial",
+        "kind": "function",
+        "line": 1282
+      },
+      {
+        "name": "_empty_transfer",
+        "kind": "function",
+        "line": 1288
+      }
+    ],
     "headings": []
   },
   {
@@ -888,8 +1248,134 @@
     "status": "alternate/test",
     "kind": "python",
     "summary": "Alternate RX simulation backend; not the physical prototype receive path.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 785,
+    "symbols": [
+      {
+        "name": "_encode_4b5b",
+        "kind": "function",
+        "line": 51
+      },
+      {
+        "name": "RXSimulationSnapshot",
+        "kind": "class",
+        "line": 70
+      },
+      {
+        "name": "VirtualChannelParams",
+        "kind": "class",
+        "line": 79
+      },
+      {
+        "name": "RXSimulationBackend",
+        "kind": "class",
+        "line": 107
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 114
+      },
+      {
+        "name": "cleanup",
+        "kind": "function",
+        "line": 171
+      },
+      {
+        "name": "set_expected_file",
+        "kind": "function",
+        "line": 190
+      },
+      {
+        "name": "_log_append",
+        "kind": "function",
+        "line": 218
+      },
+      {
+        "name": "_on_ready_read",
+        "kind": "function",
+        "line": 224
+      },
+      {
+        "name": "_handle_udp_msg",
+        "kind": "function",
+        "line": 236
+      },
+      {
+        "name": "_save_received_file",
+        "kind": "function",
+        "line": 428
+      },
+      {
+        "name": "params",
+        "kind": "function",
+        "line": 452
+      },
+      {
+        "name": "set_params",
+        "kind": "function",
+        "line": 455
+      },
+      {
+        "name": "update_distance",
+        "kind": "function",
+        "line": 460
+      },
+      {
+        "name": "update_noise",
+        "kind": "function",
+        "line": 463
+      },
+      {
+        "name": "update_lux",
+        "kind": "function",
+        "line": 466
+      },
+      {
+        "name": "update_led_wattage",
+        "kind": "function",
+        "line": 469
+      },
+      {
+        "name": "update_packet_loss",
+        "kind": "function",
+        "line": 472
+      },
+      {
+        "name": "_compute_channel",
+        "kind": "function",
+        "line": 477
+      },
+      {
+        "name": "_build_transfer",
+        "kind": "function",
+        "line": 516
+      },
+      {
+        "name": "_build_signal",
+        "kind": "function",
+        "line": 607
+      },
+      {
+        "name": "_build_log",
+        "kind": "function",
+        "line": 660
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 674
+      },
+      {
+        "name": "_generate_sim_sample",
+        "kind": "function",
+        "line": 700
+      },
+      {
+        "name": "get_new_samples",
+        "kind": "function",
+        "line": 773
+      }
+    ],
     "headings": []
   },
   {
@@ -900,8 +1386,34 @@
     "status": "active",
     "kind": "python",
     "summary": "Reference-file BER comparison and mismatch reporting.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 181,
+    "symbols": [
+      {
+        "name": "BERAnalyzerPage",
+        "kind": "class",
+        "line": 22
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 25
+      },
+      {
+        "name": "add_stat_row",
+        "kind": "function",
+        "line": 61
+      },
+      {
+        "name": "_get_state",
+        "kind": "function",
+        "line": 89
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 97
+      }
+    ],
     "headings": []
   },
   {
@@ -924,8 +1436,189 @@
     "status": "active",
     "kind": "python",
     "summary": "RX Dashboard status cards, signal summaries, OOK-derived view, transfer progress, and logs.",
-    "lineCount": null,
-    "symbols": [],
+    "lineCount": 406,
+    "symbols": [
+      {
+        "name": "MetricRow",
+        "kind": "class",
+        "line": 44
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 47
+      },
+      {
+        "name": "setValue",
+        "kind": "function",
+        "line": 60
+      },
+      {
+        "name": "StatusRow",
+        "kind": "class",
+        "line": 65
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 68
+      },
+      {
+        "name": "setStatus",
+        "kind": "function",
+        "line": 80
+      },
+      {
+        "name": "_ReceptionStatusPanel",
+        "kind": "class",
+        "line": 86
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 89
+      },
+      {
+        "name": "_on_cancel",
+        "kind": "function",
+        "line": 115
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 120
+      },
+      {
+        "name": "_PerformanceMetricsPanel",
+        "kind": "class",
+        "line": 137
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 140
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 154
+      },
+      {
+        "name": "_SignalMonitorPanel",
+        "kind": "class",
+        "line": 163
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 166
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 181
+      },
+      {
+        "name": "_SignalWaveformPanel",
+        "kind": "class",
+        "line": 194
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 197
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 206
+      },
+      {
+        "name": "refresh_telemetry",
+        "kind": "function",
+        "line": 210
+      },
+      {
+        "name": "_BitDecodePanel",
+        "kind": "class",
+        "line": 237
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 240
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 251
+      },
+      {
+        "name": "_FileInfoPanel",
+        "kind": "class",
+        "line": 266
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 269
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 283
+      },
+      {
+        "name": "_ActivityLogPanel",
+        "kind": "class",
+        "line": 296
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 299
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 304
+      },
+      {
+        "name": "RXDashboardPage",
+        "kind": "class",
+        "line": 309
+      },
+      {
+        "name": "__init__",
+        "kind": "function",
+        "line": 312
+      },
+      {
+        "name": "showEvent",
+        "kind": "function",
+        "line": 371
+      },
+      {
+        "name": "hideEvent",
+        "kind": "function",
+        "line": 378
+      },
+      {
+        "name": "shutdown",
+        "kind": "function",
+        "line": 383
+      },
+      {
+        "name": "_sample_waveform",
+        "kind": "function",
+        "line": 391
+      },
+      {
+        "name": "refresh",
+        "kind": "function",
+        "line": 395
+      }
+    ],
     "headings": []
   },
   {
