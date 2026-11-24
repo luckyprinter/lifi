@@ -10,6 +10,8 @@ import './styles.css';
 
 const REPO = 'https://github.com/luckyprinter/OpenVLC-Public';
 const PIN = '411f183a8592d8285118f613bb4909c5bbd9d3cc';
+const CODE_4B5B = [0b11110,0b01001,0b10100,0b10101,0b01010,0b01011,0b01110,0b01111,0b10010,0b10011,0b10110,0b10111,0b11010,0b11011,0b11100,0b11101];
+const toBits = (value, width) => value.toString(2).padStart(width, '0');
 const SOURCE = (path) => `${REPO}/blob/${PIN}/${path}`;
 
 const lessons = [
@@ -174,10 +176,13 @@ function Architecture() {
 
 function Protocol() {
   const [mode,setMode]=useState('encoding');
-  return <section className="content-section dark-section" id="protocol"><div className="section-heading"><div><span className="eyebrow">03 · PROTOCOL NOTES</span><h2>Bits need a<br/>shared language.</h2></div><p>Explore the two layers that make the optical stream readable: line coding and frame structure.</p></div>
+  const [byteValue,setByteValue]=useState(0xA6);
+  const high=(byteValue>>4)&0x0F, low=byteValue&0x0F;
+  const highCode=toBits(CODE_4B5B[high],5), lowCode=toBits(CODE_4B5B[low],5);
+  return <section className="content-section dark-section" id="protocol"><div className="section-heading"><div><span className="eyebrow">03 · PROTOCOL NOTES</span><h2>Bits need a<br/>shared language.</h2></div><p>Explore the actual 4B5B lookup table and the fields carried by each protocol frame.</p></div>
     <div className="protocol-switch"><button className={mode==='encoding'?'selected':''} onClick={()=>setMode('encoding')}>4B5B encoding</button><button className={mode==='frame'?'selected':''} onClick={()=>setMode('frame')}>Frame structure</button></div>
-    {mode==='encoding'?<div className="encoding-demo"><div className="encoding-input"><span>INPUT BYTE</span><strong>1010 0110</strong><small>0xA6 · two nibbles</small></div><div className="encoding-arrow"><ArrowRight/></div><div className="encoding-output"><span>5-BIT CODEWORDS</span><div className="bit-row">{'10110'.split('').map((b,i)=><i key={i} className={b==='1'?'one':''}>{b}</i>)}</div><div className="bit-row">{'01110'.split('').map((b,i)=><i key={i} className={b==='1'?'one':''}>{b}</i>)}</div><small>high nibble A → 10110 · low nibble 6 → 01110</small></div><div className="encoding-foot">4 source bits become 5 encoded bits. One byte becomes two 5-bit codewords.</div></div>:<div className="frame-demo"><div className="frame-band sync">SYNC</div><div className="frame-band header">HEADER + METADATA</div><div className="frame-band payload">PAYLOAD</div><div className="frame-band crc">CRC</div><p>Conceptual frame view. Exact field order, widths, and CRC coverage are defined in the version-controlled protocol specification.</p></div>}
-    <div className="protocol-foot"><span>REFERENCE</span><a href={SOURCE('firmware/specs/protocol_spec.md')} target="_blank" rel="noreferrer">Open protocol specification <ArrowUpRight size={14}/></a></div>
+    {mode==='encoding'?<div className="encoding-demo"><div className="encoding-input"><span>INPUT BYTE · DECIMAL / HEX</span><strong>{toBits(byteValue,8).slice(0,4)} {toBits(byteValue,8).slice(4)}</strong><small>0x{byteValue.toString(16).toUpperCase().padStart(2,'0')} · {byteValue} decimal</small><input className="byte-slider" aria-label="Choose input byte" type="range" min="0" max="255" value={byteValue} onChange={e=>setByteValue(Number(e.target.value))}/><div className="byte-control"><label htmlFor="byte-value">BYTE VALUE</label><input id="byte-value" type="number" min="0" max="255" value={byteValue} onChange={e=>setByteValue(Math.max(0,Math.min(255,Number(e.target.value)||0)))}/></div></div><div className="encoding-arrow"><ArrowRight/></div><div className="encoding-output"><span>LOOKUP TABLE OUTPUT · 5 BITS EACH</span><div className="nibble-label">HIGH NIBBLE · 0x{high.toString(16).toUpperCase()}</div><div className="bit-row">{highCode.split('').map((b,i)=><i key={i} className={b==='1'?'one':''}>{b}</i>)}</div><div className="nibble-label">LOW NIBBLE · 0x{low.toString(16).toUpperCase()}</div><div className="bit-row">{lowCode.split('').map((b,i)=><i key={i} className={b==='1'?'one':''}>{b}</i>)}</div><small>{toBits(byteValue,8)} → {highCode} {lowCode}</small></div><div className="encoding-foot">The firmware maps each 4-bit nibble through its CODE_4B5B[16] lookup table. This adds one encoded bit per nibble; it is line coding, not encryption or error correction.</div></div>:<div className="frame-demo"><div className="frame-band sync">START<br/>OF FRAME</div><div className="frame-band header">VERSION · TRANSFER ID · TYPE · SIZES · CHUNK INDEX</div><div className="frame-band payload">FILENAME + PAYLOAD</div><div className="frame-band crc">CHUNK<br/>CRC</div><div className="frame-band crc">FRAME<br/>CRC</div><p>Conceptual field grouping from the protocol specification; consult the source for exact serialization and CRC coverage.</p></div>}
+    <div className="protocol-foot"><span>PINNED SOURCE · {PIN.slice(0,12)}</span><a href={SOURCE('firmware/specs/protocol_spec.md')} target="_blank" rel="noreferrer">Open protocol specification <ArrowUpRight size={14}/></a></div>
   </section>;
 }
 
@@ -190,8 +195,10 @@ function Hardware() {
     ['BPW34','Photodetector','Converts received light into photocurrent.'],
     ['OPA2604','Transimpedance amplifier','Converts photodiode current into a voltage signal.'],
     ['LM393','Comparator','Produces the digital signal supplied to the RX ESP32.'],
-    ['RX GPIO5 / 34 / 35','Signal monitoring','Comparator data, scaled PVo, and scaled Vref monitoring.'],
-    ['RX GPIO25','PWM threshold','Adjusts the comparator reference through the Vref circuit.']
+    ['RX GPIO5','Comparator input','Receives the digital output from the LM393 comparator.'],
+    ['RX GPIO25','Vref PWM output','Drives the PWM control used for adaptive comparator-threshold adjustment.'],
+    ['RX GPIO34','Scaled PVo ADC','Reads the divided analog signal level at the receiver.'],
+    ['RX GPIO35','Scaled Vref ADC','Reads the divided comparator-reference voltage for monitoring.']
   ];
   return <section className="content-section" id="hardware"><div className="section-heading"><div><span className="eyebrow">04 · HARDWARE MAP</span><h2>From photons<br/>to logic levels.</h2></div><p>Choose a component to trace its job in the transmitter or receiver signal chain.</p></div><div className="hardware-layout"><div className="hardware-list">{parts.map(([a,b],i)=><button key={a} onClick={()=>setSelected(i)} className={selected===i?'selected':''}><span>{String(i+1).padStart(2,'0')}</span><b>{a}</b><small>{b}</small><ArrowRight size={15}/></button>)}</div><div className="hardware-detail"><div className="detail-index">COMPONENT / {String(selected+1).padStart(2,'0')}</div><div className="component-symbol">{selected<3?<Lightbulb size={42}/>:<CircuitBoard size={42}/>}</div><h3>{parts[selected][0]}</h3><span>{parts[selected][1]}</span><p>{parts[selected][2]}</p><div className="detail-rule"/><small>PINOUTS AND ELECTRICAL LIMITS SHOULD BE VERIFIED AGAINST THE CIRCUIT AND DATASHEETS.</small></div></div></section>;
 }
