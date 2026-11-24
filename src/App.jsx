@@ -44,7 +44,8 @@ function Packet({ step }) {
 function SignalDiagram({ active, onSelect }) {
   const [zoom,setZoom] = useState(1);
   const names = ['TX GUI','USB','4B5B','FRAME','LED','BPW34','RX MCU','FILE'];
-  const activeX = 86 + active * 124;
+  const stageX = [98,221,355,482,619,743,881,988];
+  const activeX = stageX[active];
   return <div className="diagram-frame">
     <div className="diagram-topline"><span><i/> LIVE SYSTEM MODEL</span><div className="diagram-toolbar"><span>INTERACTIVE · 08 STAGES</span><button onClick={()=>setZoom(v=>Math.max(.85,v-.15))} aria-label="Zoom out">−</button><button onClick={()=>setZoom(v=>Math.min(1.6,v+.15))} aria-label="Zoom in">+</button><button onClick={()=>setZoom(1)} aria-label="Fit diagram">FIT</button></div></div>
     <svg className="signal-svg" viewBox="0 0 1020 330" role="img" aria-label="Isometric diagram of the visible light communication signal path">
@@ -56,9 +57,11 @@ function SignalDiagram({ active, onSelect }) {
       <rect width="1020" height="330" fill="url(#grid)" opacity=".8"/>
       <g transform={`translate(${510*(1-zoom)} ${165*(1-zoom)}) scale(${zoom})`}>
       <path d="M52 225 L965 225" stroke="#b8aa9a" strokeWidth="1.2" strokeDasharray="4 7"/>
-      <path d="M540 164 L690 164" stroke="url(#beam)" strokeWidth="28" filter="url(#soft)"/>
-      <path d="M540 164 L690 164" stroke="#d9a34b" strokeWidth="2" strokeDasharray="7 6" opacity=".85"/>
-      {Array.from({length:5},(_,i)=><motion.circle key={i} r="3.5" fill="#e6a94f" animate={{cx:[548,680],opacity:[0,1,0]}} transition={{duration:1.5,delay:i*.28,repeat:Infinity,ease:'linear'}} cy={164}/>)}
+      <path d="M98 176 L221 176 L355 176 L482 176" fill="none" stroke="#9da6a4" strokeWidth="2" strokeDasharray="3 6" opacity=".8"/>
+      <path d="M619 164 L743 164" stroke="url(#beam)" strokeWidth="28" filter="url(#soft)"/>
+      <path d="M619 164 L743 164" stroke="#d9a34b" strokeWidth="2" strokeDasharray="7 6" opacity=".9"/>
+      <path d="M743 164 L881 176 L988 176" fill="none" stroke="#9da6a4" strokeWidth="2" strokeDasharray="3 6" opacity=".8"/>
+      {Array.from({length:5},(_,i)=><motion.circle key={i} r="3.5" fill="#e6a94f" animate={{cx:[625,737],opacity:[0,1,0]}} transition={{duration:1.5,delay:i*.28,repeat:Infinity,ease:'linear'}} cy={164}/>)}
       <g className={active===0?"diagram-node active":"diagram-node"} transform="translate(42 80)" role="button" tabIndex={0} aria-label={`Select ${names[0]} stage`} onClick={()=>onSelect(0)} onKeyDown={e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();onSelect(0)}}}>
         <path d="M0 75 L40 52 L112 52 L72 75 Z" fill="#e5d7c6" stroke="#2c2a27"/>
         <path d="M0 75 L72 75 L72 142 L0 142 Z" fill="#d5c5b3" stroke="#2c2a27"/>
