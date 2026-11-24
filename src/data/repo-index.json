@@ -6132,202 +6132,282 @@
       {
         "name": "_SectionHeader",
         "kind": "class",
-        "line": 42
+        "line": 42,
+        "endLine": 47,
+        "signature": "class _SectionHeader(QLabel):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 43
+        "line": 43,
+        "endLine": 47,
+        "signature": "def __init__(self, text: str) -> None:"
       },
       {
         "name": "_DetailRow",
         "kind": "class",
-        "line": 48
+        "line": 48,
+        "endLine": 81,
+        "signature": "class _DetailRow(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 49
+        "line": 49,
+        "endLine": 67,
+        "signature": "def __init__(self, label: str, value: str, val_color: str | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "setLabel",
         "kind": "function",
-        "line": 68
+        "line": 68,
+        "endLine": 70,
+        "signature": "def setLabel(self, text: str) -> None:"
       },
       {
         "name": "setValue",
         "kind": "function",
-        "line": 71
+        "line": 71,
+        "endLine": 83,
+        "signature": "def setValue(self, text: str, color: str | None = None) -> None:"
       },
       {
         "name": "_StatusColumn",
         "kind": "class",
-        "line": 84
+        "line": 84,
+        "endLine": 111,
+        "signature": "class _StatusColumn(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 85
+        "line": 85,
+        "endLine": 103,
+        "signature": "def __init__(self, title: str, value: str, val_color: str | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "setValue",
         "kind": "function",
-        "line": 104
+        "line": 104,
+        "endLine": 111,
+        "signature": "def setValue(self, text: str, color: str | None = None) -> None:"
       },
       {
         "name": "DeviceStatusWidget",
         "kind": "class",
-        "line": 112
+        "line": 112,
+        "endLine": 166,
+        "signature": "class DeviceStatusWidget(QFrame):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 113
+        "line": 113,
+        "endLine": 138,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 139
+        "line": 139,
+        "endLine": 168,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "_PipelineStage",
         "kind": "class",
-        "line": 169
+        "line": 169,
+        "endLine": 211,
+        "signature": "class _PipelineStage(QFrame):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 170
+        "line": 170,
+        "endLine": 195,
+        "signature": "def __init__(self, name: str, desc: str, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "setActive",
         "kind": "function",
-        "line": 196
+        "line": 196,
+        "endLine": 211,
+        "signature": "def setActive(self, active: bool, text: str) -> None:"
       },
       {
         "name": "TransmissionPipelineWidget",
         "kind": "class",
-        "line": 212
+        "line": 212,
+        "endLine": 266,
+        "signature": "class TransmissionPipelineWidget(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 213
+        "line": 213,
+        "endLine": 240,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_arrow",
         "kind": "function",
-        "line": 241
+        "line": 241,
+        "endLine": 246,
+        "signature": "def _arrow(self) -> QLabel:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 247
+        "line": 247,
+        "endLine": 268,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "CurrentSessionWidget",
         "kind": "class",
-        "line": 269
+        "line": 269,
+        "endLine": 329,
+        "signature": "class CurrentSessionWidget(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 270
+        "line": 270,
+        "endLine": 283,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 284
+        "line": 284,
+        "endLine": 331,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "FileDetailsWidget",
         "kind": "class",
-        "line": 332
+        "line": 332,
+        "endLine": 417,
+        "signature": "class FileDetailsWidget(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 333
+        "line": 333,
+        "endLine": 379,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 380
+        "line": 380,
+        "endLine": 419,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "DigitalBitstreamWidget",
         "kind": "class",
-        "line": 420
+        "line": 420,
+        "endLine": 562,
+        "signature": "class DigitalBitstreamWidget(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 423
+        "line": 423,
+        "endLine": 435,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 436
+        "line": 436,
+        "endLine": 466,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "_paint_canvas",
         "kind": "function",
-        "line": 467
+        "line": 467,
+        "endLine": 564,
+        "signature": "def _paint_canvas(self, event: Any) -> None:"
       },
       {
         "name": "_LogEntryWidget",
         "kind": "class",
-        "line": 565
+        "line": 565,
+        "endLine": 611,
+        "signature": "class _LogEntryWidget(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 568
+        "line": 568,
+        "endLine": 611,
+        "signature": "def __init__(self, entry: dict[str, str], index: int, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_TXLogPanel",
         "kind": "class",
-        "line": 612
+        "line": 612,
+        "endLine": 669,
+        "signature": "class _TXLogPanel(Card):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 615
+        "line": 615,
+        "endLine": 643,
+        "signature": "def __init__(self, state: TXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 644
+        "line": 644,
+        "endLine": 671,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "TXDashboardPage",
         "kind": "class",
-        "line": 672
+        "line": 672,
+        "endLine": 783,
+        "signature": "class TXDashboardPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 675
+        "line": 675,
+        "endLine": 718,
+        "signature": "def __init__(self, state: TXAppState, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_on_select_file_clicked",
         "kind": "function",
-        "line": 719
+        "line": 719,
+        "endLine": 753,
+        "signature": "def _on_select_file_clicked(self) -> None:"
       },
       {
         "name": "_on_start_clicked",
         "kind": "function",
-        "line": 754
+        "line": 754,
+        "endLine": 767,
+        "signature": "def _on_start_clicked(self) -> None:"
       },
       {
         "name": "_on_cancel_clicked",
         "kind": "function",
-        "line": 768
+        "line": 768,
+        "endLine": 772,
+        "signature": "def _on_cancel_clicked(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 773
+        "line": 773,
+        "endLine": 783,
+        "signature": "def refresh(self, state: TXAppState | None = None) -> None:"
       }
     ],
     "headings": []
@@ -6345,112 +6425,156 @@
       {
         "name": "_detail_row",
         "kind": "function",
-        "line": 17
+        "line": 17,
+        "endLine": 32,
+        "signature": "def _detail_row(label_text: str, default_val: str) -> tuple[QWidget, QLabel]:"
       },
       {
         "name": "SYMBOL_RATE",
         "kind": "constant",
-        "line": 33
+        "line": 33,
+        "endLine": 33,
+        "signature": "SYMBOL_RATE = 15000.0  # sym/s"
       },
       {
         "name": "PROTOCOL_OVERHEAD",
         "kind": "constant",
-        "line": 34
+        "line": 34,
+        "endLine": 34,
+        "signature": "PROTOCOL_OVERHEAD = 1.25  # 4B5B overhead"
       },
       {
         "name": "PACKET_SIZE",
         "kind": "constant",
-        "line": 35
+        "line": 35,
+        "endLine": 35,
+        "signature": "PACKET_SIZE = 256  # bytes per packet"
       },
       {
         "name": "PACKET_OVERHEAD",
         "kind": "constant",
-        "line": 36
+        "line": 36,
+        "endLine": 37,
+        "signature": "PACKET_OVERHEAD = 16  # bytes (preamble + sync + CRC + seq)"
       },
       {
         "name": "DragDropTable",
         "kind": "class",
-        "line": 38
+        "line": 38,
+        "endLine": 65,
+        "signature": "class DragDropTable(QTableWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 41
+        "line": 41,
+        "endLine": 44,
+        "signature": "def __init__(self, *args, **kwargs):"
       },
       {
         "name": "dragEnterEvent",
         "kind": "function",
-        "line": 45
+        "line": 45,
+        "endLine": 50,
+        "signature": "def dragEnterEvent(self, event):"
       },
       {
         "name": "dragMoveEvent",
         "kind": "function",
-        "line": 51
+        "line": 51,
+        "endLine": 56,
+        "signature": "def dragMoveEvent(self, event):"
       },
       {
         "name": "dropEvent",
         "kind": "function",
-        "line": 57
+        "line": 57,
+        "endLine": 65,
+        "signature": "def dropEvent(self, event):"
       },
       {
         "name": "FileManagerPage",
         "kind": "class",
-        "line": 66
+        "line": 66,
+        "endLine": 295,
+        "signature": "class FileManagerPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 67
+        "line": 67,
+        "endLine": 145,
+        "signature": "def __init__(self, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_format_size",
         "kind": "function",
-        "line": 146
+        "line": 146,
+        "endLine": 153,
+        "signature": "def _format_size(self, size_bytes: int) -> str:"
       },
       {
         "name": "_estimate_time",
         "kind": "function",
-        "line": 154
+        "line": 154,
+        "endLine": 172,
+        "signature": "def _estimate_time(self, size_bytes: int) -> str:"
       },
       {
         "name": "_compute_crc16",
         "kind": "function",
-        "line": 173
+        "line": 173,
+        "endLine": 182,
+        "signature": "def _compute_crc16(self, filepath: str) -> str:"
       },
       {
         "name": "_on_browse_clicked",
         "kind": "function",
-        "line": 183
+        "line": 183,
+        "endLine": 187,
+        "signature": "def _on_browse_clicked(self) -> None:"
       },
       {
         "name": "_on_files_added",
         "kind": "function",
-        "line": 188
+        "line": 188,
+        "endLine": 208,
+        "signature": "def _on_files_added(self, filepaths: list[str]) -> None:"
       },
       {
         "name": "_refresh_table",
         "kind": "function",
-        "line": 209
+        "line": 209,
+        "endLine": 224,
+        "signature": "def _refresh_table(self) -> None:"
       },
       {
         "name": "_on_selection_changed",
         "kind": "function",
-        "line": 225
+        "line": 225,
+        "endLine": 241,
+        "signature": "def _on_selection_changed(self) -> None:"
       },
       {
         "name": "_update_details_pane",
         "kind": "function",
-        "line": 242
+        "line": 242,
+        "endLine": 253,
+        "signature": "def _update_details_pane(self, fd: dict | None) -> None:"
       },
       {
         "name": "_on_compress_clicked",
         "kind": "function",
-        "line": 254
+        "line": 254,
+        "endLine": 273,
+        "signature": "def _on_compress_clicked(self) -> None:"
       },
       {
         "name": "_on_add_to_queue",
         "kind": "function",
-        "line": 274
+        "line": 274,
+        "endLine": 295,
+        "signature": "def _on_add_to_queue(self) -> None:"
       }
     ],
     "headings": []
@@ -6468,7 +6592,9 @@
       {
         "name": "TX_SIDEBAR_TABS",
         "kind": "constant",
-        "line": 2
+        "line": 2,
+        "endLine": 7,
+        "signature": "TX_SIDEBAR_TABS = ["
       }
     ],
     "headings": []
@@ -6486,72 +6612,100 @@
       {
         "name": "TransmitPage",
         "kind": "class",
-        "line": 34
+        "line": 34,
+        "endLine": 261,
+        "signature": "class TransmitPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 35
+        "line": 35,
+        "endLine": 117,
+        "signature": "def __init__(self, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_on_start_batch",
         "kind": "function",
-        "line": 118
+        "line": 118,
+        "endLine": 154,
+        "signature": "def _on_start_batch(self) -> None:"
       },
       {
         "name": "_on_clear_queue",
         "kind": "function",
-        "line": 155
+        "line": 155,
+        "endLine": 164,
+        "signature": "def _on_clear_queue(self) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 165
+        "line": 165,
+        "endLine": 261,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "LogsPage",
         "kind": "class",
-        "line": 262
+        "line": 262,
+        "endLine": 434,
+        "signature": "class LogsPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 263
+        "line": 263,
+        "endLine": 341,
+        "signature": "def __init__(self, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 342
+        "line": 342,
+        "endLine": 399,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "_on_filter_changed",
         "kind": "function",
-        "line": 400
+        "line": 400,
+        "endLine": 410,
+        "signature": "def _on_filter_changed(self, text: str) -> None:"
       },
       {
         "name": "_on_export_clicked",
         "kind": "function",
-        "line": 411
+        "line": 411,
+        "endLine": 434,
+        "signature": "def _on_export_clicked(self) -> None:"
       },
       {
         "name": "AboutPage",
         "kind": "class",
-        "line": 435
+        "line": 435,
+        "endLine": 488,
+        "signature": "class AboutPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 436
+        "line": 436,
+        "endLine": 490,
+        "signature": "def __init__(self, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_detail_row",
         "kind": "function",
-        "line": 491
+        "line": 491,
+        "endLine": 506,
+        "signature": "def _detail_row(label: str, value: str) -> QWidget:"
       },
       {
         "name": "_set_row_value",
         "kind": "function",
-        "line": 507
+        "line": 507,
+        "endLine": 513,
+        "signature": "def _set_row_value(row_widget: QWidget, new_value: str) -> None:"
       }
     ],
     "headings": []
@@ -6569,127 +6723,178 @@
       {
         "name": "GeneralDisplayPage",
         "kind": "class",
-        "line": 35
+        "line": 35,
+        "endLine": 142,
+        "signature": "class GeneralDisplayPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 36
+        "line": 36,
+        "endLine": 89,
+        "signature": "def __init__(self, mgr: SettingsManager, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_get_window",
         "kind": "function",
-        "line": 90
+        "line": 90,
+        "endLine": 99,
+        "signature": "def _get_window(self):"
       },
       {
         "name": "_on_reset_clicked",
         "kind": "function",
-        "line": 100
+        "line": 100,
+        "endLine": 104,
+        "signature": "def _on_reset_clicked(self) -> None:"
       },
       {
         "name": "_on_switch_mode_clicked",
         "kind": "function",
-        "line": 105
+        "line": 105,
+        "endLine": 109,
+        "signature": "def _on_switch_mode_clicked(self) -> None:"
       },
       {
         "name": "showEvent",
         "kind": "function",
-        "line": 110
+        "line": 110,
+        "endLine": 144,
+        "signature": "def showEvent(self, event) -> None:"
       },
       {
         "name": "_on_fullscreen_toggled",
         "kind": "function",
-        "line": 125
+        "line": 125,
+        "endLine": 126,
+        "signature": "def _on_fullscreen_toggled(checked: bool) -> None:"
       },
       {
         "name": "_on_fullscreen_changed",
         "kind": "function",
-        "line": 129
+        "line": 129,
+        "endLine": 132,
+        "signature": "def _on_fullscreen_changed(is_fs: bool) -> None:"
       },
       {
         "name": "_on_borderless_toggled",
         "kind": "function",
-        "line": 135
+        "line": 135,
+        "endLine": 139,
+        "signature": "def _on_borderless_toggled(checked: bool) -> None:"
       },
       {
         "name": "HardwareConnectionPage",
         "kind": "class",
-        "line": 145
+        "line": 145,
+        "endLine": 272,
+        "signature": "class HardwareConnectionPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 146
+        "line": 146,
+        "endLine": 244,
+        "signature": "def __init__(self, mgr: SettingsManager, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_refresh_ports",
         "kind": "function",
-        "line": 166
+        "line": 166,
+        "endLine": 182,
+        "signature": "def _refresh_ports():"
       },
       {
         "name": "_on_force_connect",
         "kind": "function",
-        "line": 203
+        "line": 203,
+        "endLine": 213,
+        "signature": "def _on_force_connect():"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 245
+        "line": 245,
+        "endLine": 254,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "_show_toast",
         "kind": "function",
-        "line": 255
+        "line": 255,
+        "endLine": 274,
+        "signature": "def _show_toast(self, msg: str) -> None:"
       },
       {
         "name": "TXSettingsPage",
         "kind": "class",
-        "line": 275
+        "line": 275,
+        "endLine": 443,
+        "signature": "class TXSettingsPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 276
+        "line": 276,
+        "endLine": 367,
+        "signature": "def __init__(self, mgr: SettingsManager, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_on_apply_settings",
         "kind": "function",
-        "line": 368
+        "line": 368,
+        "endLine": 408,
+        "signature": "def _on_apply_settings(self) -> None:"
       },
       {
         "name": "_update_visibility",
         "kind": "function",
-        "line": 409
+        "line": 409,
+        "endLine": 411,
+        "signature": "def _update_visibility(self, mode: str) -> None:"
       },
       {
         "name": "_update_link_param",
         "kind": "function",
-        "line": 412
+        "line": 412,
+        "endLine": 436,
+        "signature": "def _update_link_param(self, command_key: str, value: Any) -> None:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 437
+        "line": 437,
+        "endLine": 445,
+        "signature": "def refresh(self, state: TXAppState) -> None:"
       },
       {
         "name": "DiagnosticsLogsPage",
         "kind": "class",
-        "line": 446
+        "line": 446,
+        "endLine": 519,
+        "signature": "class DiagnosticsLogsPage(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 447
+        "line": 447,
+        "endLine": 452,
+        "signature": "def __init__(self, mgr: SettingsManager, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_show_toast",
         "kind": "function",
-        "line": 453
+        "line": 453,
+        "endLine": 521,
+        "signature": "def _show_toast(self, msg: str) -> None:"
       },
       {
         "name": "build_tx_settings",
         "kind": "function",
-        "line": 522
+        "line": 522,
+        "doc": "Build the full TX settings with 4 sections and persistence.",
+        "endLine": 536,
+        "signature": "def build_tx_settings(state: TXAppState | None = None) -> SettingsContainer:"
       }
     ],
     "headings": []
@@ -6707,87 +6912,128 @@
       {
         "name": "PulsingDot",
         "kind": "class",
-        "line": 25
+        "line": 25,
+        "endLine": 80,
+        "signature": "class PulsingDot(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 34
+        "line": 34,
+        "endLine": 46,
+        "signature": "def __init__(self, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "set_state",
         "kind": "function",
-        "line": 47
+        "line": 47,
+        "endLine": 51,
+        "signature": "def set_state(self, state: str) -> None:"
       },
       {
         "name": "_tick",
         "kind": "function",
-        "line": 52
+        "line": 52,
+        "endLine": 59,
+        "signature": "def _tick(self) -> None:"
       },
       {
         "name": "paintEvent",
         "kind": "function",
-        "line": 60
+        "line": 60,
+        "endLine": 76,
+        "signature": "def paintEvent(self, event) -> None:  # type: ignore[override]"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 77
+        "line": 77,
+        "endLine": 80,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "TXShell",
         "kind": "class",
-        "line": 81
+        "line": 81,
+        "endLine": 398,
+        "signature": "class TXShell(QWidget):"
       },
       {
         "name": "__init__",
         "kind": "function",
-        "line": 84
+        "line": 84,
+        "endLine": 194,
+        "signature": "def __init__(self, state: TXAppState | None = None, parent: QWidget | None = None) -> None:"
       },
       {
         "name": "_build_footer",
         "kind": "function",
-        "line": 195
+        "line": 195,
+        "doc": "Build bottom footer status bar.",
+        "endLine": 242,
+        "signature": "def _build_footer(self) -> QWidget:"
       },
       {
         "name": "_update_footer_time",
         "kind": "function",
-        "line": 243
+        "line": 243,
+        "doc": "Update the footer clock display.",
+        "endLine": 247,
+        "signature": "def _update_footer_time(self) -> None:"
       },
       {
         "name": "_update_status_indicators",
         "kind": "function",
-        "line": 248
+        "line": 248,
+        "doc": "Update connection and mode indicators from current state.",
+        "endLine": 309,
+        "signature": "def _update_status_indicators(self) -> None:"
       },
       {
         "name": "_on_mode_changed",
         "kind": "function",
-        "line": 310
+        "line": 310,
+        "doc": "Handle mode toggle from the sidebar.",
+        "endLine": 316,
+        "signature": "def _on_mode_changed(self, mode: str) -> None:"
       },
       {
         "name": "_refresh_current_page",
         "kind": "function",
-        "line": 317
+        "line": 317,
+        "doc": "Call refresh() on the current page if it supports it.",
+        "endLine": 330,
+        "signature": "def _refresh_current_page(self) -> None:"
       },
       {
         "name": "_on_poll_timer",
         "kind": "function",
-        "line": 331
+        "line": 331,
+        "doc": "Poll state and refresh the active page.",
+        "endLine": 336,
+        "signature": "def _on_poll_timer(self) -> None:"
       },
       {
         "name": "_build_pages",
         "kind": "function",
-        "line": 337
+        "line": 337,
+        "endLine": 370,
+        "signature": "def _build_pages(self) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 371
+        "line": 371,
+        "doc": "Stop poll timer and cleanup app state / backends.",
+        "endLine": 381,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "_on_nav_changed",
         "kind": "function",
-        "line": 382
+        "line": 382,
+        "endLine": 398,
+        "signature": "def _on_nav_changed(self, index: int) -> None:"
       }
     ],
     "headings": []
@@ -6805,107 +7051,159 @@
       {
         "name": "POLL_INTERVAL_MS",
         "kind": "constant",
-        "line": 20
+        "line": 20,
+        "endLine": 21,
+        "signature": "POLL_INTERVAL_MS = 1000"
       },
       {
         "name": "TXAppState",
         "kind": "class",
-        "line": 26
+        "line": 26,
+        "endLine": 314,
+        "signature": "class TXAppState:"
       },
       {
         "name": "__post_init__",
         "kind": "function",
-        "line": 63
+        "line": 63,
+        "endLine": 66,
+        "signature": "def __post_init__(self) -> None:"
       },
       {
         "name": "subscribe",
         "kind": "function",
-        "line": 67
+        "line": 67,
+        "endLine": 71,
+        "signature": "def subscribe(self, callback: TXStateSubscriber) -> None:"
       },
       {
         "name": "unsubscribe",
         "kind": "function",
-        "line": 72
+        "line": 72,
+        "endLine": 76,
+        "signature": "def unsubscribe(self, callback: TXStateSubscriber) -> None:"
       },
       {
         "name": "notify",
         "kind": "function",
-        "line": 77
+        "line": 77,
+        "endLine": 82,
+        "signature": "def notify(self) -> None:"
       },
       {
         "name": "set_mode",
         "kind": "function",
-        "line": 83
+        "line": 83,
+        "doc": "Switch between physical and simulated mode, then refresh.",
+        "endLine": 94,
+        "signature": "def set_mode(self, mode: AppMode) -> None:"
       },
       {
         "name": "_refresh",
         "kind": "function",
-        "line": 95
+        "line": 95,
+        "doc": "Refresh state by delegating to the active backend.",
+        "endLine": 127,
+        "signature": "def _refresh(self) -> None:"
       },
       {
         "name": "_apply_phy_snapshot",
         "kind": "function",
-        "line": 128
+        "line": 128,
+        "endLine": 165,
+        "signature": "def _apply_phy_snapshot(self, s: TXPhysicalSnapshot) -> None:"
       },
       {
         "name": "_apply_sim_snapshot",
         "kind": "function",
-        "line": 166
+        "line": 166,
+        "endLine": 190,
+        "signature": "def _apply_sim_snapshot(self, s: TXSimulationSnapshot) -> None:"
       },
       {
         "name": "_load_empty",
         "kind": "function",
-        "line": 191
+        "line": 191,
+        "endLine": 213,
+        "signature": "def _load_empty(self) -> None:"
       },
       {
         "name": "update_simulation_params",
         "kind": "function",
-        "line": 214
+        "line": 214,
+        "doc": "Safely update simulation backend parameters and notify subscribers.",
+        "endLine": 224,
+        "signature": "def update_simulation_params(self, **kwargs: Any) -> None:"
       },
       {
         "name": "start_transmission",
         "kind": "function",
-        "line": 225
+        "line": 225,
+        "doc": "Start transmitting a file in simulated or physical mode.",
+        "endLine": 239,
+        "signature": "def start_transmission(self, filepath: str) -> None:"
       },
       {
         "name": "send_firmware_command",
         "kind": "function",
-        "line": 240
+        "line": 240,
+        "doc": "Send a raw command to physical firmware if active.",
+        "endLine": 248,
+        "signature": "def send_firmware_command(self, cmd: str) -> bool:"
       },
       {
         "name": "is_dma_capable",
         "kind": "function",
-        "line": 249
+        "line": 249,
+        "doc": "Return True when connected firmware reports DMA capability.",
+        "endLine": 256,
+        "signature": "def is_dma_capable(self) -> bool:"
       },
       {
         "name": "apply_link_settings_from_ui",
         "kind": "function",
-        "line": 257
+        "line": 257,
+        "doc": "Apply TX link settings, gating DMA-only commands to capable firmware.",
+        "endLine": 269,
+        "signature": "def apply_link_settings_from_ui(self, freq: int, preamble: int, gap: int, fgap: int, active_low: bool, idle_on: bool, intensity: int, quiet: bool, dma_mode: bool) -> None:"
       },
       {
         "name": "force_connect_serial",
         "kind": "function",
-        "line": 270
+        "line": 270,
+        "doc": "Force connect physical backend to a port, bypassing detection.",
+        "endLine": 283,
+        "signature": "def force_connect_serial(self, port: str) -> bool:"
       },
       {
         "name": "refresh",
         "kind": "function",
-        "line": 284
+        "line": 284,
+        "endLine": 293,
+        "signature": "def refresh(self) -> None:"
       },
       {
         "name": "rebuild_backends",
         "kind": "function",
-        "line": 294
+        "line": 294,
+        "doc": "Recreate backend instances.",
+        "endLine": 297,
+        "signature": "def rebuild_backends(self) -> None:"
       },
       {
         "name": "cleanup",
         "kind": "function",
-        "line": 298
+        "line": 298,
+        "doc": "Clean up and stop active backends.",
+        "endLine": 314,
+        "signature": "def cleanup(self) -> None:"
       },
       {
         "name": "build_default_tx_state",
         "kind": "function",
-        "line": 315
+        "line": 315,
+        "endLine": 317,
+        "signature": "def build_default_tx_state() -> TXAppState:"
       }
     ],
     "headings": []
@@ -6935,32 +7233,44 @@
       {
         "name": "TXSettings",
         "kind": "class",
-        "line": 8
+        "line": 8,
+        "endLine": 17,
+        "signature": "class TXSettings:"
       },
       {
         "name": "TXFileInfo",
         "kind": "class",
-        "line": 19
+        "line": 19,
+        "endLine": 27,
+        "signature": "class TXFileInfo:"
       },
       {
         "name": "TXProgress",
         "kind": "class",
-        "line": 29
+        "line": 29,
+        "endLine": 38,
+        "signature": "class TXProgress:"
       },
       {
         "name": "TXState",
         "kind": "class",
-        "line": 40
+        "line": 40,
+        "endLine": 50,
+        "signature": "class TXState:"
       },
       {
         "name": "build_mock_tx_log",
         "kind": "function",
-        "line": 51
+        "line": 51,
+        "endLine": 59,
+        "signature": "def build_mock_tx_log() -> list[dict[str, str]]:"
       },
       {
         "name": "build_mock_tx_state",
         "kind": "function",
-        "line": 60
+        "line": 60,
+        "endLine": 70,
+        "signature": "def build_mock_tx_state() -> TXState:"
       }
     ],
     "headings": []
