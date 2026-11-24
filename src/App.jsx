@@ -66,7 +66,7 @@ const codeExamples = {
   send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);
   send4b5bCode(CODE_4B5B[value & 0x0F]);
 }` },
-  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 200, language: 'cpp', code: String.raw`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
+  frame: { title: 'The TX firmware builds a CRC-protected frame', path: 'firmware/tx/tx.ino', ref: PIN, start: 182, end: 201, language: 'cpp', code: String.raw`size_t buildFrame(uint8_t frameType, uint16_t chunkIndex, const uint8_t *payload, uint16_t payloadLen) {
   uint16_t chunkCrc = crc16_ccitt(payload, payloadLen);
   size_t pos = 0;
   frameBuf[pos++] = SOF_BYTE;
@@ -83,7 +83,7 @@ const codeExamples = {
   for (size_t i = 0; i < streamNameLen; i++) frameBuf[pos++] = streamNameBuf[i];
   for (size_t i = 0; i < payloadLen; i++) frameBuf[pos++] = payload[i];
   uint16_t frameCrc = crc16_ccitt(frameBuf, pos);` },
-  light: { title: 'The transmitter loops through chunks and sends optical frames', path: 'firmware/tx/tx.ino', ref: PIN, start: 259, end: 278, language: 'cpp', related: [{title:'Bit-level GPIO output and symbol timing',path:'firmware/tx/tx.ino',ref:PIN,start:147,end:179}], code: String.raw`void handleStreamStart() {
+  light: { title: 'The transmitter loops through chunks and sends optical frames', path: 'firmware/tx/tx.ino', ref: PIN, start: 259, end: 279, language: 'cpp', related: [{title:'Bit-level GPIO output and symbol timing',path:'firmware/tx/tx.ino',ref:PIN,start:147,end:179}], code: String.raw`void handleStreamStart() {
   if (streamTotalSize == 0) { Serial.println("TX_STREAM_ERROR:no_begin"); return; }
   if (streamLoadedBytes < streamTotalSize) { Serial.print("TX_STREAM_ERROR:not_loaded:"); Serial.print(streamLoadedBytes); Serial.print(":"); Serial.println(streamTotalSize); return; }
   uint16_t calc = crc16_ccitt(streamFileBuf, streamTotalSize);
@@ -104,7 +104,7 @@ const codeExamples = {
   }
   Serial.print("TX_STREAM_DONE:"); Serial.print(streamTid); Serial.print(":"); Serial.println(streamTotalChunks);
 }` },
-  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 770, language: 'cpp', related: [{title:'Idle detection and sync-word acquisition',path:'firmware/rx/rx.ino',ref:PIN,start:773,end:804}], code: String.raw`bool sampleRawAt(uint32_t sampleTimeUs) {
+  detect: { title: 'The RX samples around the symbol centre', path: 'firmware/rx/rx.ino', ref: PIN, start: 761, end: 771, language: 'cpp', related: [{title:'Idle detection and sync-word acquisition',path:'firmware/rx/rx.ino',ref:PIN,start:773,end:804}], code: String.raw`bool sampleRawAt(uint32_t sampleTimeUs) {
   if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }
   uint32_t delta = symbolUs / 6;
   waitUntil(sampleTimeUs - delta);
@@ -130,7 +130,7 @@ const codeExamples = {
   value = (uint8_t)((highNibble << 4) | lowNibble);
   return true;
 }` },
-  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', related: [{title:'Whole-file CRC before RX_FILE_HEX output',path:'firmware/rx/rx.ino',ref:PIN,start:874,end:885},{title:'Desktop receiver parses and saves the completed file',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP_PIN,start:681,end:740}], code: String.raw`void processCompleteFrame() {
+  verify: { title: 'Frame CRC and chunk CRC are checked before storage', path: 'firmware/rx/rx.ino', ref: PIN, start: 907, end: 942, language: 'cpp', related: [{title:'Whole-file CRC before RX_FILE_HEX output',path:'firmware/rx/rx.ino',ref:PIN,start:874,end:885},{title:'Desktop receiver parses and saves the completed file',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP_PIN,start:681,end:780}], code: String.raw`void processCompleteFrame() {
   if (framePos < 1 + 19 + 2) { resetLineDecoder(); return; }
   uint16_t rxFrameCrc = getU16(frameBuf, framePos - 2);
   uint16_t calcFrameCrc = crc16_ccitt(frameBuf, framePos - 2);
