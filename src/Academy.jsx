@@ -415,7 +415,8 @@ codeLessons.push(
   ['            vref = sig.vref','Read the current Vref value.'],
   ['            margin = sig.margin','Read the current margin value.'],
   ['            self._ook_widget.set_from_pvo_vref(pvo, vref)','Derive a logic level from the analog threshold relationship for the OOK panel.'],
-  ['            self._pvo_hist.append(pvo)','Append the current PVo snapshot to the trend.']
+  ['            self._pvo_hist.append(pvo)','Append the current PVo snapshot to the trend.'],
+  ['            self._vref_hist.append(vref)','Append the current Vref snapshot to the trend.']
  ],concept:'The physical path appends the latest telemetry snapshot every 100 ms. That is useful for observing slow changes in signal and threshold margin, but it is not a raw oscilloscope trace of the 15 ksymbol/s waveform.'},
  {id:'rx-quality-estimates',level:'APPLICATION',name:'Calculate estimated signal quality',path:'application-source/gui_dev_v3/rx/signal_page.py',ref:APP,range:'146-170',lang:'python',summary:'These gauges are heuristic percentages derived from margin, PVo and Vref. They are not independent measurements from a noise or jitter sensor.',lines:[
   ['def _quality_from_signal(sig: SignalState) -> dict[str, int]:','Define a helper that converts the signal snapshot into display percentages.'],
@@ -441,7 +442,8 @@ codeLessons.push(
   ['    # Interference: derived from noise','Interference is also inferred from the estimated noise value.'],
   ['    interference = max(0, min(100, int(noise_est * 200)))','Scale the estimated noise into a percentage.'],
   ['','Return the values for the display widgets.'],
-  ['    return {','Begin the dictionary of derived display metrics.']
+  ['    return {','Begin the dictionary of derived display metrics.'],
+  ['        "snr": snr,','Add the estimated SNR-like score to the returned metrics.']
  ],concept:'These gauges are useful visual summaries, but they should be labelled estimated/derived. They do not come from separate physical sensors measuring SNR, jitter, or interference.'},
  {id:'rx-vref-stepper',level:'APPLICATION',name:'Run the app-side Vref PWM stepper',path:'application-source/gui_dev_v3/rx/backends/physical.py',ref:APP,range:'818-840',lang:'python',summary:'The receiver backend has a separate app-side PWM calibration helper. It runs only when enabled, in MANUAL firmware Vref mode, and when no receive transfer is active.',lines:[
   ['    def _run_vref_pwm_autocal(self, lq_data: dict) -> None:','Define the app-side PWM auto-calibration routine.'],
