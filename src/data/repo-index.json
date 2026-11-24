@@ -3415,9 +3415,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 42,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "serial/ — Serial Communication Module",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 23
+      },
+      {
+        "title": "Integration",
+        "line": 38
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/serial/controllers.py",
@@ -4229,9 +4250,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 38,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "tx/backends/ — TX Backend Implementations",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 21
+      },
+      {
+        "title": "Integration",
+        "line": 34
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/tx/backends/physical.py",
@@ -4497,9 +4539,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 38,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "tx/ — Transmitter (TX) Module",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 19
+      },
+      {
+        "title": "Integration",
+        "line": 34
+      }
+    ]
   },
   {
     "path": "application-source/gui_dev_v3/tx/dashboard.py",
@@ -5605,9 +5668,74 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 191,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "OpenVLC System Suite — ESP32 Firmware",
+        "line": 1
+      },
+      {
+        "title": "1. Firmware Components",
+        "line": 9
+      },
+      {
+        "title": "Receiver",
+        "line": 23
+      },
+      {
+        "title": "Transmitter",
+        "line": 37
+      },
+      {
+        "title": "2. Thesis Experimental Firmware",
+        "line": 47
+      },
+      {
+        "title": "3. Communication Configuration",
+        "line": 55
+      },
+      {
+        "title": "4. Transmitter Pin Configuration",
+        "line": 74
+      },
+      {
+        "title": "5. Receiver Pin Configuration",
+        "line": 86
+      },
+      {
+        "title": "6. Receiver Threshold and Vref Control",
+        "line": 99
+      },
+      {
+        "title": "7. Protocol Processing",
+        "line": 122
+      },
+      {
+        "title": "8. Buffer and File Handling",
+        "line": 139
+      },
+      {
+        "title": "9. Compilation and Upload",
+        "line": 152
+      },
+      {
+        "title": "10. Supporting Documentation",
+        "line": 168
+      },
+      {
+        "title": "Protocol Specification",
+        "line": 170
+      },
+      {
+        "title": "Firmware Codemap",
+        "line": 176
+      },
+      {
+        "title": "11. Relationship to the Thesis",
+        "line": 184
+      }
+    ]
   },
   {
     "path": "firmware/codemap.md",
@@ -5617,9 +5745,54 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 135,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "Firmware Code Map",
+        "line": 1
+      },
+      {
+        "title": "Purpose",
+        "line": 3
+      },
+      {
+        "title": "Directory Structure",
+        "line": 11
+      },
+      {
+        "title": "Receiver Firmware",
+        "line": 27
+      },
+      {
+        "title": "`rx/rx.ino`",
+        "line": 29
+      },
+      {
+        "title": "Transmitter Firmware",
+        "line": 56
+      },
+      {
+        "title": "`tx/tx.ino`",
+        "line": 58
+      },
+      {
+        "title": "Communication Protocol",
+        "line": 75
+      },
+      {
+        "title": "`specs/protocol_spec.md`",
+        "line": 77
+      },
+      {
+        "title": "Integration",
+        "line": 94
+      },
+      {
+        "title": "Thesis Reference",
+        "line": 128
+      }
+    ]
   },
   {
     "path": "firmware/rx/codemap.md",
@@ -5629,9 +5802,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 18,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "firmware/rx/",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 9
+      },
+      {
+        "title": "Integration",
+        "line": 12
+      }
+    ]
   },
   {
     "path": "firmware/rx/rx.ino",
@@ -5984,9 +6178,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 17,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "OpenVLC/firmware/specs/",
+        "line": 1
+      },
+      {
+        "title": "Responsibility",
+        "line": 3
+      },
+      {
+        "title": "Design",
+        "line": 6
+      },
+      {
+        "title": "Flow",
+        "line": 9
+      },
+      {
+        "title": "Integration",
+        "line": 12
+      }
+    ]
   },
   {
     "path": "firmware/specs/protocol_spec.md",
@@ -5996,9 +6211,30 @@
     "status": "documentation",
     "kind": "markdown",
     "summary": "Project documentation and implementation notes.",
-    "lineCount": null,
+    "lineCount": 46,
     "symbols": [],
-    "headings": []
+    "headings": [
+      {
+        "title": "Firmware Protocol Specification",
+        "line": 1
+      },
+      {
+        "title": "Packet Format",
+        "line": 3
+      },
+      {
+        "title": "Transmission Flow",
+        "line": 23
+      },
+      {
+        "title": "Bit Error Rate (BER) Testing",
+        "line": 33
+      },
+      {
+        "title": "Batched Transfer Format",
+        "line": 37
+      }
+    ]
   },
   {
     "path": "firmware/tx/codemap.md",
