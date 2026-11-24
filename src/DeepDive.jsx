@@ -115,6 +115,15 @@ export default function DeepDive({onOpenCode,codeLessons}) {
  const [symbolQuery,setSymbolQuery]=useState('');
  const [activeSymbolLine,setActiveSymbolLine]=useState(null);
  const [source,setSource]=useState(null);
+ const fileSearch=React.useRef(null);
+ const fileHeading=React.useRef(null);
+ const symbolHeading=React.useRef(null);
+ const symbolSearch=React.useRef(null);
+ function focusMobile(ref){
+  if(window.matchMedia('(max-width: 720px)').matches){
+   requestAnimationFrame(()=>ref.current?.focus());
+  }
+ }
  const files=repoIndex;
  const categories=useMemo(()=>['ALL',...Array.from(new Set(files.map(f=>f.category))).sort()],[files]);
  const filtered=useMemo(()=>files.filter(f=>{
@@ -154,13 +163,14 @@ export default function DeepDive({onOpenCode,codeLessons}) {
   <div className="deep-dive-pin"><span>PINNED SOURCE SNAPSHOT</span><code>OpenVLC-Public · {SOURCE_PIN}</code><a href={'https://github.com/luckyprinter/OpenVLC-Public/tree/'+SOURCE_PIN} target="_blank" rel="noreferrer">VIEW REPOSITORY <ArrowUpRight size={13}/></a></div>
   <div className="deep-dive-layout">
    <aside className="deep-dive-browser">
-    <label className="deep-search"><Search size={15}/><input aria-label="Search repository files" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search files, classes, functions…"/></label>
+    <label className="deep-search"><Search size={15}/><input ref={fileSearch} aria-label="Search repository files" type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search files, classes, functions…"/></label>
     <div className="deep-filter-row"><select aria-label="File category" value={category} onChange={e=>setCategory(e.target.value)}>{categories.map(c=><option key={c} value={c}>{c==='ALL'?'ALL CATEGORIES':c}</option>)}</select><select aria-label="File status" value={status} onChange={e=>setStatus(e.target.value)}>{[['ALL','ALL STATUS'],['active','ACTIVE SOURCE'],['alternate/test','ALTERNATE / TEST'],['supporting','SUPPORTING'],['documentation','DOCUMENTATION'],['build','BUILD / CI'],['asset','ASSET'],['data','DATA']].map(([v,l])=><option key={v} value={v}>{l}</option>)}</select></div>
     <div className="deep-result-count" role="status">{filtered.length} FILES MATCH YOUR FILTERS</div>
-    <div className="deep-file-list">{filtered.map(f=><button key={f.path} data-path={f.path} aria-pressed={current?.path===f.path} className={current?.path===f.path?'active':''} onClick={()=>choose(f)}><span className="deep-file-top"><i>{f.kind.toUpperCase()}</i><small>{statusLabel[f.status]||f.status}</small></span><b>{f.path.split('/').pop()}</b><code>{f.path}</code><span className="deep-file-meta">{f.lineCount?f.lineCount+' lines · ':''}{f.symbols.length?f.symbols.length+' symbols · ':''}{Math.round(f.bytes/1024*10)/10} KiB</span></button>)}</div>
+    <div className="deep-file-list">{filtered.map(f=><button key={f.path} data-path={f.path} aria-pressed={current?.path===f.path} className={current?.path===f.path?'active':''} onClick={()=>{choose(f);focusMobile(fileHeading)}}><span className="deep-file-top"><i>{f.kind.toUpperCase()}</i><small>{statusLabel[f.status]||f.status}</small></span><b>{f.path.split('/').pop()}</b><code>{f.path}</code><span className="deep-file-meta">{f.lineCount?f.lineCount+' lines · ':''}{f.symbols.length?f.symbols.length+' symbols · ':''}{Math.round(f.bytes/1024*10)/10} KiB</span></button>)}</div>
    </aside>
    {current?<article className="deep-file-detail">
-    <div className="deep-file-head"><div><span className="eyebrow">{current.category} · {statusLabel[current.status]||current.status}</span><h3>{current.path.split('/').pop()}</h3><code>{current.path}</code></div><a href={link(current.path,SOURCE_PIN)} target="_blank" rel="noreferrer">OPEN FULL SOURCE <ArrowUpRight size={14}/></a></div>
+    <button className="reference-nav-control" onClick={()=>focusMobile(fileSearch)}>Back to file search</button>
+    <div className="deep-file-head"><div><span className="eyebrow">{current.category} · {statusLabel[current.status]||current.status}</span><h3 ref={fileHeading} tabIndex={-1}>{current.path.split('/').pop()}</h3><code>{current.path}</code></div><a href={link(current.path,SOURCE_PIN)} target="_blank" rel="noreferrer">OPEN FULL SOURCE <ArrowUpRight size={14}/></a></div>
     <p className="deep-file-summary">{current.summary}</p>
     <div className="deep-file-stats"><span>{current.lineCount??'—'} LINES</span><span>{current.symbols.length} SYMBOLS</span><span>{(current.bytes/1024).toFixed(1)} KiB</span><span>BLOB {current.blob.slice(0,9)}</span></div>
     {relations.length>0&&<div className="deep-relations"><div className="deep-section-label">VERIFIED CONNECTIONS · CROSS-FILE TRACE</div>{relations.map((r,i)=><a key={i} href={link(r.path,SOURCE_PIN,r.lines)} target="_blank" rel="noreferrer"><span>{r.label}</span><code>{r.path.split('/').pop()} · {formatLines(r.lines)}</code><ArrowUpRight size={13}/></a>)}</div>}
@@ -169,11 +179,11 @@ export default function DeepDive({onOpenCode,codeLessons}) {
       <div className="deep-symbols">
        <div className="deep-symbol-heading">
         <div><div className="deep-section-label">CLASS / FUNCTION / CONSTANT INDEX</div><p>Select a symbol to inspect its outline and implementation.</p></div>
-        <label><Search size={13}/><input aria-label="Filter file symbols" type="search" value={symbolFilter} onChange={e=>{if(current.path!==selected) choose(current);setSymbolQuery(e.target.value)}} placeholder="Filter symbols"/></label>
+        <label><Search size={13}/><input ref={symbolSearch} aria-label="Filter file symbols" type="search" value={symbolFilter} onChange={e=>{if(current.path!==selected) choose(current);setSymbolQuery(e.target.value)}} placeholder="Filter symbols"/></label>
        </div>
        <div className="deep-symbol-list">
         {visibleSymbols.map((s,i)=>(
-         <button type="button" key={s.name+'-'+s.line+'-'+i} aria-pressed={activeSymbol===s} className={activeSymbol===s?'active':''} onClick={()=>{if(current.path!==selected) choose(current);setActiveSymbolLine(s.line)}}>
+         <button type="button" key={s.name+'-'+s.line+'-'+i} aria-pressed={activeSymbol===s} className={activeSymbol===s?'active':''} onClick={()=>{if(current.path!==selected) choose(current);setActiveSymbolLine(s.line);focusMobile(symbolHeading)}}>
           <span className={'deep-symbol-kind kind-'+s.kind}>{s.kind}</span><b>{s.name}</b><code>L{s.line}–{s.endLine||s.line}</code><ArrowUpRight size={12}/>
          </button>
         ))}
@@ -182,7 +192,8 @@ export default function DeepDive({onOpenCode,codeLessons}) {
        {activeSymbol&&(
         <div className="deep-symbol-detail">
          <div className="deep-section-label">SELECTED {activeSymbol.kind.toUpperCase()} · SOURCE OUTLINE</div>
-         <h4>{activeSymbol.name}</h4>
+         <h4 ref={symbolHeading} tabIndex={-1}>{activeSymbol.name}</h4>
+         <button className="reference-nav-control" onClick={()=>focusMobile(symbolSearch)}>Back to symbol search</button>
          <code className="deep-symbol-range">SOURCE LINES {activeSymbol.line}–{activeSymbol.endLine||activeSymbol.line}</code>
          <pre>{activeSymbol.signature||activeSymbol.name}</pre>
          {activeSymbol.doc&&<p>{activeSymbol.doc}</p>}

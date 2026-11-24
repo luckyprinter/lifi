@@ -1,8 +1,8 @@
 .transfer-lab {
-  --transfer-accent: #a2f3db;
-  --transfer-ink: #eaf4f6;
-  --transfer-muted: #aec3cc;
-  --transfer-rule: #38505b;
+  --transfer-accent: var(--amber);
+  --transfer-ink: var(--ink);
+  --transfer-muted: var(--muted);
+  --transfer-rule: var(--line);
   box-sizing: border-box;
   max-width: 1440px;
   margin-inline: auto;
@@ -28,7 +28,7 @@
 }
 .transfer-panel {
   min-width: 0;
-  background: #111e27;
+  background: var(--panel);
   border: 1px solid var(--transfer-rule);
   border-radius: .8rem;
 }
@@ -67,7 +67,7 @@
   padding: .5rem .65rem;
   border: 1px solid var(--transfer-rule);
   border-radius: .4rem;
-  background-color: #192b37;
+  background-color: var(--panel2);
   color: var(--transfer-ink);
   color-scheme: dark;
   font-family: inherit;
@@ -78,21 +78,21 @@
   margin-inline-end: .4rem;
   border: 0;
   border-radius: .25rem;
-  color: #17272c;
-  background: #cce9e2;
+  color: var(--on-accent);
+  background: var(--amber);
   font: inherit;
 }
 .transfer-lab select {
   appearance: none;
   padding-right: 2rem;
-  background-image: linear-gradient(45deg, transparent 50%, #c5d7e0 50%), linear-gradient(135deg, #c5d7e0 50%, transparent 50%);
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%), linear-gradient(135deg, var(--muted) 50%, transparent 50%);
   background-position: calc(100% - 14px) 50%, calc(100% - 9px) 50%;
   background-size: 5px 5px;
   background-repeat: no-repeat;
 }
 .transfer-lab button { display: inline-flex; align-items: center; justify-content: center; gap: .4rem; cursor: pointer; }
 .transfer-lab button:disabled { opacity: .55; cursor: default; }
-.transfer-lab .transfer-primary { background: var(--transfer-accent); color: #122a28; border-color: var(--transfer-accent); font-weight: 700; }
+.transfer-lab .transfer-primary { background: var(--transfer-accent); color: var(--on-accent); border-color: var(--transfer-accent); font-weight: 700; }
 .transfer-lab button:hover:not(:disabled) { border-color: var(--transfer-accent); }
 .transfer-lab :is(button, input, select, a):focus-visible { outline: 2px solid var(--transfer-accent); outline-offset: 3px; }
 
@@ -129,7 +129,7 @@
 .transfer-inspector-layout { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); }
 .transfer-inspector-layout > div { display: grid; align-content: start; gap: .85rem; min-width: 0; }
 .transfer-hex { display: flex; flex-wrap: wrap; gap: .28rem; min-height: 2rem; }
-.transfer-hex code { background: #223a46; border-radius: .2rem; padding: .25rem .4rem; color: var(--transfer-ink); font: .9rem var(--mono, monospace); }
+.transfer-hex code { background: var(--panel3); border-radius: .2rem; padding: .25rem .4rem; color: var(--transfer-ink); font: .9rem var(--mono, monospace); }
 .transfer-hex .transfer-altered { background: #81392e; color: #fff5ee; }
 .transfer-scope h3 { margin: 0; font-size: 1.05rem; }
 .transfer-toggle-group { display: flex; flex-wrap: wrap; gap: .3rem; }
@@ -140,7 +140,7 @@
   grid-template-columns: 2.7rem minmax(0, 1fr);
   align-items: center;
   min-width: 0;
-  background: #0c1720;
+  background: var(--recess);
   border-radius: .5rem;
   border: 1px solid var(--transfer-rule);
 }
@@ -155,7 +155,7 @@
 }
 .transfer-scope-chart svg { width: 100%; height: 5.8rem; display: block; }
 .transfer-scope-chart path { fill: none; }
-.transfer-wave-grid { stroke: #304852; stroke-width: 1; }
+.transfer-wave-grid { stroke: var(--line); stroke-width: 1; }
 .transfer-wave-tx { stroke: var(--transfer-accent); stroke-width: 2; }
 .transfer-wave-rx { stroke: #ffc08a; stroke-width: 2; stroke-dasharray: 3 3; }
 .transfer-scope-time { margin: -.55rem 0 0 2.7rem; display: flex; justify-content: space-between; color: var(--transfer-muted); font: .82rem var(--mono, monospace); }
@@ -180,7 +180,7 @@
 .transfer-guide {
   margin-block: 0 1rem;
   padding: 1rem;
-  background: #182a33;
+  background: var(--panel2);
   border: 1px solid var(--transfer-rule);
   border-radius: .75rem;
 }

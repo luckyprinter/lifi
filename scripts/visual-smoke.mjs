@@ -64,7 +64,14 @@ try {
     await page.getByRole('button', { name: 'CODE STUDIO' }).click();
     await page.waitForSelector('.source-map-section');
     await page.locator('.editor-line').nth(1).click();
-    const lineExplain = await page.locator('.editor-explain p').innerText();
+    if (width <= 720) {
+      await page.getByRole('button', { name: 'Choose a source lesson' }).click();
+      const search = page.getByRole('textbox', { name: 'Find a source lesson' });
+      await search.fill('Encode one byte');
+      await page.locator('.file-group button').first().click();
+      await page.locator('.inline-line-note').waitFor({ state: 'visible' });
+    }
+    const lineExplain = await page.locator(width <= 720 ? '.inline-line-note' : '.editor-explain p').innerText();
     if (!lineExplain.trim()) failures.push(width + 'px code line explanation is empty');
     const codeScroll = await page.evaluate(() => document.documentElement.scrollWidth);
     if (codeScroll > width + 1) failures.push(width + 'px code studio horizontal overflow: ' + codeScroll);

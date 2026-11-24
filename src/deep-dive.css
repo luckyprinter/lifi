@@ -8,5 +8,5 @@
 }
 
 .deep-source-viewer > pre > span > i {
-  color: #9eafb8;
+  color: var(--dim);
 }

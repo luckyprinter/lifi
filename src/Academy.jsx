@@ -7,6 +7,7 @@ import {
   ShieldCheck, Sparkles, Waves, X, Zap, RefreshCw
 } from 'lucide-react';
 import './academy.css';
+import './reference-navigation.css';
 import Foundations, { OpticalIntro } from './Foundations.jsx';
 const TransferLab = React.lazy(() => import('./TransferLab.jsx'));
 const DeepDive = React.lazy(() => import('./DeepDive.jsx'));
@@ -552,8 +553,8 @@ function StageVisual({stage}){
     {stage.kind==='coding'&&<><div className="bit-group"><small>INPUT BYTE</small><b>1010 0101</b></div><motion.div className="encode-arrow" animate={{scale:[1,1.12,1]}} transition={{repeat:Infinity,duration:2}}><Zap/></motion.div><div className="codeword-groups"><small>ENCODED · 4B5B</small><b>10110 <em>01011</em></b><span>5 bits + 5 bits</span></div><div className="moving-bits">{'1011001011'.split('').map((b,i)=><motion.i key={i} animate={{y:[0,-5,0],opacity:[.5,1,.5]}} transition={{repeat:Infinity,duration:1.4,delay:i*.08}}>{b}</motion.i>)}</div></>}
     {stage.kind==='frame'&&<><div className="frame-stack"><span>SOF</span><span>HEADER</span><span>NAME</span><span>PAYLOAD</span><span>CRC</span></div><motion.div className="frame-scan" animate={{x:['-5%','105%']}} transition={{repeat:Infinity,duration:3,ease:'linear'}}/><div className="frame-check"><ShieldCheck/><b>INTEGRITY FIELDS</b><small>FRAME + CHUNK</small></div></>}
     {stage.kind==='light'&&<><div className="mini-board"><Cpu/><b>ESP32</b><small>GPIO 5</small></div><div className="driver-block"><CircuitBoard/><b>LED DRIVER</b><small>SWITCHING STAGE</small></div><div className="mini-led"><Lightbulb/><span/></div><div className="beam-particles">{Array.from({length:8},(_,i)=><motion.i key={i} animate={{x:[0,230],opacity:[0,1,0],scale:[.6,1,.6]}} transition={{repeat:Infinity,duration:2.3,delay:i*.25,ease:'linear'}}/>)}</div><span className="scene-caption">SYMBOL TIMING CONTROLS LIGHT OUTPUT</span></>}
-    {stage.kind==='detect'&&<><div className="detector-chain"><div><Radio/><b>BPW34</b><small>PHOTOCURRENT</small></div><ArrowRight/><div><Activity/><b>OPA2604</b><small>VOLTAGE</small></div><ArrowRight/><div><Zap/><b>LM393</b><small>DIGITAL EDGE</small></div></div><div className="analog-trace"><svg viewBox="0 0 520 100" role="img" aria-label="Conceptual analog signal"><path d="M0 68 C35 68 35 20 75 20 S110 75 150 75 S190 30 230 30 S270 65 310 65 S350 18 390 18 S430 72 470 72 S495 42 520 42" fill="none" stroke="#ffbd70" strokeWidth="3"/><path d="M0 78H520" stroke="#526c76" strokeDasharray="5 7"/></svg></div><small className="scene-caption">CONCEPTUAL SIGNAL SHAPE · NOT A MEASURED TRACE</small></>}
-    {stage.kind==='decode'&&<><div className="sample-wave"><div className="wave-label">COMPARATOR OUTPUT</div><svg viewBox="0 0 520 130" role="img" aria-label="Conceptual digital waveform with three sample markers"><path d="M0 94H55V28H130V94H205V28H280V94H355V28H430V94H520" fill="none" stroke="#7dd7c7" strokeWidth="3"/>{[72,91,110,222,241,260,372,391,410].map((x,i)=><circle key={i} cx={x} cy={i%3===0?28:94} r="5" fill="#ffbd70"/>)}</svg><div className="sample-legend"><span><i/> SAMPLE POINTS</span><span>3-READ MAJORITY</span></div></div><div className="decode-result"><b>10110</b><ArrowRight/><b>1010</b><small>VALID NIBBLE</small></div></>}
+    {stage.kind==='detect'&&<><div className="detector-chain"><div><Radio/><b>BPW34</b><small>PHOTOCURRENT</small></div><ArrowRight/><div><Activity/><b>OPA2604</b><small>VOLTAGE</small></div><ArrowRight/><div><Zap/><b>LM393</b><small>DIGITAL EDGE</small></div></div><div className="analog-trace"><svg viewBox="0 0 520 100" role="img" aria-label="Conceptual analog signal"><path d="M0 68 C35 68 35 20 75 20 S110 75 150 75 S190 30 230 30 S270 65 310 65 S350 18 390 18 S430 72 470 72 S495 42 520 42" fill="none" stroke="var(--amber)" strokeWidth="3"/><path d="M0 78H520" stroke="var(--dim)" strokeDasharray="5 7"/></svg></div><small className="scene-caption">CONCEPTUAL SIGNAL SHAPE · NOT A MEASURED TRACE</small></>}
+    {stage.kind==='decode'&&<><div className="sample-wave"><div className="wave-label">COMPARATOR OUTPUT</div><svg viewBox="0 0 520 130" role="img" aria-label="Conceptual digital waveform with three sample markers"><path d="M0 94H55V28H130V94H205V28H280V94H355V28H430V94H520" fill="none" stroke="var(--blue)" strokeWidth="3"/>{[72,91,110,148,167,186,222,241,260].map((x,i)=><circle key={i} cx={x} cy={i>=3&&i<6?94:28} r="5" fill="var(--amber)"/>)}</svg><div className="sample-legend"><span><i/> SAMPLE POINTS</span><span>3-READ MAJORITY</span></div></div><div className="decode-result"><b>10110</b><ArrowRight/><b>1010</b><small>VALID NIBBLE</small></div></>}
     {stage.kind==='verify'&&<><div className="verify-stack"><div><Check/><span>FRAME CRC</span><b>PASS</b></div><div><Check/><span>CHUNK CRC</span><b>PASS</b></div><div><Check/><span>FILE CRC</span><b>PASS</b></div></div><motion.div className="rebuild-file" animate={{y:[0,-5,0]}} transition={{repeat:Infinity,duration:2}}><FileCode2 size={30}/><b>original-file.bin</b><small>REASSEMBLED</small></motion.div></>}
    </motion.div>
   </AnimatePresence>
@@ -681,13 +682,19 @@ function highlightLine(source){
  });
 }
 
-function CodeLesson({lesson,selected,onSelect}){
- const [line,setLine]=useState(0); const [showAll,setShowAll]=useState(false);
- React.useEffect(()=>{setLine(0);setShowAll(false)},[lesson.id]);
+function CodeLesson({lesson}){
+ const [line,setLine]=useState(0);
  const source=link(lesson.path,lesson.ref,lesson.range);
  return <article className="code-lesson">
   <div className="code-lesson-head"><div><span className="eyebrow">{lesson.level}</span><h3>{lesson.name}</h3><p>{lesson.summary}</p></div><a href={source} target="_blank" rel="noreferrer">SOURCE LINES <ArrowUpRight size={14}/></a></div>
-  <div className="code-editor"><div className="editor-bar"><span><i/> {lesson.path.split('/').slice(-1)[0]}</span><span>{lesson.lang.toUpperCase()} · L{lesson.range.replace('-', '–')}</span></div><div className="editor-code">{lesson.lines.map(([code,explain],i)=><button key={i} className={'editor-line '+(line===i?'chosen':'')} onClick={()=>setLine(i)}><span className="line-no">{Number(lesson.range.split('-')[0])+i}</span><code>{highlightLine(code)}</code></button>)}</div><div className="editor-explain"><span>LINE EXPLAINER · {line+1}/{lesson.lines.length}</span><p>{lesson.lines[line][1]}</p><div><button disabled={line===0} onClick={()=>setLine(v=>v-1)}><ArrowLeft size={13}/> PREVIOUS LINE</button><button disabled={line===lesson.lines.length-1} onClick={()=>setLine(v=>v+1)}>NEXT LINE <ArrowRight size={13}/></button></div></div></div>
+  <div className="code-editor"><div className="editor-bar"><span><i/> {lesson.path.split('/').slice(-1)[0]}</span><span>{lesson.lang.toUpperCase()} · L{lesson.range.replace('-', '–')}</span></div><div className="editor-code">{lesson.lines.map(([code,explain],i)=>(
+    <React.Fragment key={i}>
+     <button className={'editor-line '+(line===i?'chosen':'')} aria-pressed={line===i} onClick={()=>setLine(i)}>
+      <span className="line-no">{Number(lesson.range.split('-')[0])+i}</span><code>{highlightLine(code)}</code>
+     </button>
+     {line===i&&<p className="inline-line-note">{explain}</p>}
+    </React.Fragment>
+   ))}</div><div className="editor-explain"><span>LINE EXPLAINER · {line+1}/{lesson.lines.length}</span><p>{lesson.lines[line][1]}</p><div><button disabled={line===0} onClick={()=>setLine(v=>v-1)}><ArrowLeft size={13}/> PREVIOUS LINE</button><button disabled={line===lesson.lines.length-1} onClick={()=>setLine(v=>v+1)}>NEXT LINE <ArrowRight size={13}/></button></div></div></div>
   <div className="code-concept"><Sparkles size={17}/><div><b>THE BIG IDEA</b><p>{lesson.concept}</p></div></div>
  </article>
 }
@@ -732,10 +739,38 @@ function SourceMap(){
 function CodeStudio({initialLesson}){
  const [active,setActive]=useState(initialLesson||'tx-encode');
  React.useEffect(()=>{if(initialLesson)setActive(initialLesson)},[initialLesson]); const [query,setQuery]=useState(''); const selected=codeLessons.find(x=>x.id===active)||codeLessons[0];
+ const [browse,setBrowse]=useState(false);
+ const reader=React.useRef(null);
  const groups=['APPLICATION','FIRMWARE · TX','FIRMWARE · RX'];
+ function chooseLesson(id){
+  setActive(id);
+  setBrowse(false);
+  if(window.matchMedia('(max-width: 720px)').matches){
+   requestAnimationFrame(()=>reader.current?.focus());
+  }
+ }
  const filtered=useMemo(()=>codeLessons.filter(x=>(x.name+' '+x.path+' '+x.level).toLowerCase().includes(query.toLowerCase())),[query]);
  return <section className="code-studio" id="code"><div className="section-kicker">SOURCE CODE STUDIO <span>REAL FILES · PINNED LINES</span></div><div className="section-title-row"><div><p className="eyebrow">FROM SURFACE KNOWLEDGE TO CODE CONFIDENCE</p><h2>Understand the code.<br/><i>One line at a time.</i></h2></div><p className="section-intro">Select a source lesson, tap any line, and read what it does. Each example is pinned to a commit so the code and line numbers stay traceable.</p></div>
- <div className="studio-layout"><aside className="studio-sidebar"><label className="studio-search"><Search size={15}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>{groups.map(g=><div className="file-group" key={g}><span>{g}</span>{filtered.filter(x=>x.level===g).map(x=><button key={x.id} className={active===x.id?'active':''} onClick={()=>setActive(x.id)}><FileCode2 size={14}/><span>{x.name}</span><ChevronRight size={13}/></button>)}</div>)}</aside><div className="studio-main"><CodeLesson lesson={selected}/></div></div><div className="deep-dive-callout"><div><span>OPTIONAL ADVANCED REFERENCE</span><h3>Ready to explore every file?</h3><p>Open the full repository index with file paths, classes, functions, line references, and verified cross-file connections.</p></div><button onClick={()=>window.location.hash='deepdive'}>OPEN DEEP DIVE <ArrowUpRight size={14}/></button></div><SourceMap/>
+ <div className="studio-layout">
+  <button className="reference-nav-control" aria-expanded={browse} aria-controls="studio-lessons" onClick={()=>setBrowse(!browse)}>
+   {browse?'Close lesson list':'Choose a source lesson'}
+  </button>
+  <aside className="studio-sidebar" id="studio-lessons" data-open={browse}>
+   <label className="studio-search"><Search size={15}/><input aria-label="Find a source lesson" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Find a function or file"/></label>
+   {groups.map(group=>{
+    const matches=filtered.filter(item=>item.level===group);
+    return matches.length>0&&<div className="file-group" key={group}><span>{group}</span>
+     {matches.map(item=><button key={item.id} className={active===item.id?'active':''} aria-pressed={active===item.id} onClick={()=>chooseLesson(item.id)}>
+      <FileCode2 size={14}/><span>{item.name}</span><ChevronRight size={13}/>
+     </button>)}
+    </div>;
+   })}
+   {filtered.length===0&&<p role="status">No lessons match your search.</p>}
+  </aside>
+  <div className="studio-main" ref={reader} tabIndex={-1} aria-label={selected.name}>
+   <CodeLesson key={selected.id} lesson={selected}/>
+  </div>
+ </div><div className="deep-dive-callout"><div><span>OPTIONAL ADVANCED REFERENCE</span><h3>Ready to explore every file?</h3><p>Open the full repository index with file paths, classes, functions, line references, and verified cross-file connections.</p></div><button onClick={()=>window.location.hash='deepdive'}>OPEN DEEP DIVE <ArrowUpRight size={14}/></button></div><SourceMap/>
  </section>
 }
 

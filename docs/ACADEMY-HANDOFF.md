@@ -20,6 +20,6 @@ The uploaded clip was a development-tool roundup. Its architecture and UI audit 
 
 ## Beginner redesign milestone
 
-Home and Foundations use a warm reading surface, with dark instruments for interactive demonstrations. The beginner route connects a single-symbol demo, three Foundation stages, a guided corruption-and-recovery exercise, and the RX firmware validation lesson. It shares the sample and transfer model with Transfer Lab. The normalized comparator plot and OOK trace are teaching models.
+Home and Foundations introduce the interactive beginner route. The beginner route connects a single-symbol demo, three Foundation stages, a guided corruption-and-recovery exercise, and the RX firmware validation lesson. It shares the sample and transfer model with Transfer Lab. The normalized comparator plot and OOK trace are teaching models.
 
-The other learning paths, Atlas, and reference sections retain their existing visual treatment. Expanding animated lessons and redesigning mobile reference navigation are follow-up milestones. The browser suite covers both viewport sizes on the beginner route. Participant usability testing is still open.
+The entire Academy now shares graphite backgrounds, soft white text, and amber interaction accents. Signal traces, syntax, and validation states carry distinct semantic colors. On phones, Code Studio opens the lesson picker on demand and explains selected lines in place. Deep Dive focuses selected files and symbols and provides controls to return to search. Expanding animated lessons remains a follow-up milestone. The browser suite covers both viewport sizes on the beginner route. Participant usability testing is still open.
