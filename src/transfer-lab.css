@@ -69,7 +69,7 @@
   border-radius: .4rem;
   background-color: var(--panel2);
   color: var(--transfer-ink);
-  color-scheme: dark;
+  color-scheme: light;
   font-family: inherit;
 }
 .transfer-lab input[type=file] { width: 100%; }
@@ -111,7 +111,7 @@
   line-height: 1.5;
 }
 .transfer-settings { align-items: stretch; }
-.transfer-error { margin: 0; color: #ffd0c5; }
+.transfer-error { margin: 0; color: var(--coral); }
 
 .transfer-receiver progress { width: 100%; height: .75rem; accent-color: var(--transfer-accent); }
 .transfer-lab .transfer-status { min-height: 3.3em; margin: .1rem 0 0; color: var(--transfer-accent); line-height: 1.55; }
@@ -130,7 +130,7 @@
 .transfer-inspector-layout > div { display: grid; align-content: start; gap: .85rem; min-width: 0; }
 .transfer-hex { display: flex; flex-wrap: wrap; gap: .28rem; min-height: 2rem; }
 .transfer-hex code { background: var(--panel3); border-radius: .2rem; padding: .25rem .4rem; color: var(--transfer-ink); font: .9rem var(--mono, monospace); }
-.transfer-hex .transfer-altered { background: #81392e; color: #fff5ee; }
+.transfer-hex .transfer-altered { background: #fceeea; color: var(--coral); }
 .transfer-scope h3 { margin: 0; font-size: 1.05rem; }
 .transfer-toggle-group { display: flex; flex-wrap: wrap; gap: .3rem; }
 .transfer-toggle-group button { font-size: .88rem; }
@@ -157,7 +157,7 @@
 .transfer-scope-chart path { fill: none; }
 .transfer-wave-grid { stroke: var(--line); stroke-width: 1; }
 .transfer-wave-tx { stroke: var(--transfer-accent); stroke-width: 2; }
-.transfer-wave-rx { stroke: #ffc08a; stroke-width: 2; stroke-dasharray: 3 3; }
+.transfer-wave-rx { stroke: var(--blue); stroke-width: 2; stroke-dasharray: 3 3; }
 .transfer-scope-time { margin: -.55rem 0 0 2.7rem; display: flex; justify-content: space-between; color: var(--transfer-muted); font: .82rem var(--mono, monospace); }
 
 .transfer-bit-detail summary { cursor: pointer; min-height: 2.75rem; padding: .55rem 0; color: var(--transfer-accent); }
