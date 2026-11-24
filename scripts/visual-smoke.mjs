@@ -44,6 +44,9 @@ try {
     const journeyScroll = await page.evaluate(() => document.documentElement.scrollWidth);
     if (journeyScroll > width + 1) failures.push(width + 'px journey horizontal overflow: ' + journeyScroll);
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/journey-' + width + '.png', fullPage: true });
+    await page.locator('.open-code-stage').click();
+    await page.waitForSelector('.source-map-section');
+    if (!(await page.locator('.code-lesson-head h3').innerText()).includes('Validate a complete frame')) failures.push(width + 'px journey stage did not open its matching code lesson');
 
     if (width <= 720) await page.locator('.mobile-menu').click();
     await page.getByRole('button', { name: 'CODE STUDIO' }).click();
