@@ -26,19 +26,19 @@ const stages = [
 
 const codeLessons = [
  {id:'tx-state',level:'APPLICATION',name:'TX application state',path:'application-source/gui_dev_v3/tx_app_state.py',ref:APP,range:'23-36',lang:'python',summary:'The state object holds the transmitter workspace values. Notice that the mode is initialized to physical: this is an application setting, not a live connection.',lines:[
-  ['settings: AppSettings = field(default_factory=load_settings)','Create settings from the persisted configuration when a state object is made.'],
-  ['mode: str = "physical"','Default the application to its real serial-hardware backend.'],
-  ['filename: str = "No file"','Keep a clear empty state before the user chooses a file.'],
-  ['file_size_bytes: int = 0','Store the selected file size in bytes.'],
-  ['total_chunks: int = 0','Track how many protocol chunks are needed.'],
-  ['chunk_size: int = 256','Set the current default chunk payload size.'],
-  ['encoding: str = "4B5B"','Expose the line-coding choice used by this application state.'],
-  ['modulation: str = "NRZ / OOK"','Describe the optical modulation configuration.'],
-  ['symbol_rate: str = "15,000 sym/s"','Represent the configured symbol rate.'],
-  ['led_pin: int = 5','Record the transmitter GPIO assignment.'],
-  ['tx_power: str = "100 %"','Store the configured TX power label.'],
-  ['pre_emphasis: str = "Disabled"','Store whether pre-emphasis is enabled.'],
-  ['status_text: str = "Offline — no hardware"','Start honestly: a default state does not mean a board is connected.']
+  ['    settings: AppSettings = field(default_factory=load_settings)','Create settings from the persisted configuration when a state object is made.'],
+  ['    mode: str = "physical"','Default the application to its real serial-hardware backend.'],
+  ['    filename: str = "No file"','Keep a clear empty state before the user chooses a file.'],
+  ['    file_size_bytes: int = 0','Store the selected file size in bytes.'],
+  ['    total_chunks: int = 0','Track how many protocol chunks are needed.'],
+  ['    chunk_size: int = 256','Set the current default chunk payload size.'],
+  ['    encoding: str = "4B5B"','Expose the line-coding choice used by this application state.'],
+  ['    modulation: str = "NRZ / OOK"','Describe the optical modulation configuration.'],
+  ['    symbol_rate: str = "15,000 sym/s"','Represent the configured symbol rate.'],
+  ['    led_pin: int = 5','Record the transmitter GPIO assignment.'],
+  ['    tx_power: str = "100 %"','Store the configured TX power label.'],
+  ['    pre_emphasis: str = "Disabled"','Store whether pre-emphasis is enabled.'],
+  ['    status_text: str = "Offline — no hardware"','Start honestly: a default state does not mean a board is connected.']
  ],concept:'A dataclass field declaration gives the state object a named piece of data and, often, an initial value. These fields are not the transmission itself; UI actions and controller methods consume them.'},
  {id:'serial-start',level:'APPLICATION',name:'Begin a serial transfer',path:'application-source/gui_dev_v3/serial/controllers.py',ref:APP,range:'460-478',lang:'python',summary:'This exact excerpt constructs STREAM_BEGIN, updates the transfer status, clears old firmware state, sends the command, and waits for the TX firmware acknowledgement.',lines:[
   ['        begin = (','Start a parenthesized multi-line command string.'],
@@ -63,14 +63,14 @@ const codeLessons = [
  ],concept:'The host and firmware use a small command protocol over USB serial. This is the control-plane handshake that prepares the physical transmitter; it is not the optical data transmission itself.'},
  {id:'tx-encode',level:'FIRMWARE · TX',name:'Encode one byte as 4B5B',path:'firmware/tx/tx.ino',ref:FW,range:'160-163',lang:'cpp',summary:'This tiny function is a good first example of bit manipulation. It separates a byte into two nibbles and looks up the 5-bit representation of each.',lines:[
   ['void send4b5bEncodedByte(uint8_t value) {','Define a function that receives one unsigned 8-bit value and returns no value.'],
-  ['send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);','Shift the high nibble down, mask to four bits, look up its codeword, then send five bits.'],
-  ['send4b5bCode(CODE_4B5B[value & 0x0F]);','Mask the low nibble, look up its codeword, then send five bits.'],
+  ['  send4b5bCode(CODE_4B5B[(value >> 4) & 0x0F]);','Shift the high nibble down, mask to four bits, look up its codeword, then send five bits.'],
+  ['  send4b5bCode(CODE_4B5B[value & 0x0F]);','Mask the low nibble, look up its codeword, then send five bits.'],
   ['}','End the function.']
  ],concept:'For 0xA5, the high nibble is 0xA and the low nibble is 0x5. In this firmware table they map to 10110 and 01011. The result is ten transmitted bits for one original byte.'},
  {id:'tx-bit',level:'FIRMWARE · TX',name:'Put one bit on the LED driver',path:'firmware/tx/tx.ino',ref:FW,range:'147-150',lang:'cpp',summary:'This is the boundary between a logical bit and a physical GPIO level. The helper applies the configured line polarity, then waits for the symbol boundary.',lines:[
   ['void send4b5bBit(bool bitValue) {','Accept one logical bit as true or false.'],
-  ['digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());','Choose the electrical output level for logical one or zero, including active-low configuration.'],
-  ['waitSymbolBoundary();','Hold the symbol for its configured timing interval.'],
+  ['  digitalWrite(TX_PIN, bitValue ? lineOneLevel() : lineZeroLevel());','Choose the electrical output level for logical one or zero, including active-low configuration.'],
+  ['  waitSymbolBoundary();','Hold the symbol for its configured timing interval.'],
   ['}','End the helper.']
  ],concept:'Logical 1 does not universally mean GPIO HIGH. The driver can be active-low. Keeping logical bit meaning separate from electrical pin polarity prevents the encoder from needing to know the transistor circuit details.'},
  {id:'tx-frame',level:'FIRMWARE · TX',name:'Build a protocol frame',path:'firmware/tx/tx.ino',ref:FW,range:'182-201',lang:'cpp',summary:'This is the exact 20-line frame builder. Select each line to see how metadata and payload bytes are placed in the buffer and how the CRC is appended.',lines:[
@@ -97,15 +97,15 @@ const codeLessons = [
  ],concept:'The sender and receiver must agree on the exact field order and sizes. Frame CRC protects the assembled frame; chunk CRC protects the payload; file CRC later checks the reconstructed file.'},
  {id:'rx-majority',level:'FIRMWARE · RX',name:'Read a symbol with majority voting',path:'firmware/rx/rx.ino',ref:FW,range:'761-771',lang:'cpp',summary:'Instead of trusting one digital read, this helper can take three readings around the expected symbol centre and choose the majority value.',lines:[
   ['bool sampleRawAt(uint32_t sampleTimeUs) {','Return one recovered raw bit for a target time in microseconds.'],
-  ['if (!useMajoritySampling || symbolUs < 30) ...','Use a single read if majority mode is off or the symbol is too short for this sampling pattern.'],
-  ['uint32_t delta = symbolUs / 6;','Place the outer samples one-sixth of a symbol period before and after the centre.'],
-  ['waitUntil(sampleTimeUs - delta);','Wait until the first sample instant.'],
-  ['bool a = digitalRead(RX_PIN);','Read the comparator output.'],
-  ['waitUntil(sampleTimeUs);','Wait for the centre sample.'],
-  ['bool b = digitalRead(RX_PIN);','Read the second sample.'],
-  ['waitUntil(sampleTimeUs + delta);','Wait for the third sample instant.'],
-  ['bool c = digitalRead(RX_PIN);','Read the third sample.'],
-  ['return (a + b + c) >= 2;','Return true when at least two of the three readings are HIGH.'],
+  ['  if (!useMajoritySampling || symbolUs < 30) { waitUntil(sampleTimeUs); return digitalRead(RX_PIN); }','Use a single read if majority mode is off or the symbol is too short for this sampling pattern.'],
+  ['  uint32_t delta = symbolUs / 6;','Place the outer samples one-sixth of a symbol period before and after the centre.'],
+  ['  waitUntil(sampleTimeUs - delta);','Wait until the first sample instant.'],
+  ['  bool a = digitalRead(RX_PIN);','Read the comparator output.'],
+  ['  waitUntil(sampleTimeUs);','Wait for the centre sample.'],
+  ['  bool b = digitalRead(RX_PIN);','Read the second sample.'],
+  ['  waitUntil(sampleTimeUs + delta);','Wait for the third sample instant.'],
+  ['  bool c = digitalRead(RX_PIN);','Read the third sample.'],
+  ['  return (a + b + c) >= 2;','Return true when at least two of the three readings are HIGH.'],
   ['}','End the function.']
  ],concept:'At 15 ksymbols/s, one symbol lasts about 66.7 microseconds. The three samples are close together around the centre, where the receiver expects the symbol to be stable.'},
  {id:'rx-decode',level:'FIRMWARE · RX',name:'Decode two codewords into one byte',path:'firmware/rx/rx.ino',ref:FW,range:'840-854',lang:'cpp',summary:'This exact excerpt checks synchronization and frame alignment, reads two 5-bit codewords, rejects invalid values, and combines two nibbles into a byte.',lines:[
