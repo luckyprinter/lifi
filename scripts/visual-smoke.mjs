@@ -37,7 +37,11 @@ try {
     await page.getByRole('button', { name: 'SIGNAL JOURNEY', exact: true }).click();
     await page.waitForSelector('.stage-visual');
     if (await page.locator('.stage-rail button').count() !== 8) failures.push(width + 'px signal journey does not expose all eight stages');
+    if (await page.locator('.trace-tabs button').count() !== 5) failures.push(width + 'px end-to-end trace does not expose all five implementation layers');
     await page.locator('.stage-rail button').nth(7).click();
+    await page.locator('.trace-tabs button').nth(2).click();
+    if (!(await page.locator('.trace-detail').innerText()).includes('RX_FILE_HEX')) failures.push(width + 'px USB serial layer does not explain the completed RX_FILE_HEX handoff');
+    await page.locator('.trace-tabs button').nth(0).click();
     await page.waitForTimeout(380);
     const stageWidth = await page.locator('.journey-content').evaluate(el => el.getBoundingClientRect().width);
     if (stageWidth > width + 1) failures.push(width + 'px journey panel exceeds viewport: ' + stageWidth);
@@ -46,7 +50,7 @@ try {
     if ([360, 390, 768, 1366].includes(width)) await page.screenshot({ path: output + '/journey-' + width + '.png', fullPage: true });
     await page.locator('.open-code-stage').click();
     await page.waitForSelector('.source-map-section');
-    if (!(await page.locator('.code-lesson-head h3').innerText()).includes('Validate a complete frame')) failures.push(width + 'px journey stage did not open its matching code lesson');
+    if (!(await page.locator('.code-lesson-head h3').innerText()).includes('Receive and save the completed RX file')) failures.push(width + 'px journey stage did not open its matching RX application code lesson');
 
     if (width <= 720) await page.locator('.mobile-menu').click();
     await page.getByRole('button', { name: 'CODE STUDIO' }).click();
