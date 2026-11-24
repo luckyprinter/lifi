@@ -133,7 +133,41 @@ export default function DeepDive({onOpenCode,appPin,codeLessons}) {
     <div className="deep-file-stats"><span>{current.lineCount??'—'} LINES</span><span>{current.symbols.length} SYMBOLS</span><span>{(current.bytes/1024).toFixed(1)} KiB</span><span>BLOB {current.blob.slice(0,9)}</span></div>
     {relations.length>0&&<div className="deep-relations"><div className="deep-section-label">VERIFIED CONNECTIONS · CROSS-FILE TRACE</div>{relations.map((r,i)=><a key={i} href={link(r.path,appPin,r.lines)} target="_blank" rel="noreferrer"><span>{r.label}</span><code>{r.path.split('/').pop()} · {formatLines(r.lines)}</code><ArrowUpRight size={13}/></a>)}</div>}
     {lessons.length>0&&<div className="deep-lessons"><div className="deep-section-label">GUIDED LESSONS RELATED TO THIS FILE</div>{lessons.map(id=>{const lesson=codeLessons.find(x=>x.id===id);return lesson?<button key={id} onClick={()=>onOpenCode(id)}><Code2 size={13}/>{lesson.name}<ArrowUpRight size={12}/></button>:null})}</div>}
-    {current.symbols.length>0&&<div className="deep-symbols"><div className="deep-symbol-heading"><div><div className="deep-section-label">CLASS / FUNCTION / CONSTANT INDEX</div><p>Choose a symbol to jump to its exact source line on GitHub.</p></div><label><Search size={13}/><input value={symbolQuery} onChange={e=>setSymbolQuery(e.target.value)} placeholder="Filter symbols"/></label></div><div className="deep-symbol-list">{visibleSymbols.map((s,i)=><button type="button" key={s.name+'-'+s.line+'-'+i} aria-pressed={activeSymbolLine===s.line} className={activeSymbolLine===s.line?'active':''} onClick={()=>setActiveSymbolLine(s.line)}><span className={'deep-symbol-kind kind-'+s.kind}>{s.kind}</span><b>{s.name}</b><code>L{s.line}–{s.endLine||s.line}</code><ArrowUpRight size={12}/></button>)}{visibleSymbols.length===0&&<p className="deep-empty">No symbols match this filter.</p>}</div>{activeSymbol&&<div className="deep-symbol-detail"><div className="deep-section-label">SELECTED {activeSymbol.kind.toUpperCase()} · SOURCE OUTLINE</div><h4>{activeSymbol.name}</h4><code className="deep-symbol-range">SOURCE LINES {activeSymbol.line}–{activeSymbol.endLine||activeSymbol.line}</code><pre>{activeSymbol.signature||activeSymbol.name}</pre>{activeSymbol.doc&&<p>{activeSymbol.doc}</p>}<a href={link(current.path,appPin,String(activeSymbol.line)+'-'+String(activeSymbol.endLine||activeSymbol.line))} target="_blank" rel="noreferrer">OPEN THIS SOURCE SPAN ON GITHUB <ArrowUpRight size={13}/></a><small>Line range is an indexed outline from the pinned source snapshot.</small><div className="deep-source-viewer"><div className="deep-source-head"><span>PINNED SOURCE EXCERPT</span><span>{sourceStatus==='ready'?activeSourceLines.length+' LINES LOADED':sourceStatus==='loading'?'LOADING SOURCE…':'SOURCE FETCH UNAVAILABLE'}</span></div>{sourceStatus==='ready'?<pre>{activeSourceLines.map((line,i)=><span key={i} className={i===0?'source-focus':''}><i>{activeSymbol.line+i}</i>{line||' '}</span>)}</pre>:<p>{sourceStatus==='loading'?'Loading the selected function from the pinned public repository…':'The source excerpt could not be loaded. Use the immutable GitHub link above to inspect it.'}</p>}</div></div>}</div></div>}
+    {current.symbols.length>0&&(
+      <div className="deep-symbols">
+       <div className="deep-symbol-heading">
+        <div><div className="deep-section-label">CLASS / FUNCTION / CONSTANT INDEX</div><p>Select a symbol to inspect its outline and implementation.</p></div>
+        <label><Search size={13}/><input value={symbolQuery} onChange={e=>setSymbolQuery(e.target.value)} placeholder="Filter symbols"/></label>
+       </div>
+       <div className="deep-symbol-list">
+        {visibleSymbols.map((s,i)=>(
+         <button type="button" key={s.name+'-'+s.line+'-'+i} aria-pressed={activeSymbolLine===s.line} className={activeSymbolLine===s.line?'active':''} onClick={()=>setActiveSymbolLine(s.line)}>
+          <span className={'deep-symbol-kind kind-'+s.kind}>{s.kind}</span><b>{s.name}</b><code>L{s.line}–{s.endLine||s.line}</code><ArrowUpRight size={12}/>
+         </button>
+        ))}
+        {visibleSymbols.length===0&&<p className="deep-empty">No symbols match this filter.</p>}
+       </div>
+       {activeSymbol&&(
+        <div className="deep-symbol-detail">
+         <div className="deep-section-label">SELECTED {activeSymbol.kind.toUpperCase()} · SOURCE OUTLINE</div>
+         <h4>{activeSymbol.name}</h4>
+         <code className="deep-symbol-range">SOURCE LINES {activeSymbol.line}–{activeSymbol.endLine||activeSymbol.line}</code>
+         <pre>{activeSymbol.signature||activeSymbol.name}</pre>
+         {activeSymbol.doc&&<p>{activeSymbol.doc}</p>}
+         <a href={link(current.path,appPin,String(activeSymbol.line)+'-'+String(activeSymbol.endLine||activeSymbol.line))} target="_blank" rel="noreferrer">OPEN THIS SOURCE SPAN ON GITHUB <ArrowUpRight size={13}/></a>
+         <small>Line range is an indexed outline from the pinned source snapshot.</small>
+         <div className="deep-source-viewer">
+          <div className="deep-source-head"><span>PINNED SOURCE EXCERPT</span><span>{sourceStatus==='ready'?activeSourceLines.length+' LINES LOADED':sourceStatus==='loading'?'LOADING SOURCE…':'SOURCE FETCH UNAVAILABLE'}</span></div>
+          {sourceStatus==='ready'?(
+           <pre>{activeSourceLines.map((line,i)=><span key={i} className={i===0?'source-focus':''}><i>{activeSymbol.line+i}</i>{line||' '}</span>)}</pre>
+          ):(
+           <p>{sourceStatus==='loading'?'Loading the selected function from the pinned public repository…':'The source excerpt could not be loaded. Use the immutable GitHub link above to inspect it.'}</p>
+          )}
+         </div>
+        </div>
+       )}
+      </div>
+    )}
     {current.headings.length>0&&<div className="deep-symbols"><div className="deep-section-label">DOCUMENT SECTION INDEX</div><div className="deep-symbol-list">{current.headings.map((h,i)=><a key={h.line+'-'+i} href={link(current.path,appPin,String(h.line)+'-'+String(h.line+2))} target="_blank" rel="noreferrer"><span className="deep-symbol-kind kind-doc">HEADING</span><b>{h.title}</b><code>LINE {h.line}</code><ArrowUpRight size={12}/></a>)}</div></div>}
     {current.symbols.length===0&&current.headings.length===0&&<div className="deep-file-note">This tracked item is an asset, data file, workflow, or configuration file rather than a symbol-indexed source module. Open the immutable source link to inspect its full contents.</div>}
     <div className="deep-file-footnote">The Deep Dive indexes all tracked files at this pinned revision. Full source text remains in the source repository and opens at immutable commit links; the guided Code Studio provides curated, explained excerpts for the most important execution paths.</div>
