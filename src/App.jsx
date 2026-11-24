@@ -27,7 +27,8 @@ const lessons = [
 
 const navItems = [
   ['journey','The signal journey'], ['architecture','System architecture'],
-  ['protocol','Protocol notes'], ['hardware','Hardware map'], ['validation','Integrity checks']
+  ['software','Desktop software'], ['protocol','Protocol notes'],
+  ['hardware','Hardware map'], ['validation','Integrity checks']
 ];
 
 function Packet({ step }) {
@@ -186,6 +187,33 @@ function Architecture() {
   return <section className="content-section" id="architecture"><div className="section-heading"><div><span className="eyebrow">02 · SYSTEM ARCHITECTURE</span><h2>Two endpoints.<br/>One line of sight.</h2></div><p>The software, firmware, and optical hardware form one continuous communication system.</p></div><div className="architecture-grid">{columns.map((c,i)=><div className={`architecture-column ${c.tone}`} key={c.label}><div className="column-label">{c.label}</div>{c.items.map(([a,b],j)=><React.Fragment key={a}><div className="arch-node"><span className="node-index">{String(j+1).padStart(2,'0')}</span><div><b>{a}</b><small>{b}</small></div></div>{j<c.items.length-1&&<div className="connector"><ArrowDown size={14}/></div>}</React.Fragment>)}</div>)}</div><div className="architecture-note"><CircleDot size={16}/><span>Research prototype, not a commercial LiFi product or a Wi-Fi replacement. Experimental conditions and measured results belong to the thesis.</span></div></section>;
 }
 
+function SoftwareArchitecture() {
+  const [view,setView]=useState('tx');
+  const [mode,setMode]=useState('physical');
+  const flows={
+    tx:[
+      ['01','TX desktop shell','The PySide6 transmitter window hosts dashboard, transmission controls, settings, and logs.','application-source/gui_dev_v3/tx/shell.py'],
+      ['02','TXAppState','Observable application state tracks the selected file, chunk count, progress, serial status, and transmission history.','application-source/gui_dev_v3/tx_app_state.py'],
+      ['03',mode==='physical'?'TX physical backend':'TX simulation backend',mode==='physical'?'The physical strategy communicates with the transmitter ESP32 through the serial controller.':'The simulation strategy generates a virtual transmitter session without the optical hardware.',mode==='physical'?'application-source/gui_dev_v3/tx/backends/physical.py':'application-source/gui_dev_v3/tx/backends/simulation.py'],
+      ['04',mode==='physical'?'USB serial controller':'Virtual transmission model',mode==='physical'?'The serial controller streams file data to firmware using the STREAM_BEGIN / STREAM_DATA / STREAM_START lifecycle.':'The virtual backend exercises the application workflow using generated state rather than a live ESP32.','application-source/gui_dev_v3/serial/controllers.py']
+    ],
+    rx:[
+      ['01','RX desktop shell','The PySide6 receiver window organizes dashboard, experiment tools, table builder, settings, and logs.','application-source/gui_dev_v3/rx/shell.py'],
+      ['02','RXAppState','Observable receiver state exposes session, signal, transfer, activity log, and capture data to the UI.','application-source/gui_dev_v3/app_state.py'],
+      ['03',mode==='physical'?'RX physical backend':'RX simulation backend',mode==='physical'?'Reads receiver state from the ESP32 and exposes signal and transfer measurements.':'Generates a virtual optical channel and simulated reception state without physical hardware.',mode==='physical'?'application-source/gui_dev_v3/rx/backends/physical.py':'application-source/gui_dev_v3/rx/backends/simulation.py'],
+      ['04','Receiver logic + dashboard','The UI presents reception state, waveform, file information, and transfer-quality metrics.','application-source/gui_dev_v3/logic/codemap.md']
+    ],
+    shared:[
+      ['01','SerialSession','Owns the serial connection, line writes, response matching, status updates, and a background reader thread.','application-source/gui_dev_v3/serial/session.py'],
+      ['02','TX / RX controllers','Layer protocol-specific commands on the session: stream transfer on TX; link quality, Vref, receive control, and chunk dump on RX.','application-source/gui_dev_v3/serial/controllers.py'],
+      ['03','Pure transfer-quality logic','Computes bit errors, strict BER, bit accuracy, recovery rate, and first mismatch from chunk records.','application-source/gui_dev_v3/logic/codemap.md'],
+      ['04','Models + persistence','Dataclass-based session and signal models keep UI state structured; settings and experiment records are persisted separately.','application-source/gui_dev_v3/models.py']
+    ]
+  };
+  const rows=flows[view];
+  return <section className="content-section software-section" id="software"><div className="section-heading"><div><span className="eyebrow">03 · DESKTOP SOFTWARE ARCHITECTURE</span><h2>Two apps.<br/>One shared core.</h2></div><p>The PySide6 tools are not just serial terminals. They separate UI state, backend strategies, serial transport, and transfer-quality logic.</p></div><div className="software-toolbar"><div className="software-tabs"><button className={view==='tx'?'selected':''} aria-pressed={view==='tx'} onClick={()=>setView('tx')}>TRANSMITTER APP</button><button className={view==='rx'?'selected':''} aria-pressed={view==='rx'} onClick={()=>setView('rx')}>RECEIVER APP</button><button className={view==='shared'?'selected':''} aria-pressed={view==='shared'} onClick={()=>setView('shared')}>SHARED CORE</button></div>{view!=='shared'&&<div className="software-mode"><span>BACKEND STRATEGY</span><button className={mode==='physical'?'selected':''} aria-pressed={mode==='physical'} onClick={()=>setMode('physical')}>PHYSICAL</button><button className={mode==='simulated'?'selected':''} aria-pressed={mode==='simulated'} onClick={()=>setMode('simulated')}>SIMULATED</button></div>}</div><div className="software-flow">{rows.map(([n,title,desc,file],i)=><React.Fragment key={n}><article className="software-node"><span className="software-index">{n}</span><div><b>{title}</b><p>{desc}</p><a href={SOURCE(file)} target="_blank" rel="noreferrer">OPEN SOURCE MAP <ArrowUpRight size={12}/></a></div></article>{i<rows.length-1&&<div className="software-connector"><ArrowDown size={15}/></div>}</React.Fragment>)}</div><div className="software-foot"><span><i/> STATE REFRESHES ON A 1-SECOND POLL CYCLE</span><a href={SOURCE('application-source/gui_dev_v3/codemap.md')} target="_blank" rel="noreferrer">ROOT APPLICATION CODEMAP <ExternalLink size={12}/></a></div></section>;
+}
+
 function Protocol() {
   const [mode,setMode]=useState('encoding');
   const [byteValue,setByteValue]=useState(0xA6);
@@ -244,7 +272,7 @@ export default function App() {
     <main id="top">
       <section className="hero"><div className="hero-copy"><div className="hero-kicker"><span className="pulse-dot"/> AN INTERACTIVE ENGINEERING GUIDE <span>·</span> ESP32 VISIBLE LIGHT COMMUNICATION</div><h1>Data, carried<br/>by <em>light.</em></h1><p className="hero-intro">A guided exploration of a short-range VLC prototype — from a file on the transmitter desktop to a reconstructed file at the receiver.</p><div className="hero-ctas"><a className="primary-cta" href="#journey">Explore the signal <ArrowDown size={16}/></a><a className="secondary-cta" href={REPO} target="_blank" rel="noreferrer"><Github size={16}/> View the implementation</a></div><div className="hero-facts"><div><b>4B5B</b><span>LINE CODING</span></div><div><b>NRZ / OOK</b><span>OPTICAL SIGNAL</span></div><div><b>CRC</b><span>INTEGRITY CHECKS</span></div></div></div><div className="hero-art" role="img" aria-label="Abstract visible light signal illustration"><div className="art-grid"/><div className="art-orbit orbit-one"/><div className="art-orbit orbit-two"/><div className="art-beam"/><div className="art-bulb"><Lightbulb size={52}/></div><div className="art-label label-a">15,000 SYMBOLS / SEC</div><div className="art-label label-b">VISIBLE LIGHT CHANNEL</div><div className="art-packet packet-a"/><div className="art-packet packet-b"/><div className="art-packet packet-c"/><span className="art-coord">TX / RX — LOS</span></div><div className="hero-bottom"><span>01 — SYSTEM OVERVIEW</span><span>SCROLL TO EXPLORE <ArrowDown size={13}/></span></div></section>
       <div className="ticker"><span>ESP32</span><i/> <span>4B5B LINE CODING</span><i/> <span>NRZ / OOK</span><i/> <span>BPW34 PHOTODIODE</span><i/> <span>CRC VALIDATION</span><i/> <span>SHORT-RANGE INDOOR VLC</span></div>
-      <LessonExplorer/><Architecture/><Protocol/><Hardware/><Validation/><SourceFooter/>
+      <LessonExplorer/><Architecture/><SoftwareArchitecture/><Protocol/><Hardware/><Validation/><SourceFooter/>
     </main>
   </div>;
 }
